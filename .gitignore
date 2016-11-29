@@ -2,3 +2,5 @@
 /packages
 *.lst
 /Asap2/GplexBuffers.cs
+/Asap2/Asap2.Parser.Generated.cs
+/Asap2/Asap2.Scanner.Generated.cs
