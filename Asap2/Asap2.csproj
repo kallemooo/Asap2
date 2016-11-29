@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EFADEE96-3767-42C4-92D3-BF0095B70553}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Asap2</RootNamespace>
+    <AssemblyName>Asap2</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Label="YltParsers">
+    <Names>Asap2</Names>
+  </PropertyGroup>
+  <PropertyGroup Label="YltProperties">
+    <YltTools>$(SolutionDir)packages\YaccLexTools.0.2.2\tools\</YltTools>
+    <GplexTool>"$(YltTools)gplex.exe"</GplexTool>
+    <GppgTool>"$(YltTools)gppg.exe"</GppgTool>
+  </PropertyGroup>
+  <PropertyGroup Label="GenerateAsap2Properties">
+    <Asap2Parser>$(ProjectDir)Asap2</Asap2Parser>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Asap2File.cs" />
+    <Compile Include="GplexBuffers.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShiftReduceParserCode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup Label="Asap2Files">
+    <Compile Include="Asap2.Parser.cs">
+      <DependentUpon>Asap2.parser</DependentUpon>
+    </Compile>
+    <Compile Include="Asap2.Parser.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Asap2.Language.grammar.y</DependentUpon>
+    </Compile>
+    <Compile Include="Asap2.Scanner.cs">
+      <DependentUpon>Asap2.parser</DependentUpon>
+    </Compile>
+    <Compile Include="Asap2.Scanner.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Asap2.Language.analyzer.lex</DependentUpon>
+    </Compile>
+    <None Include="Asap2.Language.analyzer.lex">
+      <DependentUpon>Asap2.parser</DependentUpon>
+    </None>
+    <None Include="Asap2.Language.grammar.y">
+      <DependentUpon>Asap2.parser</DependentUpon>
+    </None>
+    <None Include="Asap2.parser" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild" DependsOnTargets="YltBuildGen" />
+  <Target Name="YltBuildGen" DependsOnTargets="GenerateAsap2" />
+  <Target Name="GenerateAsap2" Inputs="$(Asap2Parser).Language.analyzer.lex;$(Asap2Parser).Language.grammar.y" Outputs="$(Asap2Parser).Scanner.Generated.cs;$(Asap2Parser).Parser.Generated.cs">
+    <Message Text="Generating scanner for $(Asap2Parser) ..." />
+    <Exec Command="$(GplexTool) &quot;/out:$(Asap2Parser).Scanner.Generated.cs&quot; &quot;$(Asap2Parser).Language.analyzer.lex&quot;" WorkingDirectory="$(ProjectDir)" Outputs="$(GenDir)Scanner.cs">
+      <Output TaskParameter="Outputs" ItemName="Asap2Scanner" />
+    </Exec>
+    <Message Text="Generating parser for $(Asap2Parser) ..." />
+    <Exec Command="$(GppgTool) /no-lines /gplex &quot;$(Asap2Parser).Language.grammar.y&quot; &gt; &quot;$(Asap2Parser).Parser.Generated.cs&quot;" WorkingDirectory="$(ProjectDir)" Outputs="$(Asap2Parser).Parser.Generated.cs">
+      <Output TaskParameter="Outputs" ItemName="Asap2" />
+    </Exec>
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
