@@ -1,0 +1,62 @@
+/*
+ * A2l file for testing ASAP2 parser.
+ */
+
+ASAP2_VERSION 1 60
+/begin PROJECT project_name "project description"
+  /begin HEADER
+    "Desc header"
+    VERSION "version info"
+    PROJECT_NO 12345
+  /end HEADER
+  /begin MODULE
+    SYSTEM
+    "Desc SYSTEM MODULE"
+    /begin MOD_COMMON "Desc mod_common"
+          DEPOSIT ABSOLUTE
+          ALIGNMENT_BYTE 1
+          BYTE_ORDER MSB_FIRST
+          ALIGNMENT_WORD 2
+          ALIGNMENT_LONG 4
+          ALIGNMENT_INT64 8
+          ALIGNMENT_FLOAT32_IEEE 4
+          ALIGNMENT_FLOAT64_IEEE 4
+    /end MOD_COMMON
+	/begin MEASUREMENT
+		Measurement_1
+		"Measurement_1 description"
+		UWORD
+		NO_COMPU_METHOD
+		0
+		0
+		0
+		65535
+		ECU_ADDRESS 0x4000b6ee
+		FORMAT "%8.5"
+	/end MEASUREMENT
+    /begin MEASUREMENT
+        /* Name           */     Measurement_2_Array[0]
+        /* LongIdentifier */     "Array test part 0."
+        /* Datatype       */     UWORD
+        /* Conversion     */     NO_COMPU_METHOD
+        /* Resolution     */     1
+        /* Accuracy       */     0
+        /* LowerLimit     */     0
+        /* UpperLimit     */     65535
+        ECU_ADDRESS              0x4000074c
+        ECU_ADDRESS_EXTENSION    0x0
+    /end MEASUREMENT
+    /begin MEASUREMENT
+        /* Name           */     Measurement_2_Array[1]
+        /* LongIdentifier */     "Array test part 1."
+        /* Datatype       */     UWORD
+        /* Conversion     */     NO_COMPU_METHOD
+        /* Resolution     */     1
+        /* Accuracy       */     0
+        /* LowerLimit     */     0
+        /* UpperLimit     */     65535
+        ECU_ADDRESS              0x4000074c
+        ECU_ADDRESS_EXTENSION    0x0
+    /end MEASUREMENT
+   /end MODULE
+/end PROJECT

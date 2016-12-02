@@ -11,7 +11,7 @@ namespace Asap2Test
     {
         static void Main(string[] args)
         {
-            var parser = new Asap2.Parser("testFile.a2l");
+            var parser = new Asap2.Parser("../../../testFile.a2l");
             parser.DoParse();
             //Console.WriteLine("Press enter to close...");
             //Console.ReadLine();
