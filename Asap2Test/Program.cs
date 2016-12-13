@@ -13,8 +13,8 @@ namespace Asap2Test
         {
             var parser = new Asap2.Parser("../../../testFile.a2l");
             parser.DoParse();
-            //Console.WriteLine("Press enter to close...");
-            //Console.ReadLine();
+            Console.WriteLine("Press enter to close...");
+            Console.ReadLine();
         }
     }
 }

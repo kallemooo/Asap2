@@ -36,7 +36,8 @@ ASAP2_VERSION 1 60
 	/end MEASUREMENT
     /begin MEASUREMENT
         /* Name           */     Measurement_2_Array[0]
-        /* LongIdentifier */     "Array test part 0."
+        /* LongIdentifier */     "Array test part 0.
+        Row 2"
         /* Datatype       */     UWORD
         /* Conversion     */     NO_COMPU_METHOD
         /* Resolution     */     1
@@ -45,6 +46,7 @@ ASAP2_VERSION 1 60
         /* UpperLimit     */     65535
         ECU_ADDRESS              0x4000074c
         ECU_ADDRESS_EXTENSION    0x0
+        FORMAT "%8.5"
     /end MEASUREMENT
     /begin MEASUREMENT
         /* Name           */     Measurement_2_Array[1]
@@ -57,6 +59,7 @@ ASAP2_VERSION 1 60
         /* UpperLimit     */     65535
         ECU_ADDRESS              0x4000074c
         ECU_ADDRESS_EXTENSION    0x0
+        FORMAT "%8.5"
     /end MEASUREMENT
    /end MODULE
 /end PROJECT

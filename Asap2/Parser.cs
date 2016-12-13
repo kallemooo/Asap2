@@ -28,8 +28,10 @@ namespace Asap2
                 status = parser.Parse();
             }
 
-            if(status)
+            if (status)
             {
+                string outStr = parser.Asap2File.serialize(new IndentHandler());
+                Console.WriteLine(outStr);
                 status = true;
             }
             else

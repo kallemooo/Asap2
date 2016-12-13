@@ -11,8 +11,6 @@
 			public Tuple<ALIGNMENT_type, uint> alignment;
 			public DEPOSIT deposit;
 			public BYTE_ORDER byte_order;
-			public Tuple<String, String> s2;
-			public List<Tuple<String, String>> ls2;
 	   }
 
 %start main
@@ -47,6 +45,10 @@
 %type <s>				project_no
 %type <s>				version
 %type <alignment>       alignment
+%type <n>				ecu_address
+%type <n>				ecu_address_extension
+%type <s>				format
+
 
 %%
 
@@ -58,11 +60,6 @@ main	: project
 		;
 
 any    :  module
-	   | measurement
-	   | ecu_address
-	   | format
-	   | ecu_address_extension
-	   | end_measurement
 	   | end_module
        | end_project
        ;
@@ -81,10 +78,10 @@ end_project		:	END PROJECT
 				;
 
 header			:	BEGIN HEADER QUOTED_STRING version project_no END HEADER {
-						Asap2File.project.header = new HEADER(comment: $3, version: $4, project_no: $5);
+						Asap2File.project.header = new HEADER(longIdentifier: $3, version: $4, project_no: $5);
 					}
 				|	BEGIN HEADER QUOTED_STRING project_no version END HEADER {
-						Asap2File.project.header = new HEADER(comment: $3, project_no: $4, version: $5);
+						Asap2File.project.header = new HEADER(longIdentifier: $3, project_no: $4, version: $5);
 					}
 				;
 
@@ -110,7 +107,14 @@ end_module		:	END MODULE {
 module			:	beg_module module_elements end_module
 				;
 
-module_elements : mod_common
+module_elements: /* empty */ {
+                    }
+
+				| module_elements module_elements_data
+				;
+
+module_elements_data : mod_common
+				| measurement
 				;
 
 mod_common      : mod_common_begin mod_common_datas END MOD_COMMON
@@ -147,13 +151,37 @@ mod_common_data	:  deposit {
 
 
 
-measurement		:	BEGIN MEASUREMENT IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
-						currentMeasurment = new MEASUREMENT($3, $4, $5, $6, (uint)$7, (uint)$8, (uint)$9, (uint)$10);
-						currentModule.measurements.Add($3, currentMeasurment);
-					}
+measurement		:	measurement_begin measurement_datas end_measurement
 				;
 
-end_measurement	:	END MEASUREMENT {currentMeasurment = null;}
+measurement_begin: BEGIN MEASUREMENT IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
+					currentMeasurment = new MEASUREMENT($3, $4, $5, $6, (uint)$7, (uint)$8, (uint)$9, (uint)$10);
+				}
+				;
+
+measurement_datas: /* empty */ {
+                    }
+				| measurement_datas measurement_data
+				;
+
+measurement_data :  ecu_address {
+					Console.WriteLine("Found ecu_address");
+					currentMeasurment.ECU_ADDRESS = (UInt64)$1;
+				}
+                |  ecu_address_extension {
+					Console.WriteLine("Found ecu_address_extension");
+					currentMeasurment.ECU_ADDRESS_EXTENSION = (UInt64)$1;
+				}
+                |  format {
+					Console.WriteLine("Found format");
+					currentMeasurment.FORMAT = $1;
+				}
+				;
+
+end_measurement	:	END MEASUREMENT {
+					currentModule.measurements.Add(currentMeasurment.name, currentMeasurment);
+					currentMeasurment = null;
+				}
 				;
 
 alignment		:   ALIGNMENT NUMBER {
@@ -162,70 +190,58 @@ alignment		:   ALIGNMENT NUMBER {
                 ;
 
 deposit			: DEPOSIT IDENTIFIER {
-							switch ($2)
-							{
-								case "ABSOLUTE":
-									$$ = DEPOSIT.ABSOLUTE;
-								break;
-								case "DIFFERENCE":
-									$$ = DEPOSIT.DIFFERENCE;
-								break;
-								default:
-								throw new Exception("Unknown DEPOSIT type: " + $2);
-							}
-						}
+					switch ($2)
+					{
+						case "ABSOLUTE":
+							$$ = DEPOSIT.ABSOLUTE;
+						break;
+						case "DIFFERENCE":
+							$$ = DEPOSIT.DIFFERENCE;
+						break;
+						default:
+						throw new Exception("Unknown DEPOSIT type: " + $2);
+					}
+				}
                 ;
 
 byte_order		: BYTE_ORDER IDENTIFIER {
-							switch ($2)
-							{
-								case "MSB_FIRST":
-									$$ = BYTE_ORDER.MSB_FIRST;
-								break;
-								case "MSB_LAST":
-									$$ = BYTE_ORDER.MSB_LAST;
-								break;
-								default:
-								throw new Exception("Unknown BYTE_ORDER type: " + $2);
-							}
-						}
+					switch ($2)
+					{
+						case "MSB_FIRST":
+							$$ = BYTE_ORDER.MSB_FIRST;
+						break;
+						case "MSB_LAST":
+							$$ = BYTE_ORDER.MSB_LAST;
+						break;
+						default:
+						throw new Exception("Unknown BYTE_ORDER type: " + $2);
+					}
+				}
                 ;
 
-data_size		: DATA_SIZE HEXNUMBER
-					{
-                        $$ = $2;
-                    }
-				| DATA_SIZE NUMBER
-					{
-                        $$ = $2;
-                    }
+data_size		: DATA_SIZE HEXNUMBER {
+                    $$ = $2;
+                }
+				| DATA_SIZE NUMBER {
+                    $$ = $2;
+                }
 				;
 
-ecu_address					: ECU_ADDRESS HEXNUMBER {SetEcuAddress((UInt64)$2);};
-ecu_address_extension		: ECU_ADDRESS_EXTENSION HEXNUMBER {SetEcuAddressExtension((UInt64)$2);};
-format						: FORMAT QUOTED_STRING {SetFormat($2);};
+ecu_address					: ECU_ADDRESS HEXNUMBER {
+								$$ = $2;
+							}
+							;
+
+ecu_address_extension		: ECU_ADDRESS_EXTENSION HEXNUMBER {
+								$$ = $2;
+							}
+							;
+
+format						: FORMAT QUOTED_STRING {
+								$$ = $2;
+							}
+							;
 
 %%
 private MODULE currentModule;
 private MEASUREMENT currentMeasurment;
-void SetEcuAddress(UInt64 Address)
-{
-	if (currentMeasurment != null)
-	{
-		currentMeasurment.ECU_ADDRESS = Address;
-	}
-}
-void SetEcuAddressExtension(UInt64 Address)
-{
-	if (currentMeasurment != null)
-	{
-		currentMeasurment.ECU_ADDRESS_EXTENSION = Address;
-	}
-}
-void SetFormat(string Format)
-{
-	if (currentMeasurment != null)
-	{
-		currentMeasurment.FORMAT = Format;
-	}
-}
