@@ -11,6 +11,11 @@
 			public Tuple<ALIGNMENT_type, uint> alignment;
 			public DEPOSIT deposit;
 			public BYTE_ORDER byte_order;
+			public MOD_COMMON mod_common;
+			public MODULE module;
+			public PROJECT project;
+			public HEADER header;
+			public MEASUREMENT measurement;
 	   }
 
 %start main
@@ -48,7 +53,16 @@
 %type <n>				ecu_address
 %type <n>				ecu_address_extension
 %type <s>				format
-
+%type <mod_common>      mod_common
+%type <mod_common>      mod_common_data
+%type <module>          module
+%type <module>          module_data
+%type <project>         project
+%type <project>         project_data
+%type <header>          header
+%type <header>          header_data
+%type <measurement>     measurement
+%type <measurement>     measurement_data
 
 %%
 
@@ -60,8 +74,6 @@ main	: project
 		;
 
 any    :  module
-	   | end_module
-       | end_project
        ;
 
 asap2_version	:   ASAP2_VERSION NUMBER NUMBER {
@@ -69,21 +81,46 @@ asap2_version	:   ASAP2_VERSION NUMBER NUMBER {
                     }
                 ;
 
-project			:	BEGIN PROJECT IDENTIFIER QUOTED_STRING {
-						Asap2File.project = new PROJECT($3, $4);
-					}
+project			:	BEGIN PROJECT project_data END PROJECT {
+					$$ = $3;
+					Asap2File.project = $3;
+				}
 				;
 
-end_project		:	END PROJECT
+project_data    :   IDENTIFIER QUOTED_STRING {
+					$$ = new PROJECT();
+					$$.name           = $1;
+					$$.LongIdentifier = $2;
+				}
+				| project_data header {
+					$$ = $1;
+					$$.header = $2;
+				}
+				| project_data module {
+					$$ = $1;
+					$$.modules.Add($2.name, $2);
+				}
 				;
 
-header			:	BEGIN HEADER QUOTED_STRING version project_no END HEADER {
-						Asap2File.project.header = new HEADER(longIdentifier: $3, version: $4, project_no: $5);
-					}
-				|	BEGIN HEADER QUOTED_STRING project_no version END HEADER {
-						Asap2File.project.header = new HEADER(longIdentifier: $3, project_no: $4, version: $5);
+header			:	BEGIN HEADER header_data END HEADER {
+						$$ = $3;
 					}
 				;
+				
+header_data     : QUOTED_STRING {
+					$$ = new HEADER();
+					$$.longIdentifier = $1;
+				}
+				| header_data version {
+					$$ = $1;
+					$$.version    = $2;
+				}
+				| header_data project_no {
+					$$ = $1;
+					$$.project_no = $2;
+				}
+				;
+
 
 project_no		:	PROJECT_NO IDENTIFIER	{ $$ = $2; }
 				|	PROJECT_NO NUMBER		{ $$ = $2.ToString(); }
@@ -93,96 +130,80 @@ project_no		:	PROJECT_NO IDENTIFIER	{ $$ = $2; }
 version			:	VERSION QUOTED_STRING	{ $$ = $2; }
 				;
 
-beg_module		:	BEGIN MODULE IDENTIFIER QUOTED_STRING {
-						currentModule = new MODULE(name: $3, LongIdentifier: $4);
-					}
-				;
 
-end_module		:	END MODULE {
-						Asap2File.project.modules.Add(currentModule.name, currentModule);
-						currentModule = null;
-					}
-				;
-
-module			:	beg_module module_elements end_module
-				;
-
-module_elements: /* empty */ {
-                    }
-
-				| module_elements module_elements_data
-				;
-
-module_elements_data : mod_common
-				| measurement
-				;
-
-mod_common      : mod_common_begin mod_common_datas END MOD_COMMON
-				;
-
-mod_common_begin: BEGIN MOD_COMMON QUOTED_STRING {
-					currentModule.mod_common = new MOD_COMMON($3);
+module			:	BEGIN MODULE module_data END MODULE {					
+					$$ = $3;
 				}
 				;
 
-mod_common_datas: /* empty */ {
-                    }
-
-				| mod_common_datas mod_common_data
+module_data :   IDENTIFIER QUOTED_STRING {
+					$$ = new MODULE();
+					$$.name = $1;
+					$$.LongIdentifier = $2;
+				}
+                | module_data mod_common {
+					$$ = $1;
+					$$.mod_common = $2;
+				}
+                | module_data measurement {
+					$$ = $1;
+                    $$.measurements.Add($2.name, $2);
+                }
 				;
 
-mod_common_data	:  deposit {
-					Console.WriteLine("Found deposit");
-					currentModule.mod_common.deposit    = $1;
+mod_common      : BEGIN MOD_COMMON mod_common_data END MOD_COMMON {
+					$$ = $3;
 				}
-                |  byte_order {
-					Console.WriteLine("Found byte_order");
-					currentModule.mod_common.byte_order = $1;
+				;
+
+mod_common_data	:  QUOTED_STRING {
+					$$ = new MOD_COMMON($1);
 				}
-                |  data_size {
-					Console.WriteLine("Found date_size");
-					currentModule.mod_common.data_size  = (uint)$1;
+                |  mod_common_data deposit {
+					$$ = $1;
+					$$.deposit    = $2;
 				}
-				|  alignment {
-					Console.WriteLine("Found alignment");
-					currentModule.mod_common.alignments.Add($1.Item1, $1.Item2);
+                |  mod_common_data byte_order {
+					$$ = $1;
+					$$.byte_order = $2;
+				}
+                |  mod_common_data data_size {
+					$$ = $1;
+					$$.data_size  = (uint)$2;
+				}
+				|  mod_common_data alignment {
+					$$ = $1;
+					$$.alignments.Add($2.Item1, $2.Item2);
 				}
 				;
 
 
 
-measurement		:	measurement_begin measurement_datas end_measurement
-				;
-
-measurement_begin: BEGIN MEASUREMENT IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
-					currentMeasurment = new MEASUREMENT($3, $4, $5, $6, (uint)$7, (uint)$8, (uint)$9, (uint)$10);
+measurement		: BEGIN MEASUREMENT measurement_data END MEASUREMENT {
+					$$ = $3;
 				}
 				;
 
-measurement_datas: /* empty */ {
-                    }
-				| measurement_datas measurement_data
-				;
-
-measurement_data :  ecu_address {
+measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
+					$$ = new MEASUREMENT($1, $2, $3, $4, (uint)$5, (uint)$6, (uint)$7, (uint)$8);
+				}
+				|  measurement_data ecu_address {
 					Console.WriteLine("Found ecu_address");
-					currentMeasurment.ECU_ADDRESS = (UInt64)$1;
+					$$ = $1;
+					$$.ECU_ADDRESS = (UInt64)$2;
 				}
-                |  ecu_address_extension {
+                |  measurement_data ecu_address_extension {
 					Console.WriteLine("Found ecu_address_extension");
-					currentMeasurment.ECU_ADDRESS_EXTENSION = (UInt64)$1;
+					$$ = $1;
+					$$.ECU_ADDRESS_EXTENSION = (UInt64)$2;
 				}
-                |  format {
+                |  measurement_data format {
 					Console.WriteLine("Found format");
-					currentMeasurment.FORMAT = $1;
+					$$ = $1;
+					$$.FORMAT = $2;
 				}
 				;
 
-end_measurement	:	END MEASUREMENT {
-					currentModule.measurements.Add(currentMeasurment.name, currentMeasurment);
-					currentMeasurment = null;
-				}
-				;
 
 alignment		:   ALIGNMENT NUMBER {
                         $$ = new Tuple<ALIGNMENT_type, uint>($1, (uint)$2);
