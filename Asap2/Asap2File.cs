@@ -80,11 +80,6 @@ namespace Asap2
 
     public class PROJECT
     {
-        public PROJECT(string name, string LongIdentifier)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.name = name;
-        }
         public string comment;
         public string nameComment = "/* Name           */";
         public string name;
@@ -133,12 +128,6 @@ namespace Asap2
 
     public class HEADER
     {
-        public HEADER(string longIdentifier, string version, string project_no)
-        {
-            this.longIdentifier = longIdentifier;
-            this.version = version;
-            this.project_no = project_no;
-        }
         public string longIdentifier;
         public string version;
         public string project_no;
@@ -157,12 +146,6 @@ namespace Asap2
 
     public class MODULE
     {
-        public MODULE(string name, string LongIdentifier)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.name = name;
-        }
-
         public string nameComment = "/* Name           */";
         public string name;
         public string LongIdentifierComment = "/* LongIdentifier */";
