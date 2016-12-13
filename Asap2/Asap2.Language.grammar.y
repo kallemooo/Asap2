@@ -7,10 +7,12 @@
 %union { 
 			public int n;
 			public string s;
-			public ALIGNMENT_type alingment;
-			public Dictionary<ALIGNMENT_type, uint> alignments;
+			public ALIGNMENT_type alignment_token;
+			public Tuple<ALIGNMENT_type, uint> alignment;
 			public DEPOSIT deposit;
 			public BYTE_ORDER byte_order;
+			public Tuple<String, String> s2;
+			public List<Tuple<String, String>> ls2;
 	   }
 
 %start main
@@ -34,18 +36,17 @@
 %token ECU_ADDRESS
 %token ECU_ADDRESS_EXTENSION
 %token FORMAT
-%token <alingment> ALIGNMENT
+%token <alignment_token> ALIGNMENT
 
 %token BEGIN
 %token END
 
-%type <alignments>		alignments
 %type <deposit>			deposit
 %type <byte_order>		byte_order
 %type <n>				data_size
 %type <s>				project_no
 %type <s>				version
-
+%type <alignment>       alignment
 
 %%
 
@@ -57,7 +58,6 @@ main	: project
 		;
 
 any    :  module
-	   | mod_common
 	   | measurement
 	   | ecu_address
 	   | format
@@ -96,56 +96,56 @@ project_no		:	PROJECT_NO IDENTIFIER	{ $$ = $2; }
 version			:	VERSION QUOTED_STRING	{ $$ = $2; }
 				;
 
-module			:	BEGIN MODULE IDENTIFIER QUOTED_STRING {
+beg_module		:	BEGIN MODULE IDENTIFIER QUOTED_STRING {
 						currentModule = new MODULE(name: $3, LongIdentifier: $4);
-						Asap2File.project.modules.Add($3, currentModule);
 					}
 				;
 
-end_module		:	END MODULE {currentModule = null;}
-				;
-
-mod_common		: BEGIN MOD_COMMON QUOTED_STRING deposit byte_order alignments data_size END MOD_COMMON
-					{
-						currentModule.mod_common = new MOD_COMMON(LongIdentifier: $3, deposit: $4, byte_order: $5, alignments: $6, data_size: (uint)$7);
-					}
-				| BEGIN MOD_COMMON QUOTED_STRING data_size deposit byte_order alignments END MOD_COMMON
-					{
-						currentModule.mod_common = new MOD_COMMON(LongIdentifier: $3, data_size: (uint)$4, deposit: $5, byte_order: $6, alignments: $7);
-					}
-				| BEGIN MOD_COMMON QUOTED_STRING deposit byte_order alignments END MOD_COMMON
-					{
-						currentModule.mod_common = new MOD_COMMON(LongIdentifier: $3, deposit: $4, byte_order: $5, alignments: $6);
-					}
-				| BEGIN MOD_COMMON QUOTED_STRING deposit alignments byte_order alignments END MOD_COMMON
-					{
-						var result = new Dictionary<ALIGNMENT_type, uint>();
-						var dictionariesToCombine = new Dictionary<ALIGNMENT_type, uint>[] { $5, $7 };
-						foreach (var dict in dictionariesToCombine) {
-							foreach (var item in dict) {
-								result.Add(item.Key, item.Value);
-							}
-						}
-						currentModule.mod_common = new MOD_COMMON(LongIdentifier: $3, deposit: $4, byte_order: $6, alignments: result);
-					}
-				| BEGIN MOD_COMMON QUOTED_STRING byte_order alignments END MOD_COMMON
-					{
-						currentModule.mod_common = new MOD_COMMON(LongIdentifier: $3, byte_order: $4, alignments: $5);
-					}
-				| BEGIN MOD_COMMON QUOTED_STRING alignments END MOD_COMMON
-					{
-						currentModule.mod_common = new MOD_COMMON(LongIdentifier: $3, alignments: $4);
+end_module		:	END MODULE {
+						Asap2File.project.modules.Add(currentModule.name, currentModule);
+						currentModule = null;
 					}
 				;
 
-alignments		:   /* empty */ {
-                        $$ = new Dictionary<ALIGNMENT_type, uint>();
+module			:	beg_module module_elements end_module
+				;
+
+module_elements : mod_common
+				;
+
+mod_common      : mod_common_begin mod_common_datas END MOD_COMMON
+				;
+
+mod_common_begin: BEGIN MOD_COMMON QUOTED_STRING {
+					currentModule.mod_common = new MOD_COMMON($3);
+				}
+				;
+
+mod_common_datas: /* empty */ {
                     }
-                |   alignments ALIGNMENT NUMBER {
-                        $$ = $1;
-                        $$.Add($2, (uint)$3);
-                    }
-                ;
+
+				| mod_common_datas mod_common_data
+				;
+
+mod_common_data	:  deposit {
+					Console.WriteLine("Found deposit");
+					currentModule.mod_common.deposit    = $1;
+				}
+                |  byte_order {
+					Console.WriteLine("Found byte_order");
+					currentModule.mod_common.byte_order = $1;
+				}
+                |  data_size {
+					Console.WriteLine("Found date_size");
+					currentModule.mod_common.data_size  = (uint)$1;
+				}
+				|  alignment {
+					Console.WriteLine("Found alignment");
+					currentModule.mod_common.alignments.Add($1.Item1, $1.Item2);
+				}
+				;
+
+
 
 measurement		:	BEGIN MEASUREMENT IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
 						currentMeasurment = new MEASUREMENT($3, $4, $5, $6, (uint)$7, (uint)$8, (uint)$9, (uint)$10);
@@ -155,6 +155,11 @@ measurement		:	BEGIN MEASUREMENT IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER 
 
 end_measurement	:	END MEASUREMENT {currentMeasurment = null;}
 				;
+
+alignment		:   ALIGNMENT NUMBER {
+                        $$ = new Tuple<ALIGNMENT_type, uint>($1, (uint)$2);
+                    }
+                ;
 
 deposit			: DEPOSIT IDENTIFIER {
 							switch ($2)

@@ -86,60 +86,15 @@ namespace Asap2
 
     public class MOD_COMMON
     {
-        public MOD_COMMON(string LongIdentifier, DEPOSIT deposit, BYTE_ORDER byte_order, Dictionary<ALIGNMENT_type, uint> alignments, uint data_size)
+        public MOD_COMMON(string LongIdentifier)
         {
             this.LongIdentifier = LongIdentifier;
-            this.deposit = deposit;
-            this.byte_order = byte_order;
-            this.alignments = alignments;
-            this.data_size = data_size;
         }
-        public MOD_COMMON(string LongIdentifier, DEPOSIT deposit, BYTE_ORDER byte_order, Dictionary<ALIGNMENT_type, uint> alignments)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.deposit = deposit;
-            this.byte_order = byte_order;
-            this.alignments = alignments;
-        }
-        public MOD_COMMON(string LongIdentifier, DEPOSIT deposit, Dictionary<ALIGNMENT_type, uint> alignments, uint data_size)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.deposit = deposit;
-            this.alignments = alignments;
-            this.data_size = data_size;
-        }
-        public MOD_COMMON(string LongIdentifier, DEPOSIT deposit, Dictionary<ALIGNMENT_type, uint> alignments)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.deposit = deposit;
-            this.alignments = alignments;
-        }
-        public MOD_COMMON(string LongIdentifier, DEPOSIT deposit)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.deposit = deposit;
-        }
-        public MOD_COMMON(string LongIdentifier, DEPOSIT deposit, BYTE_ORDER byte_order)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.deposit = deposit;
-            this.byte_order = byte_order;
-        }
-        public MOD_COMMON(string LongIdentifier, Dictionary<ALIGNMENT_type, uint> alignments)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.alignments = alignments;
-        }
-        public MOD_COMMON(string LongIdentifier, Dictionary<ALIGNMENT_type, uint> alignments, BYTE_ORDER byte_order)
-        {
-            this.LongIdentifier = LongIdentifier;
-            this.alignments = alignments;
-            this.byte_order = byte_order;
-        }
+
         public string LongIdentifier;
         public DEPOSIT? deposit;
         public BYTE_ORDER? byte_order;
-        public Dictionary<ALIGNMENT_type, uint> alignments;
+        public Dictionary<ALIGNMENT_type, uint> alignments = new Dictionary<ALIGNMENT_type, uint>();
         public uint? data_size;
     }
 
