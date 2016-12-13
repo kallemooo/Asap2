@@ -19,19 +19,23 @@ namespace Asap2
         public bool DoParse()
         {
             bool status = false;
+            Asap2Scanner scanner;
+            Asap2Parser parser;
             using (var file = new FileStream(fileName, FileMode.Open))
             {
-                Asap2Scanner scanner = new Asap2Scanner(file);
-                Asap2Parser parser = new Asap2Parser(scanner);
-                if (parser.Parse())
-                {
-                    status = true;
-                }
-                else
-                {
-                    Console.WriteLine("Line {0} {1}", scanner.line_num, scanner.chars_num);
-                    status = false;
-                }
+                scanner = new Asap2Scanner(file);
+                parser = new Asap2Parser(scanner);
+                status = parser.Parse();
+            }
+
+            if(status)
+            {
+                status = true;
+            }
+            else
+            {
+                Console.WriteLine("Line {0} {1}", scanner.line_num, scanner.chars_num);
+                status = false;
             }
 
             return status;
