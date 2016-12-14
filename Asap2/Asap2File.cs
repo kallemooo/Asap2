@@ -6,54 +6,19 @@ using System.Threading.Tasks;
 
 namespace Asap2
 {
-    public class IndentHandler
-    {
-        public IndentHandler(string indentType = "    ", string currentIndent = "", string newLine = "\r\n")
-        {
-            this.indentType = indentType;
-            this.currentIndent = currentIndent;
-            this.newLine = newLine;
-        }
-
-        public IndentHandler(IndentHandler iH)
-        {
-            this.indentType = iH.indentType;
-            this.currentIndent = iH.currentIndent + iH.indentType;
-            this.newLine = iH.newLine;
-        }
-
-        public string indentType { private set; get; }
-        public string currentIndent { private set; get; }
-        public string newLine { private set; get; }
-    }
-
     public class Asap2File
     {
-        public Asap2File() {}
-        public string fileComment;
-        public ASAP2_VERSION asap2_version;
-        public PROJECT project;
+        [Element(IsComment = true, IsPreComment = true)]
+        public string fileComment = " Start of A2L file ";
 
-        public string serialize(IndentHandler iH)
-        {
-            string outStr = "";
-            if (this.fileComment != null)
-            {
-                outStr += iH.currentIndent;
-                outStr += fileComment;
-                outStr += iH.newLine;
-            }
-            if (this.asap2_version != null)
-            {
-                outStr += this.asap2_version.serialize(new IndentHandler(iH));
-                outStr += iH.newLine;
-            }
-            outStr += this.project.serialize(new IndentHandler(iH));
-            outStr += iH.newLine;
-            return outStr;
-        }
+        [Element()]
+        public ASAP2_VERSION asap2_version;
+
+        [Element()]
+        public PROJECT project;
     }
 
+    [Base(IsSimple = true)]
     public class ASAP2_VERSION
     {
         public ASAP2_VERSION(UInt32 major, UInt32 minor)
@@ -61,154 +26,168 @@ namespace Asap2
             this.major = major;
             this.minor = minor;
         }
-        public string comment;
-        public UInt32 major;
-        public UInt32 minor;
 
-        public string serialize(IndentHandler iH)
-        {
-            string outStr = "";
-            if (this.comment != null)
-            {
-                outStr += comment;
-                outStr += iH.newLine;
-            }
-            outStr += "ASAP2_VERSION" + " " + this.major.ToString() + " " + this.minor.ToString();
-            return outStr;
-        }
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment;
+    
+        [Element(IsArgument = true)]
+        public UInt32 major;
+        
+        [Element(IsArgument = true)]
+        public UInt32 minor;
     }
 
+    [Base()]
     public class PROJECT
     {
-        public string comment;
-        public string nameComment = "/* Name           */";
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment = " The project ";
+
+        [Element(IsArgument = true, Comment = " Name           ")]
         public string name;
-        public string LongIdentifierComment = "/* LongIdentifier */";
+        
+        [Element(IsLongArg = true,  Comment = " LongIdentifier ")]
         public string LongIdentifier;
+
+        [Element()]
         public HEADER header;
+
+        /// <summary>
+        /// Dictionary with the project modules. The key is the name of the module.
+        /// </summary>
+        [Element(IsDictionary=true, Comment = " Project modules ")]
         public Dictionary<string, MODULE> modules = new Dictionary<string, MODULE>();
-
-        public string serialize(IndentHandler iH)
-        {
-            string outStr = "";
-            if (this.comment != null)
-            {
-                outStr += comment;
-                outStr += iH.newLine;
-            }
-            outStr += "/begin PROJECT" + iH.newLine;
-            outStr += iH.currentIndent;
-            if (this.nameComment != "")
-            {
-                outStr += this.nameComment + " ";
-            }
-            outStr += this.name + iH.newLine;
-
-            outStr += iH.currentIndent;
-            if (this.LongIdentifierComment != "")
-            {
-                outStr += this.LongIdentifierComment + " ";
-            }
-            outStr += "\"" + this.LongIdentifier + "\"" + iH.newLine;
-            if (this.header != null)
-            {
-                outStr += this.header.serialize(new IndentHandler(iH));
-            }
-            
-            foreach (MODULE module in this.modules.Values)
-            {
-                outStr += iH.newLine;
-                outStr += module.serialize(new IndentHandler(iH));
-            }
-            outStr += iH.newLine;
-            outStr += "/end PROJECT";
-            return outStr;
-        }
     }
 
+    [Base(IsSimple = true)]
+    public class PROJECT_NO
+    {
+        public PROJECT_NO(string project_no)
+        {
+            this.project_no = project_no;
+        }
+        [Element(IsArgument = true)]
+        public string project_no;
+    }
+
+    [Base(IsSimple = true)]
+    public class VERSION
+    {
+        public VERSION(string version)
+        {
+            this.version = version;
+        }
+        [Element(IsLongArg = true)]
+        public string version;
+    }
+
+    [Base()]
     public class HEADER
     {
-        public string longIdentifier;
-        public string version;
-        public string project_no;
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment = " Project header ";
 
-        public string serialize(IndentHandler iH)
-        {
-            string outStr = "";
-            outStr += iH.currentIndent + "/begin HEADER" + iH.newLine;
-            outStr += iH.currentIndent + iH.indentType + "\"" + this.longIdentifier + "\"" + iH.newLine;
-            outStr += iH.currentIndent + iH.indentType + "VERSION \"" + this.version + "\"" + iH.newLine;
-            outStr += iH.currentIndent + iH.indentType + "PROJECT_NO " + this.project_no + iH.newLine;
-            outStr += iH.currentIndent + "/end HEADER";
-            return outStr;
-        }
+        [Element(IsLongArg = true)]
+        public string longIdentifier;
+
+        [Element()]
+        public VERSION version;
+
+        [Element()]
+        public PROJECT_NO project_no;
     }
 
+    [Base()]
     public class MODULE
     {
-        public string nameComment = "/* Name           */";
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment = " Project module ";
+
+        [Element(IsArgument = true, Comment = " Name           ")]
         public string name;
-        public string LongIdentifierComment = "/* LongIdentifier */";
+
+        [Element(IsLongArg = true,  Comment = " LongIdentifier ")]
         public string LongIdentifier;
+        
+        [Element()]
         public MOD_COMMON mod_common;
+        [Element(IsDictionary = true)]
         public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
-    
-        public string serialize(IndentHandler iH)
+    }
+
+    [Base(IsSimple = true)]
+    public class ALIGNMENT
+    {
+        public enum ALIGNMENT_type
         {
-            string outStr = "";
-            outStr += iH.currentIndent + "/begin MODULE" + iH.newLine;
-
-            outStr += iH.currentIndent + iH.indentType;
-            if (this.nameComment != "")
-            {
-                outStr += this.nameComment + " ";
-            }
-            outStr += this.name + iH.newLine;
-
-            outStr += iH.currentIndent + iH.indentType;
-            if (this.LongIdentifierComment != "")
-            {
-                outStr += this.LongIdentifierComment + " ";
-            }
-            outStr += "\"" + this.LongIdentifier + "\"" + iH.newLine;
-            if (this.mod_common != null)
-            {
-                outStr += this.mod_common.serialize(new IndentHandler(iH));
-            }
-            /*
-            foreach (MEASUREMENT measurement in this.measurements.Values)
-            {
-                outStr += iH.newLine;
-                outStr += measurement.serialize(new IndentHandler(iH));
-            }*/
-            outStr += iH.newLine;
-            outStr += iH.currentIndent + "/end MODULE";
-            return outStr;
+            ALIGNMENT_BYTE,
+            ALIGNMENT_WORD,
+            ALIGNMENT_LONG,
+            ALIGNMENT_INT64,
+            ALIGNMENT_FLOAT32_IEEE,
+            ALIGNMENT_FLOAT64_IEEE
         }
+        public ALIGNMENT(ALIGNMENT_type type, uint value)
+        {
+            this.type = type;
+            this.value = value;
+            this.name = Enum.GetName(type.GetType(), type);
+        }
+
+        public ALIGNMENT_type type;
+        [Element(IsName = true)]
+        public string name;
+        [Element(IsArgument = true)]
+        public uint value;
     }
 
-    public enum ALIGNMENT_type
+    [Base(IsSimple = true)]
+    public class DEPOSIT
     {
-          ALIGNMENT_BYTE,
-          ALIGNMENT_WORD,
-          ALIGNMENT_LONG,
-          ALIGNMENT_INT64,
-          ALIGNMENT_FLOAT32_IEEE,
-          ALIGNMENT_FLOAT64_IEEE        
+        public enum DEPOSIT_type
+        {
+            ABSOLUTE,
+            DIFFERENCE,
+        }
+        public DEPOSIT(DEPOSIT_type value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true)]
+        public DEPOSIT_type value;
     }
 
-    public enum DEPOSIT
+    [Base(IsSimple = true)]
+    public class BYTE_ORDER
     {
-        ABSOLUTE,
-        DIFFERENCE,
+        public enum BYTE_ORDER_type
+        {
+            MSB_FIRST,
+            MSB_LAST,
+        }
+        public BYTE_ORDER(BYTE_ORDER_type value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true)]
+        public BYTE_ORDER_type value;
     }
 
-    public enum BYTE_ORDER
+    [Base(IsSimple = true)]
+    public class DATA_SIZE
     {
-        MSB_FIRST,
-        MSB_LAST,
+        public DATA_SIZE(uint value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true)]
+        public uint value;
     }
 
+    [Base()]
     public class MOD_COMMON
     {
         public MOD_COMMON(string LongIdentifier)
@@ -216,59 +195,26 @@ namespace Asap2
             this.LongIdentifier = LongIdentifier;
         }
 
-        public string comment = "/* Module default values */";
-        public string LongIdentifierComment = "/* LongIdentifier     */"; 
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment = " Module default values ";
+
+        [Element(IsLongArg = true,  Comment = " LongIdentifier ")]
         public string LongIdentifier;
-        public DEPOSIT? deposit;
-        public BYTE_ORDER? byte_order;
-        public Dictionary<ALIGNMENT_type, uint> alignments = new Dictionary<ALIGNMENT_type, uint>();
-        public uint? data_size;
-        public string serialize(IndentHandler iH)
-        {
-            string outStr = "";
-            outStr += iH.currentIndent + "/begin MOD_COMMON" + iH.newLine;
 
-            if (this.comment != "")
-            {
-                outStr += iH.currentIndent + iH.indentType + this.comment + iH.newLine;
-            }
+        [Element()]
+        public DEPOSIT deposit;
+        
+        [Element()]
+        public BYTE_ORDER byte_order;
 
-            outStr += iH.currentIndent + iH.indentType;
-            if (this.LongIdentifierComment != "")
-            {
-                outStr += this.LongIdentifierComment + " ";
-            }
-            outStr += "\"" + this.LongIdentifier + "\"";
+        [Element(IsDictionary = true)]
+        public Dictionary<string, ALIGNMENT> alignments = new Dictionary<string, ALIGNMENT>();
 
-            if (this.deposit != null)
-            {
-                outStr += iH.newLine;
-                outStr += iH.currentIndent + iH.indentType + "DEPOSIT " + Enum.GetName(typeof(DEPOSIT), this.deposit);
-            }
-
-            if (this.byte_order != null)
-            {
-                outStr += iH.newLine;
-                outStr += iH.currentIndent + iH.indentType + "BYTE_ORDER " + Enum.GetName(typeof(BYTE_ORDER), this.byte_order);
-            }
-
-            if (this.data_size != null)
-            {
-                outStr += iH.newLine;
-                outStr += iH.currentIndent + iH.indentType + "DATA_SIZE " + this.data_size.ToString();
-            }
-
-            foreach (KeyValuePair<ALIGNMENT_type, uint> alignment in this.alignments)
-            {
-                outStr += iH.newLine;
-                outStr += iH.currentIndent + iH.indentType + Enum.GetName(typeof(ALIGNMENT_type), alignment.Key) + " " + alignment.Value;
-            }
-            outStr += iH.newLine;
-            outStr += iH.currentIndent + "/end MOD_COMMON";
-            return outStr;
-        }
+        [Element()]
+        public DATA_SIZE data_size;
     }
 
+    [Base()]
     public class MEASUREMENT
     {
         public MEASUREMENT(string name, string LongIdentifier, string Datatype, string Conversion, uint Resolution, uint Accuracy, uint LowerLimit, uint UpperLimit)
@@ -282,17 +228,65 @@ namespace Asap2
             this.LowerLimit = LowerLimit;
             this.UpperLimit = UpperLimit;
         }
+        [Element(IsComment = true, IsPreComment=true)]
+        public string comment;
+        [Element(IsArgument = true, Comment = " Name           ")]
         public string name;
+        [Element(IsLongArg = true,  Comment = " LongIdentifier ")]
         public string LongIdentifier;
+        [Element(IsArgument = true, Comment = " Datatype       ")]
         public string Datatype;
+        [Element(IsArgument = true, Comment = " Conversion     ")]
         public string Conversion;
+        [Element(IsArgument = true, Comment = " Resolution     ")]
         public uint Resolution;
+        [Element(IsArgument = true, Comment = " Accuracy       ")]
         public uint Accuracy;
+        [Element(IsArgument = true, Comment = " LowerLimit     ")]
         public uint LowerLimit;
+        [Element(IsArgument = true, Comment = " UpperLimit     ")]
         public uint UpperLimit;
-        public UInt64? ECU_ADDRESS;
-        public UInt64? ECU_ADDRESS_EXTENSION;
-        public String FORMAT;
+        [Element()]
+        public ECU_ADDRESS ecu_address;
+        [Element()]
+        public ECU_ADDRESS_EXTENSION ecu_address_extension;
+        [Element()]
+        public FORMAT format;
     }
 
+    [Base(IsSimple = true)]
+    public class ECU_ADDRESS_EXTENSION
+    {
+        public ECU_ADDRESS_EXTENSION(UInt64 value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true, CodeAsHex = true)]
+        public UInt64 value;
+    }
+
+    [Base(IsSimple = true)]
+    public class ECU_ADDRESS
+    {
+        public ECU_ADDRESS(UInt64 value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true, CodeAsHex = true)]
+        public UInt64 value;
+    }
+
+    [Base(IsSimple = true)]
+    public class FORMAT
+    {
+        public FORMAT(string value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsLongArg = true)]
+        public string value;
+    }
 }

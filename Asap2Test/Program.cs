@@ -12,7 +12,16 @@ namespace Asap2Test
         static void Main(string[] args)
         {
             var parser = new Asap2.Parser("../../../testFile.a2l");
-            parser.DoParse();
+            Asap2.Asap2File tree = parser.DoParse();
+            if (tree != null)
+            {
+                var ms = new MemoryStream();
+                parser.Serialise(tree, ms);
+                ms.Position = 0;
+                var sr = new StreamReader(ms);
+                var myStr = sr.ReadToEnd();
+                Console.WriteLine(myStr);
+            }
             Console.WriteLine("Press enter to close...");
             Console.ReadLine();
         }

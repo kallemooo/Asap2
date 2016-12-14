@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asap2File.cs" />
+    <Compile Include="Attributes.cs" />
     <Compile Include="GplexBuffers.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -7,8 +7,8 @@
 %union { 
 			public int n;
 			public string s;
-			public ALIGNMENT_type alignment_token;
-			public Tuple<ALIGNMENT_type, uint> alignment;
+			public ALIGNMENT.ALIGNMENT_type alignment_token;
+			public ALIGNMENT alignment;
 			public DEPOSIT deposit;
 			public BYTE_ORDER byte_order;
 			public MOD_COMMON mod_common;
@@ -16,6 +16,11 @@
 			public PROJECT project;
 			public HEADER header;
 			public MEASUREMENT measurement;
+			public VERSION version;
+			public DATA_SIZE data_size;
+			public ECU_ADDRESS ecu_address;
+			public ECU_ADDRESS_EXTENSION ecu_address_ext;
+			public FORMAT format;
 	   }
 
 %start main
@@ -46,13 +51,13 @@
 
 %type <deposit>			deposit
 %type <byte_order>		byte_order
-%type <n>				data_size
+%type <data_size>		data_size
 %type <s>				project_no
 %type <s>				version
 %type <alignment>       alignment
-%type <n>				ecu_address
-%type <n>				ecu_address_extension
-%type <s>				format
+%type <ecu_address>		ecu_address
+%type <ecu_address_ext> ecu_address_extension
+%type <format>			format
 %type <mod_common>      mod_common
 %type <mod_common>      mod_common_data
 %type <module>          module
@@ -63,6 +68,7 @@
 %type <header>          header_data
 %type <measurement>     measurement
 %type <measurement>     measurement_data
+%type <version>         version
 
 %%
 
@@ -117,7 +123,7 @@ header_data     : QUOTED_STRING {
 				}
 				| header_data project_no {
 					$$ = $1;
-					$$.project_no = $2;
+					$$.project_no = new PROJECT_NO($2);
 				}
 				;
 
@@ -127,7 +133,7 @@ project_no		:	PROJECT_NO IDENTIFIER	{ $$ = $2; }
 				|	PROJECT_NO HEXNUMBER	{ $$ = $2.ToString(); }
 				;
 
-version			:	VERSION QUOTED_STRING	{ $$ = $2; }
+version			:	VERSION QUOTED_STRING	{ $$ = new VERSION($2); }
 				;
 
 
@@ -169,11 +175,11 @@ mod_common_data	:  QUOTED_STRING {
 				}
                 |  mod_common_data data_size {
 					$$ = $1;
-					$$.data_size  = (uint)$2;
+					$$.data_size  = $2;
 				}
 				|  mod_common_data alignment {
 					$$ = $1;
-					$$.alignments.Add($2.Item1, $2.Item2);
+					$$.alignments.Add($2.name, $2);
 				}
 				;
 
@@ -188,81 +194,80 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
 					$$ = new MEASUREMENT($1, $2, $3, $4, (uint)$5, (uint)$6, (uint)$7, (uint)$8);
 				}
 				|  measurement_data ecu_address {
-					Console.WriteLine("Found ecu_address");
 					$$ = $1;
-					$$.ECU_ADDRESS = (UInt64)$2;
+					$$.ecu_address = $2;
 				}
                 |  measurement_data ecu_address_extension {
-					Console.WriteLine("Found ecu_address_extension");
 					$$ = $1;
-					$$.ECU_ADDRESS_EXTENSION = (UInt64)$2;
+					$$.ecu_address_extension = $2;
 				}
                 |  measurement_data format {
-					Console.WriteLine("Found format");
 					$$ = $1;
-					$$.FORMAT = $2;
+					$$.format = $2;
 				}
 				;
 
 
 alignment		:   ALIGNMENT NUMBER {
-                        $$ = new Tuple<ALIGNMENT_type, uint>($1, (uint)$2);
+                        $$ = new ALIGNMENT($1, (uint)$2);
                     }
                 ;
 
 deposit			: DEPOSIT IDENTIFIER {
+					DEPOSIT.DEPOSIT_type type;
 					switch ($2)
 					{
 						case "ABSOLUTE":
-							$$ = DEPOSIT.ABSOLUTE;
+							type = DEPOSIT.DEPOSIT_type.ABSOLUTE;
 						break;
 						case "DIFFERENCE":
-							$$ = DEPOSIT.DIFFERENCE;
+							type = DEPOSIT.DEPOSIT_type.DIFFERENCE;
 						break;
 						default:
 						throw new Exception("Unknown DEPOSIT type: " + $2);
 					}
+					$$ = new DEPOSIT(type);
 				}
                 ;
 
 byte_order		: BYTE_ORDER IDENTIFIER {
+					BYTE_ORDER.BYTE_ORDER_type order;
 					switch ($2)
 					{
 						case "MSB_FIRST":
-							$$ = BYTE_ORDER.MSB_FIRST;
+							order = BYTE_ORDER.BYTE_ORDER_type.MSB_FIRST;
 						break;
 						case "MSB_LAST":
-							$$ = BYTE_ORDER.MSB_LAST;
+							order = BYTE_ORDER.BYTE_ORDER_type.MSB_LAST;
 						break;
 						default:
 						throw new Exception("Unknown BYTE_ORDER type: " + $2);
 					}
+					$$ = new BYTE_ORDER(order);
 				}
                 ;
 
 data_size		: DATA_SIZE HEXNUMBER {
-                    $$ = $2;
+                    $$ = new DATA_SIZE((uint)$2);
                 }
 				| DATA_SIZE NUMBER {
-                    $$ = $2;
+                    $$ = new DATA_SIZE((uint)$2);
                 }
 				;
 
 ecu_address					: ECU_ADDRESS HEXNUMBER {
-								$$ = $2;
+								$$ = new ECU_ADDRESS((UInt64)$2);
 							}
 							;
 
 ecu_address_extension		: ECU_ADDRESS_EXTENSION HEXNUMBER {
-								$$ = $2;
+								$$ = new ECU_ADDRESS_EXTENSION((UInt64)$2);
 							}
 							;
 
 format						: FORMAT QUOTED_STRING {
-								$$ = $2;
+								$$ = new FORMAT($2);
 							}
 							;
 
 %%
-private MODULE currentModule;
-private MEASUREMENT currentMeasurment;
