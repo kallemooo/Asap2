@@ -15,6 +15,9 @@ namespace Asap2
         public ASAP2_VERSION asap2_version;
 
         [Element()]
+        public A2ML_VERSION a2ml_version;
+
+        [Element()]
         public PROJECT project;
     }
 
@@ -35,6 +38,25 @@ namespace Asap2
         
         [Element(IsArgument = true)]
         public UInt32 minor;
+    }
+
+    [Base(IsSimple = true)]
+    public class A2ML_VERSION
+    {
+        public A2ML_VERSION(UInt32 VersionNo, UInt32 UpgradeNo)
+        {
+            this.VersionNo = VersionNo;
+            this.UpgradeNo = UpgradeNo;
+        }
+
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment;
+
+        [Element(IsArgument = true)]
+        public UInt32 VersionNo;
+
+        [Element(IsArgument = true)]
+        public UInt32 UpgradeNo;
     }
 
     [Base()]
@@ -108,9 +130,16 @@ namespace Asap2
 
         [Element(IsLongArg = true,  Comment = " LongIdentifier ")]
         public string LongIdentifier;
-        
+
+        [Element(IsDictionary = true)]
+        public Dictionary<string, A2ML> A2MLs = new Dictionary<string, A2ML>();
+
+        [Element(IsDictionary = true)]
+        public Dictionary<string, IF_DATA> IF_DATAs = new Dictionary<string, IF_DATA>();
+
         [Element()]
         public MOD_COMMON mod_common;
+
         [Element(IsDictionary = true)]
         public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
     }
@@ -212,6 +241,32 @@ namespace Asap2
 
         [Element()]
         public DATA_SIZE data_size;
+    }
+
+    [Base()]
+    public class IF_DATA
+    {
+        public IF_DATA(string data)
+        {
+            this.data = data;
+            char[] delimiterChars = { ' ', '\t' };
+            string[] words = data.Split(delimiterChars);
+            this.name = words[0];
+        }
+        public string name;
+        [Element(IsArgument = true)]
+        public string data;
+    }
+
+    [Base()]
+    public class A2ML
+    {
+        public A2ML(string data)
+        {
+            this.data = data;
+        }
+        [Element(IsArgument = true)]
+        public string data;
     }
 
     [Base()]

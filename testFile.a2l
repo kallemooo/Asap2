@@ -3,6 +3,7 @@
  */
 
 ASAP2_VERSION 1 60
+A2ML_VERSION 1 1
 /begin PROJECT project_name "project description"
   /begin HEADER
     "Desc header"
@@ -22,6 +23,23 @@ ASAP2_VERSION 1 60
           ALIGNMENT_FLOAT32_IEEE 4
           ALIGNMENT_FLOAT64_IEEE 4
     /end MOD_COMMON
+	/begin IF_DATA XCP
+         /begin PROTOCOL_LAYER
+            0x0100 
+            2000 
+            2000 
+            2000 
+            65535 
+            2000 
+            0005 
+            0005 
+            0x08 
+            0x0008 
+            BYTE_ORDER_MSB_LAST 
+            ADDRESS_GRANULARITY_BYTE 
+            SEED_AND_KEY_EXTERNAL_FUNCTION "SeedNKeyXcp.dll" 
+         /end PROTOCOL_LAYER
+    /end IF_DATA
 	/begin MEASUREMENT
 		Measurement_1
 		"Measurement_1 description"

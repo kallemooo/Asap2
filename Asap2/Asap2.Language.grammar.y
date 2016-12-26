@@ -5,7 +5,8 @@
 %tokentype Token
 
 %union { 
-			public int n;
+			public long n;
+			public double d;
 			public string s;
 			public ALIGNMENT.ALIGNMENT_type alignment_token;
 			public ALIGNMENT alignment;
@@ -21,15 +22,20 @@
 			public ECU_ADDRESS ecu_address;
 			public ECU_ADDRESS_EXTENSION ecu_address_ext;
 			public FORMAT format;
+			public IF_DATA if_data;
+			public A2ML a2ml;
 	   }
 
 %start main
 
 %token <n> NUMBER
+%token <d> DOUBLE
 %token <s> QUOTED_STRING
+%token <s> IF_DATA
+%token <s> A2ML
 %token <s> IDENTIFIER
-%token <n> HEXNUMBER
 %token ASAP2_VERSION
+%token A2ML_VERSION
 %token PROJECT
 %token HEADER
 %token MODULE
@@ -69,21 +75,23 @@
 %type <measurement>     measurement
 %type <measurement>     measurement_data
 %type <version>         version
+%type <if_data>         if_data
+%type <a2ml>            a2ml
 
 %%
 
 main	: project
 		| asap2_version project
-		| asap2_version project header
-		| any
-		| main any
+		| asap2_version a2ml_version project
 		;
-
-any    :  module
-       ;
 
 asap2_version	:   ASAP2_VERSION NUMBER NUMBER {
                         Asap2File.asap2_version = new ASAP2_VERSION((uint)$2, (uint)$3);
+                    }
+                ;
+
+a2ml_version	:   A2ML_VERSION NUMBER NUMBER {
+                        Asap2File.a2ml_version = new A2ML_VERSION((uint)$2, (uint)$3);
                     }
                 ;
 
@@ -130,7 +138,6 @@ header_data     : QUOTED_STRING {
 
 project_no		:	PROJECT_NO IDENTIFIER	{ $$ = $2; }
 				|	PROJECT_NO NUMBER		{ $$ = $2.ToString(); }
-				|	PROJECT_NO HEXNUMBER	{ $$ = $2.ToString(); }
 				;
 
 version			:	VERSION QUOTED_STRING	{ $$ = new VERSION($2); }
@@ -155,6 +162,24 @@ module_data :   IDENTIFIER QUOTED_STRING {
 					$$ = $1;
                     $$.measurements.Add($2.name, $2);
                 }
+                | module_data if_data {
+					$$ = $1;
+                    $$.IF_DATAs.Add($2.name, $2);
+                }
+                | module_data a2ml {
+					$$ = $1;
+                    $$.A2MLs.Add($$.A2MLs.Count.ToString(), $2);
+                }
+				;
+
+a2ml      : A2ML {
+					$$ = new A2ML($1);
+				}
+				;
+
+if_data      : IF_DATA {
+					$$ = new IF_DATA($1);
+				}
 				;
 
 mod_common      : BEGIN MOD_COMMON mod_common_data END MOD_COMMON {
@@ -247,20 +272,17 @@ byte_order		: BYTE_ORDER IDENTIFIER {
 				}
                 ;
 
-data_size		: DATA_SIZE HEXNUMBER {
-                    $$ = new DATA_SIZE((uint)$2);
-                }
-				| DATA_SIZE NUMBER {
+data_size		: DATA_SIZE NUMBER {
                     $$ = new DATA_SIZE((uint)$2);
                 }
 				;
 
-ecu_address					: ECU_ADDRESS HEXNUMBER {
+ecu_address					: ECU_ADDRESS NUMBER {
 								$$ = new ECU_ADDRESS((UInt64)$2);
 							}
 							;
 
-ecu_address_extension		: ECU_ADDRESS_EXTENSION HEXNUMBER {
+ecu_address_extension		: ECU_ADDRESS_EXTENSION NUMBER {
 								$$ = new ECU_ADDRESS_EXTENSION((UInt64)$2);
 							}
 							;

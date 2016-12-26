@@ -5,14 +5,17 @@
 
 %option stack, minimize, parser, verbose, persistbuffer, noembedbuffers 
 
-Identifier      [A-Za-z][A-Za-z0-9_\[\]]+
+Identifier      [A-Za-z_][A-Za-z0-9\._]+[\[A-Za-z0-9\]]*
 Space           [ \t]
 Number          [\-]?[0-9]+
+Double          [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
 HexNumber		0x[0-9A-Fa-f]+
-Eol             (\r\n?|\n)
+Eol             (\r?\n)
 Alignment		ALIGNMENT\_([A-Za-z0-9_]+)
 
 %x STATE_STRING
+%x STATE_IF_DATA
+%x STATE_A2ML
 %x COMMENT
 %x foo
 
@@ -35,6 +38,7 @@ int comment_caller;
 \/begin							{ return (int)Token.BEGIN; }
 \/end							{ return (int)Token.END; }
 ASAP2_VERSION					{ return (int)Token.ASAP2_VERSION; }
+A2ML_VERSION					{ return (int)Token.A2ML_VERSION; }
 PROJECT							{ return (int)Token.PROJECT; }
 HEADER							{ return (int)Token.HEADER; }
 MODULE							{ return (int)Token.MODULE; }
@@ -53,28 +57,50 @@ FORMAT							{ return (int)Token.FORMAT; }
 
 {Identifier}		{ yylval.s = yytext; return (int)Token.IDENTIFIER; }
 {Number}			{ GetNumber(); return (int)Token.NUMBER; }
-{HexNumber}			{ GetHexNumber(); return (int)Token.HEXNUMBER; }
+{HexNumber}			{ GetHexNumber(); return (int)Token.NUMBER; }
+{Double}			{ GetDouble(); return (int)Token.DOUBLE; }
 
-
-\"              { BEGIN(STATE_STRING); yylval.s = ""; }
-<STATE_STRING> {
-	\"  { BEGIN(INITIAL); return (int)Token.QUOTED_STRING; }
-	\\. { yylval.s += yytext; }
-	.   { yylval.s += yytext; }
+"\/begin IF_DATA"	{ BEGIN(STATE_IF_DATA); yylval.s = ""; }
+<STATE_IF_DATA> {
+	"\/end IF_DATA"	{ BEGIN(INITIAL); return (int)Token.IF_DATA; }
+	\\.				{ yylval.s += yytext; }
+	\r?\n			{ yylval.s += "\r\n"; }
+	.				{ yylval.s += yytext; }
 }
 
+"\/begin A2ML"		{ BEGIN(STATE_A2ML); yylval.s = ""; }
+<STATE_A2ML> {
+	"\/end A2ML"	{ BEGIN(INITIAL); return (int)Token.A2ML; }
+	\\.				{ yylval.s += yytext; }
+	\r?\n			{ yylval.s += "\r\n"; }
+	.				{ yylval.s += yytext; }
+}
+
+\"					{ BEGIN(STATE_STRING); yylval.s = ""; }
+<STATE_STRING> {
+	\"				{ BEGIN(INITIAL); return (int)Token.QUOTED_STRING; }
+	\r?\n			{ yylval.s += "\r\n"; }
+	\\r				{ yylval.s += "\r"; }
+	\\n				{ yylval.s += "\n"; }
+	\\t				{ yylval.s += "\t"; }
+	\\\"			{ yylval.s += "\""; }
+	\"\"			{ yylval.s += "\""; }
+	\\				{ yylval.s += "\\"; }
+	\\.				{ yylval.s += yytext; }
+	.				{ yylval.s += yytext; }
+}
 
 /* Comment handler. */
-"/*"		{comment_caller = INITIAL;    BEGIN(COMMENT);      }
+"/*"				{comment_caller = INITIAL;    BEGIN(COMMENT);      }
 
-<foo>"/*"	{
+<foo>"/*"			{
 			comment_caller = foo;
 			BEGIN(COMMENT);
 			}
 
 <COMMENT>[^*\n]*	   /* eat anything that's not a '*' */
 <COMMENT>"*"+[^*/\n]*  /* eat up '*'s not followed by '/'s */
-<COMMENT>\n		   ++line_num;
+<COMMENT>\r?\n		   ++line_num;
 <COMMENT>"*"+"/"	   BEGIN(comment_caller);
 
 %%

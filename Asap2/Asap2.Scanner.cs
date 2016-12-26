@@ -11,7 +11,7 @@ namespace Asap2
         void GetNumber()
         {
             yylval.s = yytext;
-            yylval.n = int.Parse(yytext);
+            yylval.n = long.Parse(yytext);
         }
 
         void GetHexNumber()
@@ -22,9 +22,15 @@ namespace Asap2
             {
                 tmp = tmp.Substring(2);
             }
-            yylval.n = int.Parse(tmp, NumberStyles.HexNumber);
+            yylval.n = long.Parse(tmp, NumberStyles.HexNumber);
         }
-        
+
+        void GetDouble()
+        {
+            yylval.s = yytext;
+            yylval.d = long.Parse(yytext);
+        }
+
         void GetAlignment()
         {
             yylval.s = yytext;
