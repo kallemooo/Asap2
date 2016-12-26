@@ -259,6 +259,12 @@ byte_order		: BYTE_ORDER IDENTIFIER {
 					BYTE_ORDER.BYTE_ORDER_type order;
 					switch ($2)
 					{
+						case "LITTLE_ENDIAN":
+							order = BYTE_ORDER.BYTE_ORDER_type.LITTLE_ENDIAN;
+						break;
+						case "BIG_ENDIAN":
+							order = BYTE_ORDER.BYTE_ORDER_type.BIG_ENDIAN;
+						break;
 						case "MSB_FIRST":
 							order = BYTE_ORDER.BYTE_ORDER_type.MSB_FIRST;
 						break;

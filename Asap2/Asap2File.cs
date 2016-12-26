@@ -24,20 +24,20 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ASAP2_VERSION
     {
-        public ASAP2_VERSION(UInt32 major, UInt32 minor)
+        public ASAP2_VERSION(UInt32 VersionNo, UInt32 UpgradeNo)
         {
-            this.major = major;
-            this.minor = minor;
+            this.VersionNo = VersionNo;
+            this.UpgradeNo = UpgradeNo;
         }
 
         [Element(IsComment = true, IsPreComment = true)]
         public string comment;
     
         [Element(IsArgument = true)]
-        public UInt32 major;
+        public UInt32 VersionNo;
         
         [Element(IsArgument = true)]
-        public UInt32 minor;
+        public UInt32 UpgradeNo;
     }
 
     [Base(IsSimple = true)]
@@ -192,6 +192,8 @@ namespace Asap2
     {
         public enum BYTE_ORDER_type
         {
+            LITTLE_ENDIAN,
+            BIG_ENDIAN,
             MSB_FIRST,
             MSB_LAST,
         }
