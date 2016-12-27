@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.Reflection;
 
@@ -191,7 +192,7 @@ namespace Asap2
                                 stream.WriteAsync("*/");
                             }
                         }
-                        else if (att.IsArgument || att.IsLongArg)
+                        else if (att.IsArgument || att.IsString)
                         {
                             if (att.Comment != null)
                             {
@@ -223,27 +224,31 @@ namespace Asap2
                                 stream.WriteAsync(att.Name + " ");
                             }
 
-                            if (att.IsLongArg)
+                            if (att.IsString)
                             {
                                 stream.WriteAsync("\"");
-                            }
-                            if (fI[i].FieldType.IsEnum)
-                            {
-                                stream.WriteAsync(Enum.GetName(fI[i].FieldType, fI[i].GetValue(tree)));
-                            }
-                            else if (fI[i].FieldType.IsPrimitive && att.CodeAsHex)
-                            {
-                                UInt64 data = (UInt64)fI[i].GetValue(tree);
-                                stream.WriteAsync("0x" + data.ToString("X"));
+                                String value = fI[i].GetValue(tree).ToString();
+                                value = Regex.Replace(value, "\r", @"\r");
+                                value = Regex.Replace(value, "\n", @"\n");
+                                value = Regex.Replace(value, "\t", @"\t");
+                                stream.WriteAsync(value);
+                                stream.WriteAsync("\"");
                             }
                             else
                             {
-                                stream.WriteAsync(fI[i].GetValue(tree).ToString());
-                            }
-
-                            if (att.IsLongArg)
-                            {
-                                stream.WriteAsync("\"");
+                                if (fI[i].FieldType.IsEnum)
+                                {
+                                    stream.WriteAsync(Enum.GetName(fI[i].FieldType, fI[i].GetValue(tree)));
+                                }
+                                else if (fI[i].FieldType.IsPrimitive && att.CodeAsHex)
+                                {
+                                    UInt64 data = (UInt64)fI[i].GetValue(tree);
+                                    stream.WriteAsync("0x" + data.ToString("X"));
+                                }
+                                else
+                                {
+                                    stream.WriteAsync(fI[i].GetValue(tree).ToString());
+                                }
                             }
                         }
                         else if(att.IsDictionary)

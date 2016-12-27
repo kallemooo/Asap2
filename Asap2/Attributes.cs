@@ -36,7 +36,7 @@ namespace Asap2
         private string comment;
         private bool isName;
         private bool isArgument;
-        private bool isLongArg;
+        private bool isString;
         private bool isComment;
         private bool isPreComment;
         private bool isDictionary;
@@ -47,7 +47,7 @@ namespace Asap2
         {
             this.isName = false;
             this.isArgument = false;
-            this.isLongArg = false;
+            this.isString = false;
             this.isComment = false;
             this.isPreComment = false;
             this.isDictionary = false;
@@ -74,12 +74,12 @@ namespace Asap2
         }
 
         /// <summary>
-        /// Is this a long argument of an element.
+        /// Is this a long argument of an element of string type.
         /// </summary>
-        public virtual bool IsLongArg
+        public virtual bool IsString
         {
-            get { return isLongArg; }
-            set { isLongArg = value; }
+            get { return isString; }
+            set { isString = value; }
         }
 
         /// <summary>
