@@ -45,6 +45,7 @@ ANNOTATION						{ return (int)Token.ANNOTATION; }
 ANNOTATION_LABEL				{ return (int)Token.ANNOTATION_LABEL; }
 ANNOTATION_ORIGIN				{ return (int)Token.ANNOTATION_ORIGIN; }
 ANNOTATION_TEXT					{ return (int)Token.ANNOTATION_TEXT; }
+ARRAY_SIZE						{ return (int)Token.ARRAY_SIZE; }
 ECU_ADDRESS						{ return (int)Token.ECU_ADDRESS; }
 ECU_ADDRESS_EXTENSION			{ return (int)Token.ECU_ADDRESS_EXTENSION; }
 PROJECT							{ return (int)Token.PROJECT; }

@@ -27,6 +27,7 @@
 			public ANNOTATION annotation;
 			public ANNOTATION_TEXT annotation_text;
 			public ADDR_EPK addr_epk;
+			public ARRAY_SIZE array_size;
 	   }
 
 %start main
@@ -46,6 +47,7 @@
 %token ANNOTATION_LABEL
 %token ANNOTATION_ORIGIN
 %token ANNOTATION_TEXT
+%token ARRAY_SIZE
 
 %token PROJECT
 %token HEADER
@@ -77,6 +79,7 @@
 %type <annotation>			annotation_data
 %type <annotation_text>		annotation_text
 %type <annotation_text>		annotation_text_data
+%type <array_size>			array_size
 
 %type <ecu_address>			ecu_address
 %type <ecu_address_ext>		ecu_address_extension
@@ -163,6 +166,11 @@ annotation_text_data		: /* empty */ {
 							}
 							;
 
+
+array_size					: ARRAY_SIZE NUMBER {
+								$$ = new ARRAY_SIZE((ulong)$2);
+							}
+							;
 
 project						: BEGIN PROJECT project_data END PROJECT {
 								$$ = $3;
@@ -299,6 +307,10 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 |  measurement_data annotation {
 					$$ = $1;
 					$$.annotation = $2;
+				}
+                |  measurement_data array_size {
+					$$ = $1;
+					$$.array_size = $2;
 				}
 				;
 

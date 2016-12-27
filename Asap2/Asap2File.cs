@@ -308,6 +308,8 @@ namespace Asap2
         [Element()]
         public ECU_ADDRESS_EXTENSION ecu_address_extension;
         [Element()]
+        public ARRAY_SIZE array_size;
+        [Element()]
         public FORMAT format;
         [Element()]
         public ANNOTATION annotation;
@@ -416,5 +418,18 @@ namespace Asap2
 
         [Element(IsLongArg = true, Name = "")]
         public string value;
+    }
+
+
+    [Base(IsSimple = true)]
+    public class ARRAY_SIZE
+    {
+        public ARRAY_SIZE(ulong value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true)]
+        public ulong value;
     }
 }
