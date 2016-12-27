@@ -30,6 +30,9 @@
 			public ARRAY_SIZE array_size;
 			public BIT_OPERATION bit_operation;
 			public CALIBRATION_ACCESS calibration_access;
+			public COMPU_VTAB compu_vtab;
+			public COMPU_VTAB_RANGE compu_vtab_range;
+			public MATRIX_DIM matrix_dim;
 	   }
 
 %start main
@@ -53,16 +56,22 @@
 %token BIT_MASK
 %token BIT_OPERATION
 %token CALIBRATION_ACCESS
-
+%token COMPU_VTAB
+%token COMPU_VTAB_RANGE
+%token CPU_TYPE
+%token CUSTOMER
+%token CUSTOMER_NO
+%token DEFAULT_VALUE
+%token DEPOSIT
+%token DISPLAY_IDENTIFIER
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
 %token SIGN_EXTEND
-
+%token MATRIX_DIM
 %token PROJECT
 %token HEADER
 %token MODULE
 %token MOD_COMMON
-%token DEPOSIT
 %token BYTE_ORDER
 %token DATA_SIZE
 %token VERSION
@@ -92,7 +101,11 @@
 %type <bit_operation>		bit_operation
 %type <bit_operation>		bit_operation_data
 %type <calibration_access>	calibration_access
-
+%type <compu_vtab>			compu_vtab
+%type <compu_vtab>			compu_vtab_data
+%type <compu_vtab_range>	compu_vtab_range
+%type <compu_vtab_range>	compu_vtab_range_data
+%type <matrix_dim>			matrix_dim
 %type <ecu_address>			ecu_address
 %type <ecu_address_ext>		ecu_address_extension
 %type <format>				format
@@ -221,6 +234,58 @@ calibration_access			: CALIBRATION_ACCESS IDENTIFIER {
 							}
 							;
 
+compu_vtab					: BEGIN COMPU_VTAB compu_vtab_data END COMPU_VTAB {
+								$$ = $3;
+							}
+							;
+
+compu_vtab_data				: IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
+								$$ = new COMPU_VTAB(Name: $1, LongIdentifier: $2, NumberValuePairs: (uint)$4);
+								if ($3 != $$.ConversionType)
+								{
+									throw new Exception("Unknown COMPU_VTAB ConversionType: " + $3);
+								}
+							}
+							| compu_vtab_data NUMBER QUOTED_STRING {
+								$$ = $1;
+								$$.data.Add($3, new COMPU_VTAB_DATA($2.ToString(), $3));
+							}
+							| compu_vtab_data DEFAULT_VALUE QUOTED_STRING {
+								$$ = $1;
+								$$.default_value = $3;
+							}
+							;
+
+compu_vtab_range			: BEGIN COMPU_VTAB_RANGE compu_vtab_range_data END COMPU_VTAB_RANGE {
+								$$ = $3;
+							}
+							;
+
+compu_vtab_range_data		: IDENTIFIER QUOTED_STRING NUMBER {
+								$$ = new COMPU_VTAB_RANGE(Name: $1, LongIdentifier: $2, NumberValueTriples: (uint)$3);
+							}
+							| compu_vtab_range_data NUMBER NUMBER QUOTED_STRING {
+								$$ = $1;
+								$$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+							}
+							| compu_vtab_range_data DOUBLE NUMBER QUOTED_STRING {
+								$$ = $1;
+								$$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+							}
+							| compu_vtab_range_data NUMBER DOUBLE QUOTED_STRING {
+								$$ = $1;
+								$$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+							}
+							| compu_vtab_range_data DOUBLE DOUBLE QUOTED_STRING {
+								$$ = $1;
+								$$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+							}
+							| compu_vtab_range_data DEFAULT_VALUE QUOTED_STRING {
+								$$ = $1;
+								$$.default_value = $3;
+							}
+							;
+
 project						: BEGIN PROJECT project_data END PROJECT {
 								$$ = $3;
 								Asap2File.project = $3;
@@ -298,6 +363,14 @@ module_data :   IDENTIFIER QUOTED_STRING {
 					$$ = $1;
                     $$.A2MLs.Add($$.A2MLs.Count.ToString(), $2);
                 }
+                | module_data compu_vtab {
+					$$ = $1;
+                    $$.COMPU_VTABs.Add($2.Name, $2);
+                }
+                | module_data compu_vtab_range {
+					$$ = $1;
+                    $$.COMPU_VTAB_RANGEs.Add($2.Name, $2);
+                }
 				;
 
 if_data      : IF_DATA {
@@ -332,6 +405,10 @@ mod_common_data	:  QUOTED_STRING {
 				;
 
 
+matrix_dim		: MATRIX_DIM NUMBER NUMBER NUMBER {
+					$$ = new MATRIX_DIM((uint)$2, (uint)$3, (uint)$4);
+				}
+				;
 
 measurement		: BEGIN MEASUREMENT measurement_data END MEASUREMENT {
 					$$ = $3;
@@ -368,6 +445,14 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 |  measurement_data bit_operation {
 					$$ = $1;
 					$$.bit_operation = $2;
+				}
+                |  measurement_data matrix_dim {
+					$$ = $1;
+					$$.matrix_dim = $2;
+				}
+                |  measurement_data DISPLAY_IDENTIFIER IDENTIFIER {
+					$$ = $1;
+					$$.display_identifier = $3;
 				}
 				;
 

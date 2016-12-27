@@ -140,8 +140,14 @@ namespace Asap2
         [Element()]
         public MOD_COMMON mod_common;
 
-        [Element(IsDictionary = true)]
+        [Element(IsDictionary = true, Comment = " MEASUREMENTs      ")]
         public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
+
+        [Element(IsDictionary = true, Comment = " COMPU_VTABs       ")]
+        public Dictionary<string, COMPU_VTAB> COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
+
+        [Element(IsDictionary = true, Comment = " COMPU_VTAB_RANGEs ")]
+        public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
     }
 
     [Base(IsSimple = true)]
@@ -303,6 +309,9 @@ namespace Asap2
         public uint LowerLimit;
         [Element(IsArgument = true, Comment = " UpperLimit     ")]
         public uint UpperLimit;
+
+        [Element(IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
+        public string display_identifier;
         [Element()]
         public ECU_ADDRESS ecu_address;
         [Element()]
@@ -315,6 +324,8 @@ namespace Asap2
         public BIT_MASK bit_mask;
         [Element()]
         public BIT_OPERATION bit_operation;
+        [Element()]
+        public MATRIX_DIM matrix_dim;
         [Element()]
         public ANNOTATION annotation;
     }
@@ -430,7 +441,7 @@ namespace Asap2
         }
 
         [Element(IsName = true)]
-        public string name = "";
+        public const string name = "";
 
         [Element(IsLongArg = true, Name = "")]
         public string value;
@@ -506,5 +517,124 @@ namespace Asap2
 
         [Element(IsArgument = true)]
         public CALIBRATION_ACCESS_type value;
+    }
+
+    [Base()]
+    public class COMPU_VTAB
+    {
+        public COMPU_VTAB(string Name, string LongIdentifier, uint NumberValuePairs)
+        {
+            this.Name = Name;
+            this.LongIdentifier = LongIdentifier;
+            this.NumberValuePairs = NumberValuePairs;
+        }
+
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment;
+        [Element(IsArgument = true, Comment = " Name           ")]
+        public string Name;
+        [Element(IsLongArg = true, Comment =  " LongIdentifier ")]
+        public string LongIdentifier;
+        [Element(IsArgument = true, Comment = " ConversionType ")]
+        public string ConversionType = "TAB_VERB";
+        [Element(IsArgument = true, Comment = " NumberValuePairs ")]
+        public uint NumberValuePairs;
+        [Element(IsDictionary = true)]
+        public Dictionary<string, COMPU_VTAB_DATA> data = new Dictionary<string, COMPU_VTAB_DATA>();
+        [Element(IsLongArg = true, Name = "DEFAULT_VALUE")]
+        public string default_value;
+    }
+
+    [Base(IsSimple = true)]
+    public class COMPU_VTAB_DATA
+    {
+        public COMPU_VTAB_DATA(string name, string value)
+        {
+            this.name = name;
+            this.value = value;
+        }
+
+        [Element(IsName = true)]
+        public string name;
+
+        [Element(IsLongArg = true)]
+        public string value;
+    }
+
+    [Base()]
+    public class COMPU_VTAB_RANGE
+    {
+        public COMPU_VTAB_RANGE(string Name, string LongIdentifier, uint NumberValueTriples)
+        {
+            this.Name = Name;
+            this.LongIdentifier = LongIdentifier;
+            this.NumberValueTriples = NumberValueTriples;
+        }
+
+        [Element(IsComment = true, IsPreComment = true)]
+        public string comment;
+        [Element(IsArgument = true, Comment = " Name           ")]
+        public string Name;
+        [Element(IsLongArg = true, Comment = " LongIdentifier ")]
+        public string LongIdentifier;
+        [Element(IsArgument = true, Comment = " NumberValueTriples ")]
+        public uint NumberValueTriples;
+        [Element(IsDictionary = true)]
+        public Dictionary<string, COMPU_VTAB_RANGE_DATA> data = new Dictionary<string, COMPU_VTAB_RANGE_DATA>();
+        [Element(IsLongArg = true, Name = "DEFAULT_VALUE")]
+        public string default_value;
+    }
+
+    [Base(IsSimple = true)]
+    public class COMPU_VTAB_RANGE_DATA
+    {
+        public COMPU_VTAB_RANGE_DATA(decimal InValMin, decimal InValMax, string value)
+        {
+            this.InValMin = InValMin;
+            this.InValMax = InValMax;
+            this.value = value;
+        }
+
+        [Element(IsName = true)]
+        public string name = "";
+
+        [Element(IsArgument = true)]
+        public decimal InValMin;
+
+        [Element(IsArgument = true)]
+        public decimal InValMax;
+
+        [Element(IsLongArg = true)]
+        public string value;
+    }
+
+    [Base(IsSimple = true)]
+    public class DEFAULT_VALUE
+    {
+        public DEFAULT_VALUE(string value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsLongArg = true)]
+        public string value;
+    }
+
+    [Base(IsSimple = true)]
+    public class MATRIX_DIM
+    {
+        public MATRIX_DIM(uint xDim, uint yDim, uint zDim)
+        {
+            this.xDim = xDim;
+            this.yDim = yDim;
+            this.zDim = zDim;
+        }
+
+        [Element(IsArgument = true)]
+        public uint xDim;
+        [Element(IsArgument = true)]
+        public uint yDim;
+        [Element(IsArgument = true)]
+        public uint zDim;
     }
 }

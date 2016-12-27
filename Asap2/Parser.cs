@@ -207,11 +207,22 @@ namespace Asap2
                                 {
                                     iH.Indent(stream);
                                 }
-                                else
+                                else if (att.Name == null || att.Name == "")
                                 {
                                     stream.WriteAsync(" ");
                                 }
                             }
+                            
+                            if (att.Name != null && att.Name != "")
+                            {
+                                if (!att.ForceNewLine ||  (att.Comment == null))
+                                {
+                                    stream.WriteAsync(newLine);
+                                    iH.Indent(stream);
+                                } 
+                                stream.WriteAsync(att.Name + " ");
+                            }
+
                             if (att.IsLongArg)
                             {
                                 stream.WriteAsync("\"");

@@ -49,8 +49,13 @@ ARRAY_SIZE						{ return (int)Token.ARRAY_SIZE; }
 BIT_MASK						{ return (int)Token.BIT_MASK; }
 BIT_OPERATION					{ return (int)Token.BIT_OPERATION; }
 CALIBRATION_ACCESS				{ return (int)Token.CALIBRATION_ACCESS; }
-
-
+COMPU_VTAB						{ return (int)Token.COMPU_VTAB; }
+COMPU_VTAB_RANGE				{ return (int)Token.COMPU_VTAB_RANGE; }
+CPU_TYPE						{ return (int)Token.CPU_TYPE; }
+CUSTOMER						{ return (int)Token.CUSTOMER; }
+CUSTOMER_NO						{ return (int)Token.CUSTOMER_NO; }
+DEFAULT_VALUE					{ return (int)Token.DEFAULT_VALUE; }
+DISPLAY_IDENTIFIER				{ return (int)Token.DISPLAY_IDENTIFIER; }
 RIGHT_SHIFT						{ return (int)Token.RIGHT_SHIFT; }
 LEFT_SHIFT						{ return (int)Token.LEFT_SHIFT; }
 SIGN_EXTEND						{ return (int)Token.SIGN_EXTEND; }
@@ -68,6 +73,7 @@ PROJECT_NO						{ return (int)Token.PROJECT_NO; }
 MEASUREMENT						{ return (int)Token.MEASUREMENT; }
 CHARACTERISTIC					{ return (int)Token.CHARACTERISTIC; }
 FORMAT							{ return (int)Token.FORMAT; }
+MATRIX_DIM						{ return (int)Token.MATRIX_DIM; }
 
 {Identifier}		{ yylval.s = yytext; return (int)Token.IDENTIFIER; }
 {Number}			{ GetNumber(); return (int)Token.NUMBER; }
