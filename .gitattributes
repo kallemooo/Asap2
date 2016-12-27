@@ -1,0 +1,14 @@
+###############################################################################
+# Set default behavior to automatically normalize line endings.
+###############################################################################
+* text=auto
+
+*.cs        eol=crlf
+*.config    eol=crlf
+*.csproj    eol=crlf
+*.lex       eol=crlf
+*.y         eol=crlf
+*.parser    eol=crlf
+*.sln       eol=crlf
+*.a2l       eol=crlf
+*.ico       -text
