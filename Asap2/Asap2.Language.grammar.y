@@ -28,6 +28,7 @@
 			public ANNOTATION_TEXT annotation_text;
 			public ADDR_EPK addr_epk;
 			public ARRAY_SIZE array_size;
+			public BIT_OPERATION bit_operation;
 	   }
 
 %start main
@@ -48,6 +49,11 @@
 %token ANNOTATION_ORIGIN
 %token ANNOTATION_TEXT
 %token ARRAY_SIZE
+%token BIT_MASK
+%token BIT_OPERATION
+%token RIGHT_SHIFT
+%token LEFT_SHIFT
+%token SIGN_EXTEND
 
 %token PROJECT
 %token HEADER
@@ -80,6 +86,8 @@
 %type <annotation_text>		annotation_text
 %type <annotation_text>		annotation_text_data
 %type <array_size>			array_size
+%type <bit_operation>		bit_operation
+%type <bit_operation>		bit_operation_data
 
 %type <ecu_address>			ecu_address
 %type <ecu_address_ext>		ecu_address_extension
@@ -169,6 +177,28 @@ annotation_text_data		: /* empty */ {
 
 array_size					: ARRAY_SIZE NUMBER {
 								$$ = new ARRAY_SIZE((ulong)$2);
+							}
+							;
+
+bit_operation				: BEGIN BIT_OPERATION bit_operation_data END BIT_OPERATION {
+								$$ = $3;
+							}
+							;
+
+bit_operation_data			: /* empty */ {
+								$$ = new BIT_OPERATION();
+							}
+							| bit_operation_data RIGHT_SHIFT NUMBER {
+								$$ = $1;
+								$$.right_shift = new RIGHT_SHIFT((ulong)$3);
+							}
+							| bit_operation_data LEFT_SHIFT NUMBER  {
+								$$ = $1;
+								$$.left_shift = new LEFT_SHIFT((ulong)$3);
+							}
+							| bit_operation_data SIGN_EXTEND  {
+								$$ = $1;
+								$$.sign_extend = new SIGN_EXTEND();
 							}
 							;
 
@@ -311,6 +341,14 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 |  measurement_data array_size {
 					$$ = $1;
 					$$.array_size = $2;
+				}
+                |  measurement_data BIT_MASK NUMBER {
+					$$ = $1;
+					$$.bit_mask = new BIT_MASK((ulong)$3);
+				}
+                |  measurement_data bit_operation {
+					$$ = $1;
+					$$.bit_operation = $2;
 				}
 				;
 

@@ -46,6 +46,11 @@ ANNOTATION_LABEL				{ return (int)Token.ANNOTATION_LABEL; }
 ANNOTATION_ORIGIN				{ return (int)Token.ANNOTATION_ORIGIN; }
 ANNOTATION_TEXT					{ return (int)Token.ANNOTATION_TEXT; }
 ARRAY_SIZE						{ return (int)Token.ARRAY_SIZE; }
+BIT_MASK						{ return (int)Token.BIT_MASK; }
+BIT_OPERATION					{ return (int)Token.BIT_OPERATION; }
+RIGHT_SHIFT						{ return (int)Token.RIGHT_SHIFT; }
+LEFT_SHIFT						{ return (int)Token.LEFT_SHIFT; }
+SIGN_EXTEND						{ return (int)Token.SIGN_EXTEND; }
 ECU_ADDRESS						{ return (int)Token.ECU_ADDRESS; }
 ECU_ADDRESS_EXTENSION			{ return (int)Token.ECU_ADDRESS_EXTENSION; }
 PROJECT							{ return (int)Token.PROJECT; }

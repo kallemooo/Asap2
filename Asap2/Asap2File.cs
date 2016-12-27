@@ -312,7 +312,23 @@ namespace Asap2
         [Element()]
         public FORMAT format;
         [Element()]
+        public BIT_MASK bit_mask;
+        [Element()]
+        public BIT_OPERATION bit_operation;
+        [Element()]
         public ANNOTATION annotation;
+    }
+
+    [Base(IsSimple = true)]
+    public class BIT_MASK
+    {
+        public BIT_MASK(UInt64 value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true, CodeAsHex = true)]
+        public UInt64 value;
     }
 
     [Base(IsSimple = true)]
@@ -431,5 +447,45 @@ namespace Asap2
 
         [Element(IsArgument = true)]
         public ulong value;
+    }
+
+    [Base()]
+    public class BIT_OPERATION
+    {
+        [Element()]
+        public RIGHT_SHIFT right_shift;
+        [Element()]
+        public LEFT_SHIFT left_shift;
+        [Element()]
+        public SIGN_EXTEND sign_extend;
+    }
+
+    [Base(IsSimple = true)]
+    public class RIGHT_SHIFT
+    {
+        public RIGHT_SHIFT(ulong value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true)]
+        public ulong value;
+    }
+    
+    [Base(IsSimple = true)]
+    public class LEFT_SHIFT
+    {
+        public LEFT_SHIFT(ulong value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true)]
+        public ulong value;
+    }
+
+    [Base(IsSimple = true)]
+    public class SIGN_EXTEND
+    {
     }
 }
