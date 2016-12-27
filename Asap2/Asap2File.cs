@@ -488,4 +488,23 @@ namespace Asap2
     public class SIGN_EXTEND
     {
     }
+
+    [Base(IsSimple = true)]
+    public class CALIBRATION_ACCESS
+    {
+        public enum CALIBRATION_ACCESS_type
+        {
+            CALIBRATION,
+            NO_CALIBRATION,
+            NOT_IN_MCD_SYSTEM,
+            OFFLINE_CALIBRATION,
+        }
+        public CALIBRATION_ACCESS(CALIBRATION_ACCESS_type value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsArgument = true)]
+        public CALIBRATION_ACCESS_type value;
+    }
 }

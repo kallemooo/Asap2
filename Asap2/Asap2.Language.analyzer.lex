@@ -48,6 +48,9 @@ ANNOTATION_TEXT					{ return (int)Token.ANNOTATION_TEXT; }
 ARRAY_SIZE						{ return (int)Token.ARRAY_SIZE; }
 BIT_MASK						{ return (int)Token.BIT_MASK; }
 BIT_OPERATION					{ return (int)Token.BIT_OPERATION; }
+CALIBRATION_ACCESS				{ return (int)Token.CALIBRATION_ACCESS; }
+
+
 RIGHT_SHIFT						{ return (int)Token.RIGHT_SHIFT; }
 LEFT_SHIFT						{ return (int)Token.LEFT_SHIFT; }
 SIGN_EXTEND						{ return (int)Token.SIGN_EXTEND; }

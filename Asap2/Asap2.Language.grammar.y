@@ -29,6 +29,7 @@
 			public ADDR_EPK addr_epk;
 			public ARRAY_SIZE array_size;
 			public BIT_OPERATION bit_operation;
+			public CALIBRATION_ACCESS calibration_access;
 	   }
 
 %start main
@@ -51,6 +52,8 @@
 %token ARRAY_SIZE
 %token BIT_MASK
 %token BIT_OPERATION
+%token CALIBRATION_ACCESS
+
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
 %token SIGN_EXTEND
@@ -88,6 +91,7 @@
 %type <array_size>			array_size
 %type <bit_operation>		bit_operation
 %type <bit_operation>		bit_operation_data
+%type <calibration_access>	calibration_access
 
 %type <ecu_address>			ecu_address
 %type <ecu_address_ext>		ecu_address_extension
@@ -199,6 +203,21 @@ bit_operation_data			: /* empty */ {
 							| bit_operation_data SIGN_EXTEND  {
 								$$ = $1;
 								$$.sign_extend = new SIGN_EXTEND();
+							}
+							;
+
+
+calibration_access			: CALIBRATION_ACCESS IDENTIFIER {
+								CALIBRATION_ACCESS.CALIBRATION_ACCESS_type access;	
+								try
+								{
+									access = (CALIBRATION_ACCESS.CALIBRATION_ACCESS_type) Enum.Parse(typeof(CALIBRATION_ACCESS.CALIBRATION_ACCESS_type), $2);        
+								}
+								catch (ArgumentException)
+								{
+									throw new Exception("Unknown CALIBRATION_ACCESS type: " + $2);
+								}
+								$$ = new CALIBRATION_ACCESS(access);
 							}
 							;
 
