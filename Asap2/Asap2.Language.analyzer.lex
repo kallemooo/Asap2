@@ -37,8 +37,16 @@ int comment_caller;
 
 \/begin							{ return (int)Token.BEGIN; }
 \/end							{ return (int)Token.END; }
-ASAP2_VERSION					{ return (int)Token.ASAP2_VERSION; }
 A2ML_VERSION					{ return (int)Token.A2ML_VERSION; }
+ASAP2_VERSION					{ return (int)Token.ASAP2_VERSION; }
+ADDR_EPK						{ return (int)Token.ADDR_EPK; }
+{Alignment}						{ GetAlignment(); return (int)Token.ALIGNMENT; }
+ANNOTATION						{ return (int)Token.ANNOTATION; }
+ANNOTATION_LABEL				{ return (int)Token.ANNOTATION_LABEL; }
+ANNOTATION_ORIGIN				{ return (int)Token.ANNOTATION_ORIGIN; }
+ANNOTATION_TEXT					{ return (int)Token.ANNOTATION_TEXT; }
+ECU_ADDRESS						{ return (int)Token.ECU_ADDRESS; }
+ECU_ADDRESS_EXTENSION			{ return (int)Token.ECU_ADDRESS_EXTENSION; }
 PROJECT							{ return (int)Token.PROJECT; }
 HEADER							{ return (int)Token.HEADER; }
 MODULE							{ return (int)Token.MODULE; }
@@ -50,10 +58,7 @@ VERSION							{ return (int)Token.VERSION; }
 PROJECT_NO						{ return (int)Token.PROJECT_NO; }
 MEASUREMENT						{ return (int)Token.MEASUREMENT; }
 CHARACTERISTIC					{ return (int)Token.CHARACTERISTIC; }
-ECU_ADDRESS						{ return (int)Token.ECU_ADDRESS; }
-ECU_ADDRESS_EXTENSION			{ return (int)Token.ECU_ADDRESS_EXTENSION; }
 FORMAT							{ return (int)Token.FORMAT; }
-{Alignment}						{ GetAlignment(); return (int)Token.ALIGNMENT; }
 
 {Identifier}		{ yylval.s = yytext; return (int)Token.IDENTIFIER; }
 {Number}			{ GetNumber(); return (int)Token.NUMBER; }

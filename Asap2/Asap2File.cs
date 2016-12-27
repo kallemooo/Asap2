@@ -309,6 +309,8 @@ namespace Asap2
         public ECU_ADDRESS_EXTENSION ecu_address_extension;
         [Element()]
         public FORMAT format;
+        [Element()]
+        public ANNOTATION annotation;
     }
 
     [Base(IsSimple = true)]
@@ -336,6 +338,18 @@ namespace Asap2
     }
 
     [Base(IsSimple = true)]
+    public class ADDR_EPK
+    {
+        public ADDR_EPK(UInt64 Address)
+        {
+            this.Address = Address;
+        }
+
+        [Element(IsArgument = true, CodeAsHex = true)]
+        public UInt64 Address;
+    }
+    
+    [Base(IsSimple = true)]
     public class FORMAT
     {
         public FORMAT(string value)
@@ -344,6 +358,63 @@ namespace Asap2
         }
 
         [Element(IsLongArg = true)]
+        public string value;
+    }
+
+    [Base()]
+    public class ANNOTATION
+    {
+        [Element()]
+        public ANNOTATION_LABEL annotation_label;
+        [Element()]
+        public ANNOTATION_ORIGIN annotation_origin;
+        [Element()]
+        public ANNOTATION_TEXT annotation_text;
+    }
+
+    [Base(IsSimple = true)]
+    public class ANNOTATION_LABEL
+    {
+        public ANNOTATION_LABEL(string value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsLongArg = true)]
+        public string value;
+    }
+
+    [Base(IsSimple = true)]
+    public class ANNOTATION_ORIGIN
+    {
+        public ANNOTATION_ORIGIN(string value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsLongArg = true)]
+        public string value;
+    }
+
+    [Base()]
+    public class ANNOTATION_TEXT
+    {
+        [Element(IsDictionary = true)]
+        public Dictionary<string, ANNOTATION_TEXT_DATA> data = new Dictionary<string, ANNOTATION_TEXT_DATA>();
+    }
+
+    [Base(IsSimple = true)]
+    public class ANNOTATION_TEXT_DATA
+    {
+        public ANNOTATION_TEXT_DATA(string value)
+        {
+            this.value = value;
+        }
+
+        [Element(IsName = true)]
+        public string name = "";
+
+        [Element(IsLongArg = true, Name = "")]
         public string value;
     }
 }

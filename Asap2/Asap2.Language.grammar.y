@@ -24,6 +24,9 @@
 			public FORMAT format;
 			public IF_DATA if_data;
 			public A2ML a2ml;
+			public ANNOTATION annotation;
+			public ANNOTATION_TEXT annotation_text;
+			public ADDR_EPK addr_epk;
 	   }
 
 %start main
@@ -32,10 +35,18 @@
 %token <d> DOUBLE
 %token <s> QUOTED_STRING
 %token <s> IF_DATA
-%token <s> A2ML
 %token <s> IDENTIFIER
-%token ASAP2_VERSION
+
+%token <s> A2ML
 %token A2ML_VERSION
+%token ASAP2_VERSION
+%token <alignment_token> ALIGNMENT
+%token ADDR_EPK
+%token ANNOTATION	
+%token ANNOTATION_LABEL
+%token ANNOTATION_ORIGIN
+%token ANNOTATION_TEXT
+
 %token PROJECT
 %token HEADER
 %token MODULE
@@ -50,33 +61,38 @@
 %token ECU_ADDRESS
 %token ECU_ADDRESS_EXTENSION
 %token FORMAT
-%token <alignment_token> ALIGNMENT
 
 %token BEGIN
 %token END
 
-%type <deposit>			deposit
-%type <byte_order>		byte_order
-%type <data_size>		data_size
-%type <s>				project_no
-%type <s>				version
-%type <alignment>       alignment
-%type <ecu_address>		ecu_address
-%type <ecu_address_ext> ecu_address_extension
-%type <format>			format
-%type <mod_common>      mod_common
-%type <mod_common>      mod_common_data
-%type <module>          module
-%type <module>          module_data
-%type <project>         project
-%type <project>         project_data
-%type <header>          header
-%type <header>          header_data
-%type <measurement>     measurement
-%type <measurement>     measurement_data
-%type <version>         version
-%type <if_data>         if_data
-%type <a2ml>            a2ml
+%type <deposit>				deposit
+%type <byte_order>			byte_order
+%type <data_size>			data_size
+%type <s>					project_no
+%type <s>					version
+%type <a2ml>				a2ml
+%type <addr_epk>			addr_epk
+%type <alignment>			alignment
+%type <annotation>			annotation
+%type <annotation>			annotation_data
+%type <annotation_text>		annotation_text
+%type <annotation_text>		annotation_text_data
+
+%type <ecu_address>			ecu_address
+%type <ecu_address_ext>		ecu_address_extension
+%type <format>				format
+%type <mod_common>			mod_common
+%type <mod_common>			mod_common_data
+%type <module>				module
+%type <module>				module_data
+%type <project>				project
+%type <project>				project_data
+%type <header>				header
+%type <header>				header_data
+%type <measurement>			measurement
+%type <measurement>			measurement_data
+%type <version>				version
+%type <if_data>				if_data
 
 %%
 
@@ -85,21 +101,76 @@ main	: project
 		| asap2_version a2ml_version project
 		;
 
-asap2_version	:   ASAP2_VERSION NUMBER NUMBER {
-                        Asap2File.asap2_version = new ASAP2_VERSION((uint)$2, (uint)$3);
-                    }
-                ;
 
-a2ml_version	:   A2ML_VERSION NUMBER NUMBER {
-                        Asap2File.a2ml_version = new A2ML_VERSION((uint)$2, (uint)$3);
-                    }
-                ;
+a2ml						: A2ML {
+								$$ = new A2ML($1);
+							}
+							;
 
-project			:	BEGIN PROJECT project_data END PROJECT {
-					$$ = $3;
-					Asap2File.project = $3;
-				}
-				;
+a2ml_version				: A2ML_VERSION NUMBER NUMBER {
+								Asap2File.a2ml_version = new A2ML_VERSION((uint)$2, (uint)$3);
+							}
+							;
+
+asap2_version				: ASAP2_VERSION NUMBER NUMBER {
+								Asap2File.asap2_version = new ASAP2_VERSION((uint)$2, (uint)$3);
+							}
+							;
+
+addr_epk					: ADDR_EPK NUMBER {
+								$$ = new ADDR_EPK((UInt64)$2);
+							}
+							;
+
+alignment					: ALIGNMENT NUMBER {
+								$$ = new ALIGNMENT($1, (uint)$2);
+							}
+							;
+
+annotation					: BEGIN ANNOTATION annotation_data END ANNOTATION {
+								$$ = $3;
+							}
+							;
+
+annotation_data				: /* empty */ {
+								$$ = new ANNOTATION();
+							}
+							| annotation_data ANNOTATION_LABEL QUOTED_STRING {
+								$$ = $1;
+								$$.annotation_label = new ANNOTATION_LABEL($3);
+							}
+							| annotation_data ANNOTATION_ORIGIN QUOTED_STRING {
+								$$ = $1;
+								$$.annotation_origin = new ANNOTATION_ORIGIN($3);
+							}
+							| annotation_data annotation_text {
+								$$ = $1;
+								$$.annotation_text = $2;
+							}
+							;
+
+annotation_text				: BEGIN ANNOTATION_TEXT annotation_text_data END ANNOTATION_TEXT {
+								$$ = $3;
+							}
+							;
+
+annotation_text_data		: /* empty */ {
+								$$ = new ANNOTATION_TEXT();
+							}
+							| annotation_text_data QUOTED_STRING {
+								$$ = $1;
+								$$.data.Add($$.data.Count.ToString(), new ANNOTATION_TEXT_DATA($2));
+							}
+							;
+
+
+project						: BEGIN PROJECT project_data END PROJECT {
+								$$ = $3;
+								Asap2File.project = $3;
+							}
+							;
+
+
 
 project_data    :   IDENTIFIER QUOTED_STRING {
 					$$ = new PROJECT();
@@ -172,11 +243,6 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
 				;
 
-a2ml      : A2ML {
-					$$ = new A2ML($1);
-				}
-				;
-
 if_data      : IF_DATA {
 					$$ = new IF_DATA($1);
 				}
@@ -230,25 +296,21 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
 					$$ = $1;
 					$$.format = $2;
 				}
+                |  measurement_data annotation {
+					$$ = $1;
+					$$.annotation = $2;
+				}
 				;
 
 
-alignment		:   ALIGNMENT NUMBER {
-                        $$ = new ALIGNMENT($1, (uint)$2);
-                    }
-                ;
-
 deposit			: DEPOSIT IDENTIFIER {
 					DEPOSIT.DEPOSIT_type type;
-					switch ($2)
+					try
 					{
-						case "ABSOLUTE":
-							type = DEPOSIT.DEPOSIT_type.ABSOLUTE;
-						break;
-						case "DIFFERENCE":
-							type = DEPOSIT.DEPOSIT_type.DIFFERENCE;
-						break;
-						default:
+						type = (DEPOSIT.DEPOSIT_type) Enum.Parse(typeof(DEPOSIT.DEPOSIT_type), $2);        
+					}
+					catch (ArgumentException)
+					{
 						throw new Exception("Unknown DEPOSIT type: " + $2);
 					}
 					$$ = new DEPOSIT(type);
@@ -256,22 +318,13 @@ deposit			: DEPOSIT IDENTIFIER {
                 ;
 
 byte_order		: BYTE_ORDER IDENTIFIER {
-					BYTE_ORDER.BYTE_ORDER_type order;
-					switch ($2)
+					BYTE_ORDER.BYTE_ORDER_type order;	
+					try
 					{
-						case "LITTLE_ENDIAN":
-							order = BYTE_ORDER.BYTE_ORDER_type.LITTLE_ENDIAN;
-						break;
-						case "BIG_ENDIAN":
-							order = BYTE_ORDER.BYTE_ORDER_type.BIG_ENDIAN;
-						break;
-						case "MSB_FIRST":
-							order = BYTE_ORDER.BYTE_ORDER_type.MSB_FIRST;
-						break;
-						case "MSB_LAST":
-							order = BYTE_ORDER.BYTE_ORDER_type.MSB_LAST;
-						break;
-						default:
+						order = (BYTE_ORDER.BYTE_ORDER_type) Enum.Parse(typeof(BYTE_ORDER.BYTE_ORDER_type), $2);        
+					}
+					catch (ArgumentException)
+					{
 						throw new Exception("Unknown BYTE_ORDER type: " + $2);
 					}
 					$$ = new BYTE_ORDER(order);
