@@ -7,7 +7,6 @@ namespace Asap2
 {
     internal partial class Asap2Scanner
     {
-
         void GetNumber()
         {
             yylval.s = yytext;
@@ -34,21 +33,21 @@ namespace Asap2
         void GetAlignment()
         {
             yylval.s = yytext;
-			try
-			{
+            try
+            {
                 yylval.alignment_token = (ALIGNMENT.ALIGNMENT_type)Enum.Parse(typeof(ALIGNMENT.ALIGNMENT_type), yytext);        
-			}
-			catch (ArgumentException)
-			{
-				throw new Exception("Unknown ALIGNMENT type: " + yytext);
-			}
+            }
+            catch (ArgumentException)
+            {
+                throw new Exception("Unknown ALIGNMENT type: " + yytext);
+            }
         }
 
-		public override void yyerror(string format, params object[] args)
-		{
-			base.yyerror(format, args);
-			Console.WriteLine(format, args);
-			Console.WriteLine();
-		}
+        public override void yyerror(string format, params object[] args)
+        {
+            base.yyerror(format, args);
+            Console.WriteLine(format, args);
+            Console.WriteLine();
+        }
     }
 }
