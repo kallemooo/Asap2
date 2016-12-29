@@ -104,39 +104,17 @@ namespace Asap2
         public Dictionary<string, MODULE> modules;
     }
 
-    [Base(IsSimple = true)]
-    public class PROJECT_NO : Asap2Base
-    {
-        public PROJECT_NO(string project_no)
-        {
-            this.project_no = project_no;
-        }
-        [Element(0, IsArgument = true)]
-        public string project_no;
-    }
-
-    [Base(IsSimple = true)]
-    public class VERSION : Asap2Base
-    {
-        public VERSION(string version)
-        {
-            this.version = version;
-        }
-        [Element(0, IsString = true)]
-        public string version;
-    }
-
     [Base()]
     public class HEADER : Asap2Base
     {
         [Element(0, IsString = true)]
         public string longIdentifier;
 
-        [Element(1)]
-        public VERSION version;
+        [Element(1, IsString = true, Name = "VERSION")]
+        public string version;
 
-        [Element(2)]
-        public PROJECT_NO project_no;
+        [Element(2, IsArgument = true, Name = "PROJECT_NO")]
+        public string project_no;
     }
 
     [Base()]
@@ -149,7 +127,7 @@ namespace Asap2
             COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
         }
 
-        [Element(1, IsArgument = true, Comment = " Name           ")]
+        [Element(1, IsArgument = true)]
         public string name;
 
         [Element(2, IsString = true, Comment = " LongIdentifier ")]
@@ -164,13 +142,16 @@ namespace Asap2
         [Element(5)]
         public MOD_COMMON mod_common;
 
-        [Element(6, IsDictionary = true, Comment = " Measurment data for the module ")]
+        [Element(6)]
+        public MOD_PAR mod_par;
+
+        [Element(7, IsDictionary = true, Comment = " Measurment data for the module ")]
         public Dictionary<string, MEASUREMENT> measurements;
 
-        [Element(7, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
+        [Element(8, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
         public Dictionary<string, COMPU_VTAB> COMPU_VTABs;
 
-        [Element(8, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
+        [Element(9, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
         public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs;
     }
 
@@ -575,9 +556,9 @@ namespace Asap2
             data = new List<COMPU_VTAB_RANGE_DATA>();
         }
 
-        [Element(1, IsArgument = true, Comment = " Name           ")]
+        [Element(1, IsArgument = true, Comment = " Name               ")]
         public string Name;
-        [Element(2, IsString = true, Comment = " LongIdentifier ")]
+        [Element(2, IsString = true, Comment   = " LongIdentifier     ")]
         public string LongIdentifier;
         [Element(3, IsArgument = true, Comment = " NumberValueTriples ")]
         public uint NumberValueTriples;
@@ -626,5 +607,253 @@ namespace Asap2
         public uint yDim;
         [Element(2, IsArgument = true)]
         public uint zDim;
+    }
+
+    [Base()]
+    public class MEMORY_SEGMENT : Asap2Base
+    {
+        public enum PrgType
+        {
+            CALIBRATION_VARIABLES,
+            CODE,
+            DATA,
+            EXCLUDED_FROM_FLASH,
+            OFFLINE_DATA,
+            RESERVED,
+            SERAM,
+            VARIABLES,
+        }
+        
+        public enum MemoryType
+        {
+            EEPROM,
+            EPROM,
+            FLASH,
+            RAM,
+            ROM,
+            REGISTER,
+        }
+
+        public enum Attribute
+        {
+            INTERN,
+            EXTERN,
+        }
+
+        public MEMORY_SEGMENT(string name, string longIdentifier, PrgType prgType, MemoryType memoryType, Attribute attribute, UInt64 address, UInt64 size,
+            long offset0, long offset1, long offset2, long offset3, long offset4)
+        {
+            this.name = name;
+            this.longIdentifier = longIdentifier;
+            this.prgType = prgType;
+            this.memoryType = memoryType;
+            this.attribute = attribute;
+            this.address = address;
+            this.size = size;
+            this.offset0 = offset0;
+            this.offset1 = offset1;
+            this.offset2 = offset2;
+            this.offset3 = offset3;
+            this.offset4 = offset4;
+        }
+
+        [Element(0, IsArgument = true)]
+        public string name;
+
+        [Element(1, IsString = true)]
+        public string longIdentifier;
+
+        [Element(2, IsArgument = true, Comment = " PrgTypes   ")]
+        public PrgType prgType;
+
+        [Element(3, IsArgument = true, Comment = " MemoryType ")]
+        public MemoryType memoryType;
+
+        [Element(4, IsArgument = true, Comment = " Attribute  ")]
+        public Attribute attribute;
+
+        [Element(5, IsArgument = true, Comment = " Address    ", CodeAsHex = true)]
+        public UInt64 address;
+
+        [Element(6, IsArgument = true, Comment = " Size       ", CodeAsHex = true)]
+        public UInt64 size;
+
+        [Element(7, IsArgument = true, Comment = " offset     ")]
+        public long offset0;
+
+        [Element(8, IsArgument = true)]
+        public long offset1;
+
+        [Element(9, IsArgument = true)]
+        public long offset2;
+
+        [Element(10, IsArgument = true)]
+        public long offset3;
+
+        [Element(11, IsArgument = true)]
+        public long offset4;
+    
+        [Element(12, IsList = true)]
+        public List<IF_DATA> if_data = new List<IF_DATA>();
+    }
+
+    [Base()]
+    public class MEMORY_LAYOUT : Asap2Base
+    {
+        public enum PrgType
+        {
+            PRG_CODE,
+            PRG_DATA,
+            PRG_RESERVED,
+        }
+
+        public MEMORY_LAYOUT(PrgType prgType, UInt64 Address, UInt64 Size,
+            long offset0, long offset1, long offset2, long offset3, long offset4)
+        {
+            this.prgType = prgType;
+            this.Address = Address;
+            this.Size = Size;
+            this.offset0 = offset0;
+            this.offset1 = offset1;
+            this.offset2 = offset2;
+            this.offset3 = offset3;
+            this.offset4 = offset4;
+        }
+
+        [Element(0, IsArgument = true, Comment = " Program segment type ")]
+        public PrgType prgType;
+
+        [Element(1, IsArgument = true, Comment = " Address              ", CodeAsHex = true)]
+        public UInt64 Address;
+
+        [Element(2, IsArgument = true, Comment = " Size                 ", CodeAsHex = true)]
+        public UInt64 Size;
+
+        [Element(3, IsArgument = true, Comment = " offset               ")]
+        public long offset0;
+
+        [Element(4, IsArgument = true)]
+        public long offset1;
+
+        [Element(5, IsArgument = true)]
+        public long offset2;
+
+        [Element(6, IsArgument = true)]
+        public long offset3;
+
+        [Element(7, IsArgument = true)]
+        public long offset4;
+
+        [Element(8, IsList = true)]
+        public List<IF_DATA> if_data = new List<IF_DATA>();
+    }
+
+    [Base()]
+    public class CALIBRATION_METHOD : Asap2Base
+    {
+        public CALIBRATION_METHOD(string Method, ulong Version)
+        {
+            this.Method = Method;
+            this.Version = Version;
+        }
+
+        [Element(0, IsString = true,   Comment = " Method  ")]
+        public string Method;
+
+        [Element(1, IsArgument = true, Comment = " Version ")]
+        public ulong Version;
+
+        [Element(2)]
+        public CALIBRATION_HANDLE calibration_handle;
+    }
+
+    [Base()]
+    public class CALIBRATION_HANDLE : Asap2Base
+    {
+        public CALIBRATION_HANDLE()
+        {
+        }
+
+        [Element(0, IsArgument = true, ForceNewLine = true, IsList = true, CodeAsHex = true, Comment = " Handles ")]
+        public List<Int64> Handles = new List<Int64>();
+
+        [Element(1, IsString = true, Name = "CALIBRATION_HANDLE_TEXT")]
+        public string text;
+    }
+
+    [Base(IsSimple = true)]
+    public class SYSTEM_CONSTANT : Asap2Base
+    {
+        public SYSTEM_CONSTANT(string name, string value)
+        {
+            this.name = name;
+            this.value = value;
+        }
+
+        [Element(1, IsString = true)]
+        public string name;
+
+        [Element(1, IsString = true)]
+        public string value;
+    }
+
+    [Base()]
+    public class MOD_PAR : Asap2Base
+    {
+        public MOD_PAR(string comment)
+        {
+            this.comment = comment;
+        }
+
+        [Element(1, IsString = true)]
+        public string comment;
+
+        [Element(2, IsList = true)]
+        public List<ADDR_EPK> addr_epk = new List<ADDR_EPK>();
+
+        [Element(3, IsList = true)]
+        public List<CALIBRATION_METHOD> calibration_method = new List<CALIBRATION_METHOD>();
+
+        [Element(4, IsString = true, Name = "CPU_TYPE")]
+        public string cpu_type;
+
+        [Element(5, IsString = true, Name = "CUSTOMER")]
+        public string customer;
+
+        [Element(6, IsString = true, Name = "CUSTOMER_NO")]
+        public string customer_no;
+
+        [Element(7, IsString = true, Name = "ECU")]
+        public string ecu;
+
+        [Element(8, IsArgument = true, Name = "ECU_CALIBRATION_OFFSET")]
+        public Int64? ecu_calibration_offset;
+
+        [Element(9, IsString = true, Name = "EPK")]
+        public string epk;
+
+        [Element(10, IsList = true)]
+        public List<MEMORY_LAYOUT> memory_layout = new List<MEMORY_LAYOUT>();
+
+        [Element(11, IsList = true)]
+        public List<MEMORY_SEGMENT> memory_segment = new List<MEMORY_SEGMENT>();
+
+        [Element(12, IsArgument = true, Name = "NO_OF_INTERFACES")]
+        public UInt64? no_of_interfaces;
+
+        [Element(13, IsString = true, Name = "PHONE_NO")]
+        public string phone_no;
+
+        [Element(14, IsString = true, Name = "SUPPLIER")]
+        public string supplier;
+
+        [Element(15, IsDictionary = true)]
+        public Dictionary<string, SYSTEM_CONSTANT> system_constants = new Dictionary<string, SYSTEM_CONSTANT>();
+
+        [Element(16, IsString = true, Name = "USER")]
+        public string user;
+
+        [Element(17, IsString = true, Name = "VERSION")]
+        public string version;
     }
 }

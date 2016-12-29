@@ -17,7 +17,6 @@
             public PROJECT project;
             public HEADER header;
             public MEASUREMENT measurement;
-            public VERSION version;
             public DATA_SIZE data_size;
             public ECU_ADDRESS ecu_address;
             public ECU_ADDRESS_EXTENSION ecu_address_ext;
@@ -33,7 +32,12 @@
             public COMPU_VTAB compu_vtab;
             public COMPU_VTAB_RANGE compu_vtab_range;
             public MATRIX_DIM matrix_dim;
-       }
+            public MEMORY_SEGMENT memory_segment;
+            public MEMORY_LAYOUT memory_layout;
+            public MOD_PAR mod_par;
+            public CALIBRATION_METHOD calibration_method;
+            public CALIBRATION_HANDLE calibration_handle;
+}
 
 %start main
 
@@ -56,6 +60,9 @@
 %token BIT_MASK
 %token BIT_OPERATION
 %token CALIBRATION_ACCESS
+%token CALIBRATION_METHOD
+%token CALIBRATION_HANDLE
+%token CALIBRATION_HANDLE_TEXT
 %token COMPU_VTAB
 %token COMPU_VTAB_RANGE
 %token CPU_TYPE
@@ -64,6 +71,9 @@
 %token DEFAULT_VALUE
 %token DEPOSIT
 %token DISPLAY_IDENTIFIER
+%token ECU
+%token ECU_CALIBRATION_OFFSET
+%token EPK
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
 %token SIGN_EXTEND
@@ -72,15 +82,23 @@
 %token HEADER
 %token MODULE
 %token MOD_COMMON
+%token MOD_PAR
+%token MEMORY_SEGMENT
+%token MEMORY_LAYOUT
+%token NO_OF_INTERFACES
 %token BYTE_ORDER
 %token DATA_SIZE
 %token VERSION
 %token PROJECT_NO
+%token PHONE_NO
+%token SUPPLIER
+%token SYSTEM_CONSTANT
 %token MEASUREMENT
 %token CHARACTERISTIC
 %token ECU_ADDRESS
 %token ECU_ADDRESS_EXTENSION
 %token FORMAT
+%token USER
 
 %token BEGIN
 %token END
@@ -88,8 +106,6 @@
 %type <deposit>             deposit
 %type <byte_order>          byte_order
 %type <data_size>           data_size
-%type <s>                   project_no
-%type <s>                   version
 %type <a2ml>                a2ml
 %type <addr_epk>            addr_epk
 %type <alignment>           alignment
@@ -101,6 +117,10 @@
 %type <bit_operation>       bit_operation
 %type <bit_operation>       bit_operation_data
 %type <calibration_access>  calibration_access
+%type <calibration_method>  calibration_method
+%type <calibration_method>  calibration_method_data
+%type <calibration_handle>  calibration_handle
+%type <calibration_handle>  calibration_handle_data
 %type <compu_vtab>          compu_vtab
 %type <compu_vtab>          compu_vtab_data
 %type <compu_vtab_range>    compu_vtab_range
@@ -111,15 +131,20 @@
 %type <format>              format
 %type <mod_common>          mod_common
 %type <mod_common>          mod_common_data
+%type <mod_par>             mod_par
+%type <mod_par>             mod_par_data
 %type <module>              module
 %type <module>              module_data
+%type <memory_segment>      memory_segment
+%type <memory_segment>      memory_segment_data
+%type <memory_layout>       memory_layout
+%type <memory_layout>       memory_layout_data
 %type <project>             project
 %type <project>             project_data
 %type <header>              header
 %type <header>              header_data
 %type <measurement>         measurement
 %type <measurement>         measurement_data
-%type <version>             version
 %type <if_data>             if_data
 
 %%
@@ -234,6 +259,40 @@ calibration_access          : CALIBRATION_ACCESS IDENTIFIER {
                             }
                             ;
 
+                            
+calibration_method          : BEGIN CALIBRATION_METHOD calibration_method_data END CALIBRATION_METHOD {
+                                $$ = $3;
+                            }
+                            ;
+
+calibration_method_data     : QUOTED_STRING NUMBER {
+                                $$ = new CALIBRATION_METHOD($1, (ulong)$2);
+                            }
+                            | calibration_method_data calibration_handle {
+                                $$ = $1;
+                                $$.calibration_handle = $2;
+                            }
+                            ;
+
+calibration_handle          : BEGIN CALIBRATION_HANDLE calibration_handle_data END CALIBRATION_HANDLE {
+                                $$ = $3;
+                            }
+                            ;
+
+calibration_handle_data     : NUMBER {
+                                $$ = new CALIBRATION_HANDLE();
+                                $$.Handles.Add($1);
+                            }
+                            | calibration_handle_data NUMBER {
+                                $$ = $1;
+                                $$.Handles.Add($2);
+                            }
+                            | calibration_handle_data CALIBRATION_HANDLE_TEXT QUOTED_STRING {
+                                $$ = $1;
+                                $$.text = $3;
+                            }
+                            ;
+
 compu_vtab                  : BEGIN COMPU_VTAB compu_vtab_data END COMPU_VTAB {
                                 $$ = $3;
                             }
@@ -322,24 +381,15 @@ header_data     : QUOTED_STRING {
                     $$ = new HEADER();
                     $$.longIdentifier = $1;
                 }
-                | header_data version {
+                | header_data VERSION QUOTED_STRING {
                     $$ = $1;
-                    $$.version    = $2;
+                    $$.version = $3;
                 }
-                | header_data project_no {
+                | header_data PROJECT_NO IDENTIFIER {
                     $$ = $1;
-                    $$.project_no = new PROJECT_NO($2);
+                    $$.project_no = $3;
                 }
                 ;
-
-
-project_no      :   PROJECT_NO IDENTIFIER   { $$ = $2; }
-                |   PROJECT_NO NUMBER       { $$ = $2.ToString(); }
-                ;
-
-version         :   VERSION QUOTED_STRING   { $$ = new VERSION($2); }
-                ;
-
 
 module          :   BEGIN MODULE module_data END MODULE {                   
                     $$ = $3;
@@ -375,6 +425,14 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.COMPU_VTAB_RANGEs.Add($2.Name, $2);
                 }
+                | module_data compu_vtab_range {
+                    $$ = $1;
+                    $$.COMPU_VTAB_RANGEs.Add($2.Name, $2);
+                }
+                | module_data mod_par {
+                    $$ = $1;
+                    $$.mod_par = $2;
+                }
                 ;
 
 if_data      : IF_DATA {
@@ -408,6 +466,79 @@ mod_common_data :  QUOTED_STRING {
                 }
                 ;
 
+mod_par         : BEGIN MOD_PAR mod_par_data END MOD_PAR {
+                    $$ = $3;
+                }
+                ;
+
+mod_par_data :  QUOTED_STRING {
+                    $$ = new MOD_PAR($1);
+                }
+                |  mod_par_data addr_epk {
+                    $$ = $1;
+                    $$.addr_epk.Add($2);
+                }
+                |  mod_par_data calibration_method {
+                    $$ = $1;
+                    $$.calibration_method.Add($2);
+                }
+                |  mod_par_data CPU_TYPE QUOTED_STRING {
+                    $$ = $1;
+                    $$.cpu_type = $3;
+                }
+                |  mod_par_data CUSTOMER QUOTED_STRING {
+                    $$ = $1;
+                    $$.customer = $3;
+                }
+                |  mod_par_data CUSTOMER_NO QUOTED_STRING {
+                    $$ = $1;
+                    $$.customer_no = $3;
+                }
+                |  mod_par_data ECU QUOTED_STRING {
+                    $$ = $1;
+                    $$.ecu = $3;
+                }
+                |  mod_par_data ECU_CALIBRATION_OFFSET NUMBER {
+                    $$ = $1;
+                    $$.ecu_calibration_offset = $3;
+                }
+                |  mod_par_data EPK QUOTED_STRING {
+                    $$ = $1;
+                    $$.epk = $3;
+                }
+                |  mod_par_data memory_layout {
+                    $$ = $1;
+                    $$.memory_layout.Add($2);
+                }
+                |  mod_par_data memory_segment {
+                    $$ = $1;
+                    $$.memory_segment.Add($2);
+                }
+                |  mod_par_data NO_OF_INTERFACES NUMBER {
+                    $$ = $1;
+                    $$.no_of_interfaces = (UInt64)$3;
+                }
+                |  mod_par_data PHONE_NO QUOTED_STRING {
+                    $$ = $1;
+                    $$.phone_no = $3;
+                }
+                |  mod_par_data SUPPLIER QUOTED_STRING {
+                    $$ = $1;
+                    $$.supplier = $3;
+                }
+                |  mod_par_data SYSTEM_CONSTANT QUOTED_STRING QUOTED_STRING {
+                    $$ = $1;
+                    $$.system_constants.Add($3, new SYSTEM_CONSTANT($3, $4));
+                }
+                |  mod_par_data USER QUOTED_STRING {
+                    $$ = $1;
+                    $$.user = $3;
+                }
+                |  mod_par_data VERSION QUOTED_STRING {
+                    $$ = $1;
+                    $$.version = $3;
+                }
+                ;
 
 matrix_dim      : MATRIX_DIM NUMBER NUMBER NUMBER {
                     $$ = new MATRIX_DIM((uint)$2, (uint)$3, (uint)$4);
@@ -460,6 +591,72 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 }
                 ;
 
+memory_segment  : BEGIN MEMORY_SEGMENT memory_segment_data END MEMORY_SEGMENT {
+                    $$ = $3;
+                }
+                ;
+
+memory_segment_data : IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
+                    MEMORY_SEGMENT.PrgType PrgType;  
+                    try
+                    {
+                        PrgType = (MEMORY_SEGMENT.PrgType) Enum.Parse(typeof(MEMORY_SEGMENT.PrgType), $3);        
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new Exception("Unknown MEMORY_SEGMENT PrgType: " + $3);
+                    }                    
+
+                    MEMORY_SEGMENT.MemoryType MemoryType;  
+                    try
+                    {
+                        MemoryType = (MEMORY_SEGMENT.MemoryType) Enum.Parse(typeof(MEMORY_SEGMENT.MemoryType), $4);        
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new Exception("Unknown MEMORY_SEGMENT MemoryType: " + $4);
+                    }                    
+
+                    MEMORY_SEGMENT.Attribute Attribute;  
+                    try
+                    {
+                        Attribute = (MEMORY_SEGMENT.Attribute) Enum.Parse(typeof(MEMORY_SEGMENT.Attribute), $5);        
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new Exception("Unknown MEMORY_SEGMENT Attribute: " + $5);
+                    }                    
+
+                    $$ = new MEMORY_SEGMENT($1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, $8, $9, $10, $11, $12);
+                }
+                |  memory_segment_data if_data {
+                    $$ = $1;
+                    $$.if_data.Add($2);
+                }
+                ;
+
+memory_layout       : BEGIN MEMORY_LAYOUT memory_layout_data END MEMORY_LAYOUT {
+                        $$ = $3;
+                    }
+                    ;
+
+memory_layout_data  : IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
+                    MEMORY_LAYOUT.PrgType PrgType;  
+                    try
+                    {
+                        PrgType = (MEMORY_LAYOUT.PrgType) Enum.Parse(typeof(MEMORY_LAYOUT.PrgType), $1);        
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new Exception("Unknown MEMORY_LAYOUT PrgType: " + $1);
+                    }
+                    $$ = new MEMORY_LAYOUT(PrgType, (UInt64)$2, (UInt64)$3, $4, $5, $6, $7, $8);
+                }
+                |  memory_layout_data if_data {
+                    $$ = $1;
+                    $$.if_data.Add($2);
+                }
+                ;
 
 deposit         : DEPOSIT IDENTIFIER {
                     DEPOSIT.DEPOSIT_type type;

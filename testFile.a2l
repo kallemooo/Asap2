@@ -8,7 +8,7 @@ A2ML_VERSION 1 1
   /begin HEADER
     "Desc header"
     VERSION "version info"
-    PROJECT_NO 12345
+    PROJECT_NO A12345
   /end HEADER
   /begin MODULE
     SYSTEM
@@ -67,6 +67,78 @@ A2ML_VERSION 1 1
             SEED_AND_KEY_EXTERNAL_FUNCTION "SeedNKeyXcp.dll" 
          /end PROTOCOL_LAYER
     /end IF_DATA
+    
+    /begin MOD_PAR "Module parameters for XCP configuration"
+            VERSION "0"
+            SUPPLIER "Supplier example" 
+            CUSTOMER "Customer example"
+            ECU "ECU example"
+            CPU_TYPE "PPC"
+            PHONE_NO "1234567890"
+            NO_OF_INTERFACES 1
+            ADDR_EPK     0x12345 
+            EPK      "EPROM identifier test" 
+            SYSTEM_CONSTANT "System_Constant_1" "-3.45"
+            SYSTEM_CONSTANT "System_Constant_2" "5.67"
+            SYSTEM_CONSTANT "System_Constant_3" "Text in System Constant"
+            /begin MEMORY_LAYOUT  PRG_DATA  0x0000  0x8000   -1   -1   -1   -1   -1 
+                /begin IF_DATA DIM  
+                    /begin DP_BLOB EXTERN /end DP_BLOB    /* memory type */ 
+                    /begin PA_BLOB DIRECT /end PA_BLOB    /* addressing mode */ 
+                /end IF_DATA 
+            /end MEMORY_LAYOUT                       	  
+            /begin MEMORY_SEGMENT
+            Code "main program" CODE FLASH INTERN 0x0015fff8 0x8 -1 -1 -1 -1 -1 
+            /begin IF_DATA XCP 
+                /begin SEGMENT 
+                  0x0 0x1 0x0 0x0 0x0 
+                    /begin CHECKSUM 
+                      XCP_ADD_14
+    				  MAX_BLOCK_SIZE 0x100	
+                    /end CHECKSUM
+                    /begin PAGE 
+                      0x0 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_NOT_ALLOWED XCP_WRITE_ACCESS_NOT_ALLOWED 
+                    /end PAGE
+                /end SEGMENT
+            /end IF_DATA
+          /end MEMORY_SEGMENT
+          
+          /begin MEMORY_SEGMENT
+            flash_calib_offline "flash_calib_offline" OFFLINE_DATA FLASH INTERN 0x00140000 0xab00 -1 -1 -1 -1 -1 
+            /begin IF_DATA XCP 
+                /begin SEGMENT 
+                  0x1 0x1 0x0 0x0 0x0 
+                    /begin CHECKSUM 
+                      XCP_ADD_14 
+    		          MAX_BLOCK_SIZE 0x100
+                    /end CHECKSUM
+                    /begin PAGE 
+                      0x0 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_WITH_ECU_ONLY XCP_WRITE_ACCESS_NOT_ALLOWED 
+                    /end PAGE
+                /end SEGMENT
+            /end IF_DATA
+          /end MEMORY_SEGMENT
+    	  
+          /begin MEMORY_SEGMENT
+            flash_calib_online "flash_calib_online" DATA FLASH INTERN 0x0014ab00 0x154f8 -1 -1 -1 -1 -1 
+            /begin IF_DATA XCP 
+                /begin SEGMENT 
+                  0x2 0x2 0x0 0x0 0x0 
+                    /begin CHECKSUM 
+                      XCP_ADD_14 
+    	              MAX_BLOCK_SIZE 0x100
+                    /end CHECKSUM
+                    /begin PAGE 
+                      0x0 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_WITH_ECU_ONLY XCP_WRITE_ACCESS_NOT_ALLOWED  
+                    /end PAGE
+                    /begin PAGE 
+                      0x1 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_WITH_ECU_ONLY XCP_WRITE_ACCESS_WITH_ECU_ONLY 
+                    /end PAGE
+                /end SEGMENT
+            /end IF_DATA
+          /end MEMORY_SEGMENT
+        /end MOD_PAR
+        
 	/begin MEASUREMENT
 		Measurement_1
 		"Measurement_1 description"

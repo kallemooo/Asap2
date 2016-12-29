@@ -49,6 +49,9 @@ ARRAY_SIZE                      { return (int)Token.ARRAY_SIZE; }
 BIT_MASK                        { return (int)Token.BIT_MASK; }
 BIT_OPERATION                   { return (int)Token.BIT_OPERATION; }
 CALIBRATION_ACCESS              { return (int)Token.CALIBRATION_ACCESS; }
+CALIBRATION_METHOD              { return (int)Token.CALIBRATION_METHOD; }
+CALIBRATION_HANDLE              { return (int)Token.CALIBRATION_HANDLE; }
+CALIBRATION_HANDLE_TEXT         { return (int)Token.CALIBRATION_HANDLE_TEXT; }
 COMPU_VTAB                      { return (int)Token.COMPU_VTAB; }
 COMPU_VTAB_RANGE                { return (int)Token.COMPU_VTAB_RANGE; }
 CPU_TYPE                        { return (int)Token.CPU_TYPE; }
@@ -56,6 +59,9 @@ CUSTOMER                        { return (int)Token.CUSTOMER; }
 CUSTOMER_NO                     { return (int)Token.CUSTOMER_NO; }
 DEFAULT_VALUE                   { return (int)Token.DEFAULT_VALUE; }
 DISPLAY_IDENTIFIER              { return (int)Token.DISPLAY_IDENTIFIER; }
+ECU                             { return (int)Token.ECU; }
+ECU_CALIBRATION_OFFSET          { return (int)Token.ECU_CALIBRATION_OFFSET; }
+EPK                             { return (int)Token.EPK; }
 RIGHT_SHIFT                     { return (int)Token.RIGHT_SHIFT; }
 LEFT_SHIFT                      { return (int)Token.LEFT_SHIFT; }
 SIGN_EXTEND                     { return (int)Token.SIGN_EXTEND; }
@@ -65,6 +71,14 @@ PROJECT                         { return (int)Token.PROJECT; }
 HEADER                          { return (int)Token.HEADER; }
 MODULE                          { return (int)Token.MODULE; }
 MOD_COMMON                      { return (int)Token.MOD_COMMON; }
+MEMORY_SEGMENT                  { return (int)Token.MEMORY_SEGMENT; }
+MEMORY_LAYOUT                   { return (int)Token.MEMORY_LAYOUT; }
+MOD_PAR                         { return (int)Token.MOD_PAR; }
+NO_OF_INTERFACES                { return (int)Token.NO_OF_INTERFACES; }
+PHONE_NO                        { return (int)Token.PHONE_NO; }
+SUPPLIER                        { return (int)Token.SUPPLIER; }
+SYSTEM_CONSTANT                 { return (int)Token.SYSTEM_CONSTANT; }
+USER                            { return (int)Token.USER; }
 DEPOSIT                         { return (int)Token.DEPOSIT; }
 BYTE_ORDER                      { return (int)Token.BYTE_ORDER; }
 DATA_SIZE                       { return (int)Token.DATA_SIZE; }
