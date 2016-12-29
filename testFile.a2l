@@ -13,6 +13,33 @@ A2ML_VERSION 1 1
   /begin MODULE
     SYSTEM
     "Desc SYSTEM MODULE"
+    /begin A2ML
+              block "IF_DATA" taggedunion if_data {
+                "CANAPE_EXT" struct {
+                  int;             /* version number */
+                  taggedstruct {
+                    "LINK_MAP" struct {
+                      char[256];   /* segment name */
+                      long;        /* base address of the segment */
+                      uint;        /* address extension of the segment */
+                      uint;        /* flag: address is relative to DS */
+                      long;        /* offset of the segment address */
+                      uint;        /* datatypValid */
+                      uint;        /* enum datatyp */
+                      uint;        /* bit offset of the segment */
+                    };
+                    "DISPLAY" struct {
+                      long;        /* display color */
+                      double;      /* minimal display value (phys)*/
+                      double;      /* maximal display value (phys)*/
+                    };
+                    "VIRTUAL_CONVERSION" struct {
+                      char[256];   /* name of the conversion formula */
+                    };
+                  };
+                };
+    /end A2ML
+
     /begin MOD_COMMON "Desc mod_common"
           DEPOSIT ABSOLUTE
           ALIGNMENT_BYTE 1
@@ -51,7 +78,26 @@ A2ML_VERSION 1 1
 		65535
 		ECU_ADDRESS 0x4000b6ee
 		FORMAT "%8.5"
+		/begin BIT_OPERATION
+			RIGHT_SHIFT 4
+			LEFT_SHIFT 6
+			SIGN_EXTEND
+		/end BIT_OPERATION
 	/end MEASUREMENT
+    /begin MEASUREMENT
+        /* Name           */     Measurement_3_Array
+        /* LongIdentifier */     "Array test 3"
+        /* Datatype       */     UWORD
+        /* Conversion     */     NO_COMPU_METHOD
+        /* Resolution     */     1
+        /* Accuracy       */     0
+        /* LowerLimit     */     0
+        /* UpperLimit     */     65535
+		ARRAY_SIZE				 8
+        ECU_ADDRESS              0x4000074c
+        ECU_ADDRESS_EXTENSION    0x0
+        FORMAT "%8.5"
+    /end MEASUREMENT
     /begin MEASUREMENT
         /* Name           */     Measurement_2_Array[0]
         /* LongIdentifier */     "Array test part 0.
@@ -77,7 +123,45 @@ A2ML_VERSION 1 1
         /* UpperLimit     */     65535
         ECU_ADDRESS              0x4000074c
         ECU_ADDRESS_EXTENSION    0x0
+		DISPLAY_IDENTIFIER Measurement_2_ArrayDISPLAY_IDENTIFIER[1]
         FORMAT "%8.5"
+		/begin ANNOTATION
+			ANNOTATION_LABEL "Measurement_2_Array[1] annotation label"
+			ANNOTATION_ORIGIN "Measurement_2_Array[1] annotation origin"
+			/begin ANNOTATION_TEXT
+				"Measurement_2_Array[1] annotation test line1.\r\n"
+				"Measurement_2_Array[1] annotation test line2.\r\n"
+				"Measurement_2_Array[1] annotation test line3."
+			/end ANNOTATION_TEXT
+		/end ANNOTATION
     /end MEASUREMENT
-   /end MODULE
+	/begin COMPU_VTAB compu_vtab_boolean 
+		""
+		TAB_VERB
+		2
+		0 "FALSE"
+		1 "TRUE"
+	/end COMPU_VTAB
+
+	/begin COMPU_VTAB compu_vtab_example1 
+		""
+		TAB_VERB
+		5
+		0 "compu_vtab_example1_level0"
+		1 "compu_vtab_example1_level1"
+		2 "compu_vtab_example1_level2"
+		11 "compu_vtab_example1_level11"
+		13 "compu_vtab_example1_level13"
+        DEFAULT_VALUE "compu_vtab_example1_error"
+	/end COMPU_VTAB
+
+	/begin COMPU_VTAB compu_vtab_example2 
+		""
+		TAB_VERB
+		3
+		0 "compu_vtab_example2_Idle"
+		1 "compu_vtab_example2_Strtg"
+		2 "compu_vtab_example2_Actv"
+	/end COMPU_VTAB
+ /end MODULE
 /end PROJECT
