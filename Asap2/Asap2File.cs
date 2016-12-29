@@ -217,41 +217,32 @@ namespace Asap2
         public BYTE_ORDER_type value;
     }
 
-    [Base(IsSimple = true)]
-    public class DATA_SIZE : Asap2Base
-    {
-        public DATA_SIZE(uint value)
-        {
-            this.value = value;
-        }
-
-        [Element(0, IsArgument = true)]
-        public uint value;
-    }
-
     [Base()]
     public class MOD_COMMON : Asap2Base
     {
-        public MOD_COMMON(string LongIdentifier)
+        public MOD_COMMON(string Comment)
         {
             alignments = new Dictionary<string, ALIGNMENT>();
-            this.LongIdentifier = LongIdentifier;
+            this.Comment = Comment;
         }
 
-        [Element(0, IsString = true, Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        [Element(0, IsString = true, Comment = " Comment ")]
+        public string Comment;
 
-        [Element(1)]
-        public DEPOSIT deposit;
+        [Element(1, IsDictionary = true)]
+        public Dictionary<string, ALIGNMENT> alignments;
 
         [Element(2)]
         public BYTE_ORDER byte_order;
 
-        [Element(3, IsDictionary = true)]
-        public Dictionary<string, ALIGNMENT> alignments;
+        [Element(3, IsArgument = true, Name = "DATA_SIZE")]
+        public UInt64? data_size;
 
         [Element(4)]
-        public DATA_SIZE data_size;
+        public DEPOSIT deposit;
+
+        [Element(5, IsArgument = true, Name = "S_REC_LAYOUT")]
+        public string s_rec_layout;
     }
 
     [Base()]

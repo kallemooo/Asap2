@@ -49,6 +49,8 @@ A2ML_VERSION 1 1
           ALIGNMENT_INT64 8
           ALIGNMENT_FLOAT32_IEEE 4
           ALIGNMENT_FLOAT64_IEEE 4
+          S_REC_LAYOUT TEST_S_REC_LAYOUT
+          DATA_SIZE 32
     /end MOD_COMMON
 	/begin IF_DATA XCP
          /begin PROTOCOL_LAYER
@@ -76,7 +78,8 @@ A2ML_VERSION 1 1
             CPU_TYPE "PPC"
             PHONE_NO "1234567890"
             NO_OF_INTERFACES 1
-            ADDR_EPK     0x12345 
+            ADDR_EPK     0x12345
+            ECU_CALIBRATION_OFFSET 0x1000
             EPK      "EPROM identifier test" 
             SYSTEM_CONSTANT "System_Constant_1" "-3.45"
             SYSTEM_CONSTANT "System_Constant_2" "5.67"

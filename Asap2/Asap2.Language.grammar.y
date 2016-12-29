@@ -17,7 +17,6 @@
             public PROJECT project;
             public HEADER header;
             public MEASUREMENT measurement;
-            public DATA_SIZE data_size;
             public ECU_ADDRESS ecu_address;
             public ECU_ADDRESS_EXTENSION ecu_address_ext;
             public FORMAT format;
@@ -88,6 +87,7 @@
 %token NO_OF_INTERFACES
 %token BYTE_ORDER
 %token DATA_SIZE
+%token S_REC_LAYOUT
 %token VERSION
 %token PROJECT_NO
 %token PHONE_NO
@@ -105,7 +105,6 @@
 
 %type <deposit>             deposit
 %type <byte_order>          byte_order
-%type <data_size>           data_size
 %type <a2ml>                a2ml
 %type <addr_epk>            addr_epk
 %type <alignment>           alignment
@@ -456,9 +455,13 @@ mod_common_data :  QUOTED_STRING {
                     $$ = $1;
                     $$.byte_order = $2;
                 }
-                |  mod_common_data data_size {
+                |  mod_common_data DATA_SIZE NUMBER {
                     $$ = $1;
-                    $$.data_size  = $2;
+                    $$.data_size  = (UInt64)$3;
+                }
+                |  mod_common_data S_REC_LAYOUT IDENTIFIER {
+                    $$ = $1;
+                    $$.s_rec_layout  = $3;
                 }
                 |  mod_common_data alignment {
                     $$ = $1;
@@ -683,11 +686,6 @@ byte_order      : BYTE_ORDER IDENTIFIER {
                         throw new Exception("Unknown BYTE_ORDER type: " + $2);
                     }
                     $$ = new BYTE_ORDER(order);
-                }
-                ;
-
-data_size       : DATA_SIZE NUMBER {
-                    $$ = new DATA_SIZE((uint)$2);
                 }
                 ;
 

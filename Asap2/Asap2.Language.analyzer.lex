@@ -64,6 +64,7 @@ ECU_CALIBRATION_OFFSET          { return (int)Token.ECU_CALIBRATION_OFFSET; }
 EPK                             { return (int)Token.EPK; }
 RIGHT_SHIFT                     { return (int)Token.RIGHT_SHIFT; }
 LEFT_SHIFT                      { return (int)Token.LEFT_SHIFT; }
+S_REC_LAYOUT                    { return (int)Token.S_REC_LAYOUT; }
 SIGN_EXTEND                     { return (int)Token.SIGN_EXTEND; }
 ECU_ADDRESS                     { return (int)Token.ECU_ADDRESS; }
 ECU_ADDRESS_EXTENSION           { return (int)Token.ECU_ADDRESS_EXTENSION; }
