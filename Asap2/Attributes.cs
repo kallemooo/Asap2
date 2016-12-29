@@ -32,7 +32,7 @@ namespace Asap2
     {
         // Private fields.
         private string name;
-        private uint? sortOrder;
+        private uint sortOrder;
         private string comment;
         private bool isName;
         private bool isArgument;
@@ -40,17 +40,20 @@ namespace Asap2
         private bool isComment;
         private bool isPreComment;
         private bool isDictionary;
+        private bool isList;
         private bool forceNewLine;
         private bool codeAsHex;
 
-        public ElementAttribute()
+        public ElementAttribute(uint SortOrder)
         {
+            this.sortOrder = SortOrder;
             this.isName = false;
             this.isArgument = false;
             this.isString = false;
             this.isComment = false;
             this.isPreComment = false;
             this.isDictionary = false;
+            this.isList = false;
             this.forceNewLine = false;
             this.codeAsHex = false;
         }
@@ -110,6 +113,15 @@ namespace Asap2
         }
 
         /// <summary>
+        /// Is a list of type List&lt;object&gt;. Object is a new node or simple data that can be fetched whith ToString().
+        /// </summary>
+        public virtual bool IsList
+        {
+            get { return isList; }
+            set { isList = value; }
+        }
+
+        /// <summary>
         /// Force extra newline before this element.
         /// </summary>
         public virtual bool ForceNewLine
@@ -141,8 +153,7 @@ namespace Asap2
         /// </summary>
         public virtual uint SortOrder
         {
-            get { return sortOrder.Value; }
-            set { sortOrder = value; }
+            get { return sortOrder; }
         }
 
         /// <summary>

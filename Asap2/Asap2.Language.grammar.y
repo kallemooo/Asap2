@@ -187,7 +187,7 @@ annotation_text_data        : /* empty */ {
                             }
                             | annotation_text_data QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add($$.data.Count.ToString(), new ANNOTATION_TEXT_DATA($2));
+                                $$.data.Add($2);
                             }
                             ;
 
@@ -248,7 +248,11 @@ compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
                             }
                             | compu_vtab_data NUMBER QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add($3, new COMPU_VTAB_DATA($2.ToString(), $3));
+                                $$.data.Add(new COMPU_VTAB_DATA($2.ToString(), $3));
+                            }
+                            | compu_vtab_data DOUBLE QUOTED_STRING {
+                                $$ = $1;
+                                $$.data.Add(new COMPU_VTAB_DATA($2.ToString(), $3));
                             }
                             | compu_vtab_data DEFAULT_VALUE QUOTED_STRING {
                                 $$ = $1;
@@ -266,19 +270,19 @@ compu_vtab_range_data       : IDENTIFIER QUOTED_STRING NUMBER {
                             }
                             | compu_vtab_range_data NUMBER NUMBER QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
                             }
                             | compu_vtab_range_data DOUBLE NUMBER QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
                             }
                             | compu_vtab_range_data NUMBER DOUBLE QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
                             }
                             | compu_vtab_range_data DOUBLE DOUBLE QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add($4, new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
                             }
                             | compu_vtab_range_data DEFAULT_VALUE QUOTED_STRING {
                                 $$ = $1;
@@ -361,7 +365,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
                 | module_data a2ml {
                     $$ = $1;
-                    $$.A2MLs.Add($$.A2MLs.Count.ToString(), $2);
+                    $$.A2MLs.Add($2);
                 }
                 | module_data compu_vtab {
                     $$ = $1;

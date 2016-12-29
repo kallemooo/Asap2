@@ -10,7 +10,7 @@ namespace Asap2
     {
         private static ulong orderId;
 
-        protected ulong OrderID { get; set; }
+        public ulong OrderID { get; protected set; }
 
         // Static constructor to initialize the static member, orderId. This
         // constructor is called one time, automatically, before any instance
@@ -35,16 +35,16 @@ namespace Asap2
 
     public class Asap2File : Asap2Base
     {
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
+        [Element(0, IsComment = true, IsPreComment = true)]
         public string fileComment = " Start of A2L file ";
 
-        [Element(SortOrder = 2)]
+        [Element(1)]
         public ASAP2_VERSION asap2_version;
 
-        [Element(SortOrder = 3)]
+        [Element(2)]
         public A2ML_VERSION a2ml_version;
 
-        [Element(SortOrder = 4)]
+        [Element(3)]
         public PROJECT project;
     }
 
@@ -57,13 +57,10 @@ namespace Asap2
             this.UpgradeNo = UpgradeNo;
         }
 
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment;
-    
-        [Element(IsArgument = true, SortOrder = 2)]
+        [Element(0, IsArgument = true)]
         public UInt32 VersionNo;
-        
-        [Element(IsArgument = true, SortOrder = 3)]
+
+        [Element(1, IsArgument = true)]
         public UInt32 UpgradeNo;
     }
 
@@ -76,36 +73,35 @@ namespace Asap2
             this.UpgradeNo = UpgradeNo;
         }
 
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment;
-
-        [Element(IsArgument = true, SortOrder = 2)]
+        [Element(0, IsArgument = true)]
         public UInt32 VersionNo;
 
-        [Element(IsArgument = true, SortOrder = 3)]
+        [Element(1, IsArgument = true)]
         public UInt32 UpgradeNo;
     }
 
     [Base()]
     public class PROJECT : Asap2Base
     {
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment = " The project ";
+        public PROJECT()
+        {
+            modules = new Dictionary<string, MODULE>();
+        }
 
-        [Element(IsArgument = true, SortOrder = 2, Comment = " Name           ")]
+        [Element(0, IsArgument = true, Comment = " Name           ")]
         public string name;
-        
-        [Element(IsString = true, SortOrder = 3,  Comment = " LongIdentifier ")]
+
+        [Element(1, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;
 
-        [Element(SortOrder = 4)]
+        [Element(2)]
         public HEADER header;
 
         /// <summary>
         /// Dictionary with the project modules. The key is the name of the module.
         /// </summary>
-        [Element(IsDictionary=true, SortOrder = 5, Comment = " Project modules ")]
-        public Dictionary<string, MODULE> modules = new Dictionary<string, MODULE>();
+        [Element(3, IsDictionary = true)]
+        public Dictionary<string, MODULE> modules;
     }
 
     [Base(IsSimple = true)]
@@ -115,7 +111,7 @@ namespace Asap2
         {
             this.project_no = project_no;
         }
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public string project_no;
     }
 
@@ -126,55 +122,56 @@ namespace Asap2
         {
             this.version = version;
         }
-        [Element(IsString = true)]
+        [Element(0, IsString = true)]
         public string version;
     }
 
     [Base()]
     public class HEADER : Asap2Base
     {
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment = " Project header ";
-
-        [Element(IsString = true, SortOrder = 2)]
+        [Element(0, IsString = true)]
         public string longIdentifier;
 
-        [Element(SortOrder = 3)]
+        [Element(1)]
         public VERSION version;
 
-        [Element(SortOrder = 4)]
+        [Element(2)]
         public PROJECT_NO project_no;
     }
 
     [Base()]
     public class MODULE : Asap2Base
     {
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment = " Project module ";
+        public MODULE()
+        {
+            measurements = new Dictionary<string, MEASUREMENT>();
+            COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
+            COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
+        }
 
-        [Element(IsArgument = true, SortOrder = 2, Comment = " Name           ")]
+        [Element(1, IsArgument = true, Comment = " Name           ")]
         public string name;
 
-        [Element(IsString = true, SortOrder = 3,  Comment = " LongIdentifier ")]
+        [Element(2, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;
 
-        [Element(IsDictionary = true)]
-        public Dictionary<string, A2ML> A2MLs = new Dictionary<string, A2ML>();
+        [Element(3, IsList = true)]
+        public List<A2ML> A2MLs = new List<A2ML>();
 
-        [Element(IsDictionary = true)]
+        [Element(4, IsDictionary = true)]
         public Dictionary<string, IF_DATA> IF_DATAs = new Dictionary<string, IF_DATA>();
 
-        [Element()]
+        [Element(5)]
         public MOD_COMMON mod_common;
 
-        [Element(IsDictionary = true, Comment = " MEASUREMENTs      ")]
-        public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
+        [Element(6, IsDictionary = true, Comment = " Measurment data for the module ")]
+        public Dictionary<string, MEASUREMENT> measurements;
 
-        [Element(IsDictionary = true, Comment = " COMPU_VTABs       ")]
-        public Dictionary<string, COMPU_VTAB> COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
+        [Element(7, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
+        public Dictionary<string, COMPU_VTAB> COMPU_VTABs;
 
-        [Element(IsDictionary = true, Comment = " COMPU_VTAB_RANGEs ")]
-        public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
+        [Element(8, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
+        public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs;
     }
 
     [Base(IsSimple = true)]
@@ -197,9 +194,9 @@ namespace Asap2
         }
 
         public ALIGNMENT_type type;
-        [Element(IsName = true, SortOrder = 1)]
+        [Element(0, IsName = true)]
         public string name;
-        [Element(IsArgument = true, SortOrder = 2)]
+        [Element(1, IsArgument = true)]
         public uint value;
     }
 
@@ -216,7 +213,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public DEPOSIT_type value;
     }
 
@@ -235,7 +232,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public BYTE_ORDER_type value;
     }
 
@@ -247,7 +244,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public uint value;
     }
 
@@ -256,25 +253,23 @@ namespace Asap2
     {
         public MOD_COMMON(string LongIdentifier)
         {
+            alignments = new Dictionary<string, ALIGNMENT>();
             this.LongIdentifier = LongIdentifier;
         }
 
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment = " Module default values ";
-
-        [Element(IsString = true, SortOrder = 2, Comment = " LongIdentifier ")]
+        [Element(0, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;
 
-        [Element()]
+        [Element(1)]
         public DEPOSIT deposit;
-        
-        [Element()]
+
+        [Element(2)]
         public BYTE_ORDER byte_order;
 
-        [Element(IsDictionary = true)]
-        public Dictionary<string, ALIGNMENT> alignments = new Dictionary<string, ALIGNMENT>();
+        [Element(3, IsDictionary = true)]
+        public Dictionary<string, ALIGNMENT> alignments;
 
-        [Element()]
+        [Element(4)]
         public DATA_SIZE data_size;
     }
 
@@ -289,7 +284,7 @@ namespace Asap2
             this.name = words[0];
         }
         public string name;
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public string data;
     }
 
@@ -300,7 +295,7 @@ namespace Asap2
         {
             this.data = data;
         }
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public string data;
     }
 
@@ -318,42 +313,40 @@ namespace Asap2
             this.LowerLimit = LowerLimit;
             this.UpperLimit = UpperLimit;
         }
-        [Element(IsComment = true, IsPreComment=true, SortOrder = 1)]
-        public string comment;
-        [Element(IsArgument = true, Comment = " Name           ", SortOrder = 2)]
+        [Element(1, IsArgument = true, Comment = " Name           ")]
         public string name;
-        [Element(IsString = true,  Comment = " LongIdentifier ", SortOrder = 3)]
+        [Element(2, IsString = true, Comment   = " LongIdentifier ")]
         public string LongIdentifier;
-        [Element(IsArgument = true, Comment = " Datatype       ", SortOrder = 4)]
+        [Element(3, IsArgument = true, Comment = " Datatype       ")]
         public string Datatype;
-        [Element(IsArgument = true, Comment = " Conversion     ", SortOrder = 5)]
+        [Element(4, IsArgument = true, Comment = " Conversion     ")]
         public string Conversion;
-        [Element(IsArgument = true, Comment = " Resolution     ", SortOrder = 6)]
+        [Element(5, IsArgument = true, Comment = " Resolution     ")]
         public uint Resolution;
-        [Element(IsArgument = true, Comment = " Accuracy       ", SortOrder = 7)]
+        [Element(6, IsArgument = true, Comment = " Accuracy       ")]
         public uint Accuracy;
-        [Element(IsArgument = true, Comment = " LowerLimit     ", SortOrder = 8)]
+        [Element(7, IsArgument = true, Comment = " LowerLimit     ")]
         public uint LowerLimit;
-        [Element(IsArgument = true, Comment = " UpperLimit     ", SortOrder = 9)]
+        [Element(8, IsArgument = true, Comment = " UpperLimit     ")]
         public uint UpperLimit;
 
-        [Element(IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
+        [Element(9, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
         public string display_identifier;
-        [Element()]
+        [Element(10)]
         public ECU_ADDRESS ecu_address;
-        [Element()]
+        [Element(11)]
         public ECU_ADDRESS_EXTENSION ecu_address_extension;
-        [Element()]
+        [Element(12)]
         public ARRAY_SIZE array_size;
-        [Element()]
+        [Element(13)]
         public FORMAT format;
-        [Element()]
+        [Element(14)]
         public BIT_MASK bit_mask;
-        [Element()]
+        [Element(15)]
         public BIT_OPERATION bit_operation;
-        [Element()]
+        [Element(16)]
         public MATRIX_DIM matrix_dim;
-        [Element()]
+        [Element(17)]
         public ANNOTATION annotation;
     }
 
@@ -365,7 +358,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true, CodeAsHex = true)]
+        [Element(0, IsArgument = true, CodeAsHex = true)]
         public UInt64 value;
     }
 
@@ -377,7 +370,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true, CodeAsHex = true)]
+        [Element(0, IsArgument = true, CodeAsHex = true)]
         public UInt64 value;
     }
 
@@ -389,7 +382,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true, CodeAsHex = true)]
+        [Element(0, IsArgument = true, CodeAsHex = true)]
         public UInt64 value;
     }
 
@@ -401,10 +394,10 @@ namespace Asap2
             this.Address = Address;
         }
 
-        [Element(IsArgument = true, CodeAsHex = true)]
+        [Element(0, IsArgument = true, CodeAsHex = true)]
         public UInt64 Address;
     }
-    
+
     [Base(IsSimple = true)]
     public class FORMAT : Asap2Base
     {
@@ -413,18 +406,18 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsString = true)]
+        [Element(0, IsString = true)]
         public string value;
     }
 
     [Base()]
     public class ANNOTATION : Asap2Base
     {
-        [Element(SortOrder = 1)]
+        [Element(0)]
         public ANNOTATION_LABEL annotation_label;
-        [Element(SortOrder = 2)]
+        [Element(1)]
         public ANNOTATION_ORIGIN annotation_origin;
-        [Element(SortOrder = 3)]
+        [Element(2)]
         public ANNOTATION_TEXT annotation_text;
     }
 
@@ -436,7 +429,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsString = true)]
+        [Element(0, IsString = true)]
         public string value;
     }
 
@@ -448,32 +441,16 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsString = true)]
+        [Element(0, IsString = true)]
         public string value;
     }
 
     [Base()]
     public class ANNOTATION_TEXT : Asap2Base
     {
-        [Element(IsDictionary = true)]
-        public Dictionary<string, ANNOTATION_TEXT_DATA> data = new Dictionary<string, ANNOTATION_TEXT_DATA>();
+        [Element(0, IsString = true, IsList = true)]
+        public List<string> data = new List<string>();
     }
-
-    [Base(IsSimple = true)]
-    public class ANNOTATION_TEXT_DATA : Asap2Base
-    {
-        public ANNOTATION_TEXT_DATA(string value)
-        {
-            this.value = value;
-        }
-
-        [Element(IsName = true)]
-        public const string name = "";
-
-        [Element(IsString = true, Name = "")]
-        public string value;
-    }
-
 
     [Base(IsSimple = true)]
     public class ARRAY_SIZE : Asap2Base
@@ -483,18 +460,18 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public ulong value;
     }
 
     [Base()]
     public class BIT_OPERATION : Asap2Base
     {
-        [Element(SortOrder = 1)]
+        [Element(0)]
         public RIGHT_SHIFT right_shift;
-        [Element(SortOrder = 2)]
+        [Element(2)]
         public LEFT_SHIFT left_shift;
-        [Element(SortOrder = 3)]
+        [Element(3)]
         public SIGN_EXTEND sign_extend;
     }
 
@@ -506,10 +483,10 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public ulong value;
     }
-    
+
     [Base(IsSimple = true)]
     public class LEFT_SHIFT : Asap2Base
     {
@@ -518,7 +495,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public ulong value;
     }
 
@@ -542,7 +519,7 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsArgument = true)]
+        [Element(0, IsArgument = true)]
         public CALIBRATION_ACCESS_type value;
     }
 
@@ -554,21 +531,20 @@ namespace Asap2
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
             this.NumberValuePairs = NumberValuePairs;
+            data = new List<COMPU_VTAB_DATA>();
         }
 
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment;
-        [Element(IsArgument = true, Comment = " Name           ", SortOrder = 2)]
+        [Element(1, IsArgument = true, Comment = " Name           ")]
         public string Name;
-        [Element(IsString = true, Comment =  " LongIdentifier ", SortOrder = 3)]
+        [Element(2, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;
-        [Element(IsArgument = true, Comment = " ConversionType ", SortOrder = 4)]
+        [Element(3, IsArgument = true, Comment = " ConversionType ")]
         public string ConversionType = "TAB_VERB";
-        [Element(IsArgument = true, Comment = " NumberValuePairs ", SortOrder = 5)]
+        [Element(4, IsArgument = true, Comment = " NumberValuePairs ")]
         public uint NumberValuePairs;
-        [Element(IsDictionary = true, SortOrder = 6)]
-        public Dictionary<string, COMPU_VTAB_DATA> data = new Dictionary<string, COMPU_VTAB_DATA>();
-        [Element(IsString = true, Name = "DEFAULT_VALUE", SortOrder = 7)]
+        [Element(5, IsList = true)]
+        public List<COMPU_VTAB_DATA> data;
+        [Element(6, IsString = true, Name = "DEFAULT_VALUE")]
         public string default_value;
     }
 
@@ -581,10 +557,10 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsName = true)]
+        [Element(0, IsName = true)]
         public string name;
 
-        [Element(IsString = true)]
+        [Element(1, IsString = true)]
         public string value;
     }
 
@@ -596,19 +572,18 @@ namespace Asap2
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
             this.NumberValueTriples = NumberValueTriples;
+            data = new List<COMPU_VTAB_RANGE_DATA>();
         }
 
-        [Element(IsComment = true, IsPreComment = true, SortOrder = 1)]
-        public string comment;
-        [Element(IsArgument = true, Comment = " Name           ", SortOrder = 2)]
+        [Element(1, IsArgument = true, Comment = " Name           ")]
         public string Name;
-        [Element(IsString = true, Comment = " LongIdentifier ", SortOrder = 3)]
+        [Element(2, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;
-        [Element(IsArgument = true, Comment = " NumberValueTriples ", SortOrder = 4)]
+        [Element(3, IsArgument = true, Comment = " NumberValueTriples ")]
         public uint NumberValueTriples;
-        [Element(IsDictionary = true, SortOrder = 5)]
-        public Dictionary<string, COMPU_VTAB_RANGE_DATA> data = new Dictionary<string, COMPU_VTAB_RANGE_DATA>();
-        [Element(IsString = true, Name = "DEFAULT_VALUE", SortOrder = 6)]
+        [Element(4, IsList = true)]
+        public List<COMPU_VTAB_RANGE_DATA> data;
+        [Element(5, IsString = true, Name = "DEFAULT_VALUE")]
         public string default_value;
     }
 
@@ -622,16 +597,16 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(IsName = true, SortOrder = 1)]
+        [Element(0, IsName = true)]
         public string name = "";
 
-        [Element(IsArgument = true, SortOrder = 2)]
+        [Element(1, IsArgument = true)]
         public decimal InValMin;
 
-        [Element(IsArgument = true, SortOrder = 3)]
+        [Element(2, IsArgument = true)]
         public decimal InValMax;
 
-        [Element(IsString = true, SortOrder = 4)]
+        [Element(3, IsString = true)]
         public string value;
     }
 
@@ -645,11 +620,11 @@ namespace Asap2
             this.zDim = zDim;
         }
 
-        [Element(IsArgument = true, SortOrder = 1)]
+        [Element(0, IsArgument = true)]
         public uint xDim;
-        [Element(IsArgument = true, SortOrder = 2)]
+        [Element(1, IsArgument = true)]
         public uint yDim;
-        [Element(IsArgument = true, SortOrder = 3)]
+        [Element(2, IsArgument = true)]
         public uint zDim;
     }
 }
