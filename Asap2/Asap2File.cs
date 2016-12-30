@@ -510,13 +510,13 @@ namespace Asap2
 
         [Element(1, IsArgument = true, Comment = " Name           ")]
         public string Name;
-        [Element(2, IsString = true, Comment = " LongIdentifier ")]
+        [Element(2, IsString = true, Comment   = " LongIdentifier ")]
         public string LongIdentifier;
         [Element(3, IsArgument = true, Comment = " ConversionType ")]
         public string ConversionType = "TAB_VERB";
         [Element(4, IsArgument = true, Comment = " NumberValuePairs ")]
         public uint NumberValuePairs;
-        [Element(5, IsList = true)]
+        [Element(5, IsList = true, Comment     = " ValuePairs       ")]
         public List<COMPU_VTAB_DATA> data;
         [Element(6, IsString = true, Name = "DEFAULT_VALUE")]
         public string default_value;
@@ -525,17 +525,20 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class COMPU_VTAB_DATA : Asap2Base
     {
-        public COMPU_VTAB_DATA(string name, string value)
+        public COMPU_VTAB_DATA(decimal InVal, string OutVal)
         {
-            this.name = name;
-            this.value = value;
+            this.InVal = InVal;
+            this.OutVal = OutVal;
         }
 
-        [Element(0, IsName = true)]
-        public string name;
+        [Element(0, IsName = true, ForceNewLine = true)]
+        public string name = "";
 
-        [Element(1, IsString = true)]
-        public string value;
+        [Element(1, IsArgument = true, ForceNewLine = true)]
+        public decimal InVal;
+
+        [Element(2, IsString = true)]
+        public string OutVal;
     }
 
     [Base()]

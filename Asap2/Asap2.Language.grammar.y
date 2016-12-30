@@ -306,7 +306,7 @@ compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
                             }
                             | compu_vtab_data NUMBER QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_DATA($2.ToString(), $3));
+                                $$.data.Add(new COMPU_VTAB_DATA($2, $3));
                             }
                             | compu_vtab_data default_value {
                                 $$ = $1;
