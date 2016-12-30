@@ -341,7 +341,7 @@ namespace Asap2
                                     String value = Enum.GetName(fI[i].FieldType, fI[i].GetValue(tree));
                                     resultElement.data = value;
                                 }
-                                else if (fI[i].FieldType.IsPrimitive && att.CodeAsHex)
+                                else if (att.CodeAsHex)
                                 {
                                     UInt64 data = (UInt64)fI[i].GetValue(tree);
                                     String value = "0x" + data.ToString("X");
@@ -437,7 +437,7 @@ namespace Asap2
                                                     String value = Enum.GetName(item.GetType(), item);
                                                     dicElement.data = value;
                                                 }
-                                                else if (item.GetType().IsPrimitive && att.CodeAsHex)
+                                                else if (att.CodeAsHex)
                                                 {
                                                     UInt64 data = (UInt64)item;
                                                     String value = "0x" + data.ToString("X");
