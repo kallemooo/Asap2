@@ -11,6 +11,7 @@ namespace Asap2
     {
         // Private fields.
         private bool isSimple;
+        private string ObsoleteMsg;
 
         public BaseAttribute()
         {
@@ -24,6 +25,15 @@ namespace Asap2
         {
             get { return isSimple; }
             set { isSimple = value; }
+        }
+
+        /// <summary>
+        /// This type is Obsolete if this string is populated with a obsolete message.
+        /// </summary>
+        public virtual string IsObsolete
+        {
+            get { return ObsoleteMsg; }
+            set { ObsoleteMsg = value; }
         }
     }
 
@@ -43,6 +53,7 @@ namespace Asap2
         private bool isList;
         private bool forceNewLine;
         private bool codeAsHex;
+        private string ObsoleteMsg;
 
         public ElementAttribute(uint SortOrder)
         {
@@ -163,6 +174,15 @@ namespace Asap2
         {
             get { return comment; }
             set { comment = value; }
+        }
+
+        /// <summary>
+        /// This parameter is obsolete if this string is populated with a obsolete message.
+        /// </summary>
+        public virtual string IsObsolete
+        {
+            get { return ObsoleteMsg; }
+            set { ObsoleteMsg = value; }
         }
     }
 }
