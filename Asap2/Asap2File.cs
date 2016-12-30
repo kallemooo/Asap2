@@ -33,6 +33,20 @@ namespace Asap2
         }
     }
 
+    public enum DataType
+    {
+        UBYTE,
+        SBYTE,
+        UWORD,
+        SWORD,
+        ULONG,
+        SLONG,
+        A_UINT64,
+        A_INT64,
+        FLOAT32_IEEE,
+        FLOAT64_IEEE
+    }
+
     public class Asap2File : Asap2Base
     {
         [Element(0, IsComment = true, IsPreComment = true)]
@@ -274,7 +288,13 @@ namespace Asap2
     [Base()]
     public class MEASUREMENT : Asap2Base
     {
-        public MEASUREMENT(string name, string LongIdentifier, string Datatype, string Conversion, uint Resolution, decimal Accuracy, decimal LowerLimit, decimal UpperLimit)
+        public enum LAYOUT
+        {
+            ROW_DIR,
+            COLUMN_DIR,
+        }
+
+        public MEASUREMENT(string name, string LongIdentifier, DataType Datatype, string Conversion, uint Resolution, decimal Accuracy, decimal LowerLimit, decimal UpperLimit)
         {
             this.name = name;
             this.LongIdentifier = LongIdentifier;
@@ -289,8 +309,8 @@ namespace Asap2
         public string name;
         [Element(2, IsString = true, Comment   = " LongIdentifier ")]
         public string LongIdentifier;
-        [Element(3, IsArgument = true, Comment = " Datatype       ")]
-        public string Datatype;
+        [Element(3, IsArgument = true, Comment = " DataType       ")]
+        public DataType Datatype;
         [Element(4, IsArgument = true, Comment = " Conversion     ")]
         public string Conversion;
         [Element(5, IsArgument = true, Comment = " Resolution     ")]
@@ -301,39 +321,93 @@ namespace Asap2
         public decimal LowerLimit;
         [Element(8, IsArgument = true, Comment = " UpperLimit     ")]
         public decimal UpperLimit;
-
-        [Element(9, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
-        public string display_identifier;
+        [Element(9)]
+        public List<ANNOTATION> annotation = new List<ANNOTATION>();
         [Element(10)]
-        public ECU_ADDRESS ecu_address;
-        [Element(11)]
-        public ECU_ADDRESS_EXTENSION ecu_address_extension;
-        [Element(12)]
         public ARRAY_SIZE array_size;
-        [Element(13)]
-        public FORMAT format;
-        [Element(14)]
-        public BIT_MASK bit_mask;
-        [Element(15)]
+        [Element(11, IsArgument = true, CodeAsHex = true, Name = "BIT_MASK")]
+        public UInt64? bit_mask;
+        [Element(12)]
         public BIT_OPERATION bit_operation;
+        [Element(13)]
+        public BYTE_ORDER byte_order;
+        [Element(14)]
+        public DISCRETE discrete;
+        [Element(15, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
+        public string display_identifier;
         [Element(16)]
-        public MATRIX_DIM matrix_dim;
+        public ECU_ADDRESS ecu_address;
         [Element(17)]
-        public ANNOTATION annotation;
-        [Element(18, IsList = true)]
+        public ECU_ADDRESS_EXTENSION ecu_address_extension;
+        [Element(18, IsArgument = true, CodeAsHex = true, Name = "ERROR_MASK")]
+        public UInt64? error_mask;
+        [Element(19, IsString = true, Name = "FORMAT")]
+        public string format;
+        [Element(20, Comment = " Lists the FUNCTIONs in which this object is listed. ")]
+        public FUNCTION_LIST function_list;
+        [Element(21, IsArgument = true, Name = "LAYOUT")]
+        public LAYOUT? layout;
+        [Element(22)]
+        public MATRIX_DIM matrix_dim;
+        [Element(23)]
+        public MAX_REFRESH max_refresh;
+        [Element(24, IsString = true, Name = "PHYS_UNIT")]
+        public string phys_unit;
+        [Element(25, Comment = "Write-access is allowed for this MEASUREMENT")]
+        public READ_WRITE read_write;
+        [Element(26, IsArgument = true, Name = "REF_MEMORY_SEGMENT")]
+        public string ref_memory_segment;
+        [Element(27)]
+        public SYMBOL_LINK symbol_link;
+        [Element(28)]
+        public VIRTUAL Virtual;
+        [Element(30, IsList = true)]
         public List<IF_DATA> if_data = new List<IF_DATA>();
     }
 
-    [Base(IsSimple = true)]
-    public class BIT_MASK : Asap2Base
+    [Base(IsObsolete = "Obsolete keyword. Please use FUNCTION instead.")]
+    public class FUNCTION_LIST : Asap2Base
     {
-        public BIT_MASK(UInt64 value)
-        {
-            this.value = value;
-        }
+        [Element(0, IsArgument = true, IsList = true)]
+        public List<string> functions = new List<string>();
+    }
 
-        [Element(0, IsArgument = true, CodeAsHex = true)]
-        public UInt64 value;
+    [Base()]
+    public class VIRTUAL : Asap2Base
+    {
+        [Element(0, IsArgument = true, IsList = true, Comment = " MeasuringChannels ")]
+        public List<string> MeasuringChannel = new List<string>();
+    }
+
+
+    [Base(IsSimple = true)]
+    public class SYMBOL_LINK : Asap2Base
+    {
+        public SYMBOL_LINK(string SymbolName, UInt64 Offset)
+        {
+            this.SymbolName = SymbolName;
+            this.Offset = Offset;
+        }
+        [Element(0, IsArgument = true, Comment = " SymbolName ")]
+        public string SymbolName;
+
+        [Element(1, IsArgument = true, Comment = " Offset     ")]
+        public UInt64 Offset;
+    }
+
+    [Base(IsSimple = true)]
+    public class MAX_REFRESH : Asap2Base
+    {
+        public MAX_REFRESH(UInt64 ScalingUnit, UInt64 Rate)
+        {
+            this.ScalingUnit = ScalingUnit;
+            this.Rate = Rate;
+        }
+        [Element(0, IsArgument = true, Comment = " ScalingUnit ")]
+        public UInt64 ScalingUnit;
+
+        [Element(1, IsArgument = true, Comment = " Rate        ")]
+        public UInt64 Rate;
     }
 
     [Base(IsSimple = true)]
@@ -370,18 +444,6 @@ namespace Asap2
 
         [Element(0, IsArgument = true, CodeAsHex = true)]
         public UInt64 Address;
-    }
-
-    [Base(IsSimple = true)]
-    public class FORMAT : Asap2Base
-    {
-        public FORMAT(string value)
-        {
-            this.value = value;
-        }
-
-        [Element(0, IsString = true)]
-        public string value;
     }
 
     [Base()]
@@ -426,7 +488,7 @@ namespace Asap2
         public List<string> data = new List<string>();
     }
 
-    [Base(IsSimple = true)]
+    [Base(IsSimple = true, IsObsolete = "Obsolete keyword. Please use MATRIX_DIM instead.")]
     public class ARRAY_SIZE : Asap2Base
     {
         public ARRAY_SIZE(ulong value)
@@ -851,5 +913,15 @@ namespace Asap2
 
         [Element(17, IsString = true, Name = "VERSION")]
         public string version;
+    }
+
+    [Base(IsSimple = true)]
+    public class DISCRETE : Asap2Base
+    {
+    }
+
+    [Base(IsSimple = true)]
+    public class READ_WRITE : Asap2Base
+    {
     }
 }

@@ -597,6 +597,21 @@ A2ML_VERSION 1 1
          DISPLAY_IDENTIFIER Measurement_16
          ECU_ADDRESS 0xE0100000
          FORMAT "%6.3"
+         ERROR_MASK 0x12345
+         /begin FUNCTION_LIST
+            FUNC1
+            FUNC2
+         /end FUNCTION_LIST
+         LAYOUT ROW_DIR
+         MAX_REFRESH 1 54
+         READ_WRITE
+         PHYS_UNIT "C"
+         REF_MEMORY_SEGMENT TestOf_ref_memory_segment
+         SYMBOL_LINK "LinkName" 0
+         /begin VIRTUAL
+            Channel1
+            Channel2
+         /end VIRTUAL
          /begin IF_DATA XCP
             /begin DAQ_EVENT
                VARIABLE

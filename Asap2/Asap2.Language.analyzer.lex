@@ -57,9 +57,16 @@ CUSTOMER                        { return (int)Token.CUSTOMER; }
 CUSTOMER_NO                     { return (int)Token.CUSTOMER_NO; }
 DEFAULT_VALUE                   { return (int)Token.DEFAULT_VALUE; }
 DISPLAY_IDENTIFIER              { return (int)Token.DISPLAY_IDENTIFIER; }
+DISCRETE                        { return (int)Token.DISCRETE; }
 ECU                             { return (int)Token.ECU; }
 ECU_CALIBRATION_OFFSET          { return (int)Token.ECU_CALIBRATION_OFFSET; }
+ERROR_MASK                      { return (int)Token.ERROR_MASK; }
+FUNCTION_LIST                   { return (int)Token.FUNCTION_LIST; }
 EPK                             { return (int)Token.EPK; }
+LAYOUT                          { return (int)Token.LAYOUT; }
+MAX_REFRESH                     { return (int)Token.MAX_REFRESH; }
+PHYS_UNIT                       { return (int)Token.PHYS_UNIT; }
+READ_WRITE                      { return (int)Token.READ_WRITE; }
 RIGHT_SHIFT                     { return (int)Token.RIGHT_SHIFT; }
 LEFT_SHIFT                      { return (int)Token.LEFT_SHIFT; }
 S_REC_LAYOUT                    { return (int)Token.S_REC_LAYOUT; }
@@ -72,6 +79,9 @@ MODULE                          { return (int)Token.MODULE; }
 MOD_COMMON                      { return (int)Token.MOD_COMMON; }
 MEMORY_SEGMENT                  { return (int)Token.MEMORY_SEGMENT; }
 MEMORY_LAYOUT                   { return (int)Token.MEMORY_LAYOUT; }
+REF_MEMORY_SEGMENT              { return (int)Token.REF_MEMORY_SEGMENT; }
+SYMBOL_LINK                     { return (int)Token.SYMBOL_LINK; }
+VIRTUAL                         { return (int)Token.VIRTUAL; }
 MOD_PAR                         { return (int)Token.MOD_PAR; }
 NO_OF_INTERFACES                { return (int)Token.NO_OF_INTERFACES; }
 PHONE_NO                        { return (int)Token.PHONE_NO; }

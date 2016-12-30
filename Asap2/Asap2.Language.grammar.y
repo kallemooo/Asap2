@@ -19,7 +19,6 @@
             public MEASUREMENT measurement;
             public ECU_ADDRESS ecu_address;
             public ECU_ADDRESS_EXTENSION ecu_address_ext;
-            public FORMAT format;
             public IF_DATA if_data;
             public A2ML a2ml;
             public ANNOTATION annotation;
@@ -36,6 +35,10 @@
             public MOD_PAR mod_par;
             public CALIBRATION_METHOD calibration_method;
             public CALIBRATION_HANDLE calibration_handle;
+            public FUNCTION_LIST function_list;
+            public MAX_REFRESH max_refresh;
+            public SYMBOL_LINK symbol_link;
+            public VIRTUAL Virtual;
 }
 
 %start main
@@ -69,9 +72,11 @@
 %token DEFAULT_VALUE
 %token DEPOSIT
 %token DISPLAY_IDENTIFIER
+%token DISCRETE
 %token ECU
 %token ECU_CALIBRATION_OFFSET
 %token EPK
+%token ERROR_MASK
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
 %token SIGN_EXTEND
@@ -97,8 +102,15 @@
 %token ECU_ADDRESS
 %token ECU_ADDRESS_EXTENSION
 %token FORMAT
+%token LAYOUT
+%token MAX_REFRESH
+%token READ_WRITE
+%token PHYS_UNIT
+%token FUNCTION_LIST
 %token USER
-
+%token REF_MEMORY_SEGMENT
+%token SYMBOL_LINK
+%token VIRTUAL
 %token BEGIN
 %token END
 
@@ -126,7 +138,8 @@
 %type <matrix_dim>          matrix_dim
 %type <ecu_address>         ecu_address
 %type <ecu_address_ext>     ecu_address_extension
-%type <format>              format
+%type <function_list>       function_list
+%type <function_list>       function_list_data
 %type <mod_common>          mod_common
 %type <mod_common>          mod_common_data
 %type <mod_par>             mod_par
@@ -143,7 +156,11 @@
 %type <header>              header_data
 %type <measurement>         measurement
 %type <measurement>         measurement_data
+%type <max_refresh>         max_refresh
+%type <symbol_link>         symbol_link
 %type <if_data>             if_data
+%type <Virtual>             Virtual
+%type <Virtual>             Virtual_data
 %type <s>                   default_value
 
 %%
@@ -543,11 +560,45 @@ measurement     : BEGIN MEASUREMENT measurement_data END MEASUREMENT {
                 ;
 
 measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
-                    $$ = new MEASUREMENT($1, $2, $3, $4, (uint)$5, $6, $7, $8);
+                    DataType Datatype;  
+                    try
+                    {
+                        Datatype = (DataType) Enum.Parse(typeof(DataType), $3);        
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new Exception("Unknown DataType: " + $3);
+                    }                    
+
+                    $$ = new MEASUREMENT($1, $2, Datatype, $4, (uint)$5, $6, $7, $8);
                 }
                 |  measurement_data annotation {
                     $$ = $1;
-                    $$.annotation = $2;
+                    $$.annotation.Add($2);
+                }
+                |  measurement_data array_size {
+                    $$ = $1;
+                    $$.array_size = $2;
+                }
+                |  measurement_data BIT_MASK NUMBER {
+                    $$ = $1;
+                    $$.bit_mask = (UInt64)$3;
+                }
+                |  measurement_data bit_operation {
+                    $$ = $1;
+                    $$.bit_operation = $2;
+                }
+                |  measurement_data byte_order {
+                    $$ = $1;
+                    $$.byte_order = $2;
+                }
+                |  measurement_data DISCRETE {
+                    $$ = $1;
+                    $$.discrete = new DISCRETE();
+                }
+                |  measurement_data DISPLAY_IDENTIFIER IDENTIFIER {
+                    $$ = $1;
+                    $$.display_identifier = $3;
                 }
                 |  measurement_data ecu_address {
                     $$ = $1;
@@ -557,33 +608,98 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                     $$ = $1;
                     $$.ecu_address_extension = $2;
                 }
-                |  measurement_data format {
+                |  measurement_data ERROR_MASK NUMBER {
                     $$ = $1;
-                    $$.format = $2;
+                    $$.error_mask = (UInt64)$3;
                 }
-                |  measurement_data array_size {
+                |  measurement_data FORMAT QUOTED_STRING {
                     $$ = $1;
-                    $$.array_size = $2;
+                    $$.format = $3;
                 }
-                |  measurement_data BIT_MASK NUMBER {
+                |  measurement_data function_list {
                     $$ = $1;
-                    $$.bit_mask = new BIT_MASK((ulong)$3);
+                    $$.function_list = $2;
                 }
-                |  measurement_data bit_operation {
+                |  measurement_data LAYOUT IDENTIFIER {
                     $$ = $1;
-                    $$.bit_operation = $2;
+                    try
+                    {
+                        $$.layout = (MEASUREMENT.LAYOUT) Enum.Parse(typeof(MEASUREMENT.LAYOUT), $3);        
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new Exception("Unknown MEASUREMENT LAYOUT IndexMode: " + $3);
+                    }                    
                 }
                 |  measurement_data matrix_dim {
                     $$ = $1;
                     $$.matrix_dim = $2;
                 }
-                |  measurement_data DISPLAY_IDENTIFIER IDENTIFIER {
+                |  measurement_data max_refresh {
                     $$ = $1;
-                    $$.display_identifier = $3;
+                    $$.max_refresh = $2;
+                }
+                |  measurement_data PHYS_UNIT QUOTED_STRING {
+                    $$ = $1;
+                    $$.phys_unit = $3;
+                }
+                |  measurement_data READ_WRITE {
+                    $$ = $1;
+                    $$.read_write = new READ_WRITE();
+                }
+                |  measurement_data REF_MEMORY_SEGMENT IDENTIFIER {
+                    $$ = $1;
+                    $$.ref_memory_segment = $3;
+                }
+                |  measurement_data symbol_link {
+                    $$ = $1;
+                    $$.symbol_link = $2;
+                }
+                |  measurement_data Virtual {
+                    $$ = $1;
+                    $$.Virtual = $2;
                 }
                 | measurement_data if_data {
                     $$ = $1;
                     $$.if_data.Add($2);
+                }
+                ;
+
+max_refresh     : MAX_REFRESH NUMBER NUMBER {
+                    $$ = new MAX_REFRESH((UInt64)$2, (UInt64)$3);
+                }
+                ;
+
+symbol_link     : SYMBOL_LINK QUOTED_STRING NUMBER {
+                    $$ = new SYMBOL_LINK($2, (UInt64)$3);
+                }
+                ;
+
+function_list  : BEGIN FUNCTION_LIST function_list_data END FUNCTION_LIST {
+                    $$ = $3;
+                }
+                ;
+
+function_list_data  : /* start */  {
+                    $$ = new FUNCTION_LIST();
+                }
+                |  function_list_data IDENTIFIER {
+                    $$ = $1;
+                    $$.functions.Add($2);
+                }
+                ;
+
+Virtual         : BEGIN VIRTUAL Virtual_data END VIRTUAL {
+                    $$ = $3;
+                }
+                ;
+
+Virtual_data   : /* start */  {
+                    $$ = new VIRTUAL();
+                }
+                |  Virtual_data IDENTIFIER {
+                    $$ = $1;
+                    $$.MeasuringChannel.Add($2);
                 }
                 ;
 
@@ -689,11 +805,6 @@ ecu_address                 : ECU_ADDRESS NUMBER {
 
 ecu_address_extension       : ECU_ADDRESS_EXTENSION NUMBER {
                                 $$ = new ECU_ADDRESS_EXTENSION((UInt64)$2);
-                            }
-                            ;
-
-format                      : FORMAT QUOTED_STRING {
-                                $$ = new FORMAT($2);
                             }
                             ;
 
