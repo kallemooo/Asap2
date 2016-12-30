@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -346,6 +347,11 @@ namespace Asap2
                                     String value = "0x" + data.ToString("X");
                                     resultElement.data = value;
                                 }
+                                else if (fI[i].FieldType == typeof(decimal))
+                                {
+                                    decimal data = (decimal)fI[i].GetValue(tree);
+                                    resultElement.data = data.ToString(CultureInfo.InvariantCulture);
+                                }
                                 else
                                 {
                                     resultElement.data = fI[i].GetValue(tree).ToString();
@@ -436,6 +442,11 @@ namespace Asap2
                                                     UInt64 data = (UInt64)item;
                                                     String value = "0x" + data.ToString("X");
                                                     dicElement.data = value;
+                                                }
+                                                else if (item.GetType() == typeof(decimal))
+                                                {
+                                                    decimal data = (decimal)item;
+                                                    dicElement.data = data.ToString(CultureInfo.InvariantCulture);
                                                 }
                                                 else
                                                 {
