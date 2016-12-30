@@ -6,7 +6,8 @@
 
 %union { 
             public decimal d;
-            public string s;
+            public String s;
+            public StringBuilder sb;
             public ALIGNMENT.ALIGNMENT_type alignment_token;
             public ALIGNMENT alignment;
             public DEPOSIT deposit;

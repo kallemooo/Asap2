@@ -106,36 +106,36 @@ MATRIX_DIM                      { return (int)Token.MATRIX_DIM; }
     return (int)Token.NUMBER;
 }
 
-"\/begin IF_DATA"   { yy_push_state (STATE_IF_DATA); yylval.s = ""; }
+"\/begin IF_DATA"   { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }
 <STATE_IF_DATA> {
-    "\/end IF_DATA" { yy_pop_state(); return (int)Token.IF_DATA; }
-    \\.             { yylval.s += yytext; }
-    \r?\n           { yylval.s += "\r\n"; }
-    .               { yylval.s += yytext; }
+    "\/end IF_DATA" { yy_pop_state(); yylval.s = yylval.sb.ToString(); return (int)Token.IF_DATA; }
+    \\.             { yylval.sb.Append(yytext); }
+    \r?\n           { yylval.sb.Append("\r\n"); }
+    .               { yylval.sb.Append(yytext); }
     <<EOF>>         { ; /* raise an error. */ }
 }
 
-"\/begin A2ML"      { yy_push_state (STATE_A2ML); yylval.s = ""; }
+"\/begin A2ML"      { yy_push_state (STATE_A2ML); yylval.sb = new StringBuilder(); }
 <STATE_A2ML> {
-    "\/end A2ML"    { yy_pop_state(); return (int)Token.A2ML; }
-    \\.             { yylval.s += yytext; }
-    \r?\n           { yylval.s += "\r\n"; }
-    .               { yylval.s += yytext; }
+    "\/end A2ML"    { yy_pop_state(); yylval.s = yylval.sb.ToString(); return (int)Token.A2ML; }
+    \\.             { yylval.sb.Append(yytext); }
+    \r?\n           { yylval.sb.Append("\r\n"); }
+    .               { yylval.sb.Append(yytext); }
     <<EOF>>         { ; /* raise an error. */ }
 }
 
-\"                  { yy_push_state(STATE_STRING); yylval.s = ""; }
+\"                  { yy_push_state(STATE_STRING); yylval.sb = new StringBuilder(); }
 <STATE_STRING> {
-    \"              { yy_pop_state(); return (int)Token.QUOTED_STRING; }
-    \r?\n           { yylval.s += "\r\n"; }
-    \\r             { yylval.s += "\r"; }
-    \\n             { yylval.s += "\n"; }
-    \\t             { yylval.s += "\t"; }
-    \\\"            { yylval.s += "\""; }
-    \"\"            { yylval.s += "\""; }
-    \\              { yylval.s += "\\"; }
-    \\.             { yylval.s += yytext; }
-    .               { yylval.s += yytext; }
+    \"              { yy_pop_state(); yylval.s = yylval.sb.ToString(); return (int)Token.QUOTED_STRING; }
+    \r?\n           { yylval.sb.Append("\r\n"); }
+    \\r             { yylval.sb.Append("\r"); }
+    \\n             { yylval.sb.Append("\n"); }
+    \\t             { yylval.sb.Append("\t"); }
+    \\\"            { yylval.sb.Append("\""); }
+    \"\"            { yylval.sb.Append("\""); }
+    \\              { yylval.sb.Append("\\"); }
+    \\.             { yylval.sb.Append(yytext); }
+    .               { yylval.sb.Append(yytext); }
     <<EOF>>         { ; /* raise an error. */ }
 }
 
