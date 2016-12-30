@@ -148,9 +148,9 @@ A2ML_VERSION 1 1
 		UWORD
 		NO_COMPU_METHOD
 		0
-		0
-		0
-		65535
+		0.0
+		0.0
+		65535.0
 		ECU_ADDRESS 0x4000b6ee
 		FORMAT "%8.5"
 		/begin BIT_OPERATION
@@ -165,9 +165,9 @@ A2ML_VERSION 1 1
         /* Datatype       */     UWORD
         /* Conversion     */     NO_COMPU_METHOD
         /* Resolution     */     1
-        /* Accuracy       */     0
-        /* LowerLimit     */     0
-        /* UpperLimit     */     65535
+        /* Accuracy       */     0.
+        /* LowerLimit     */     0.
+        /* UpperLimit     */     65535.
 		ARRAY_SIZE				 8
         ECU_ADDRESS              0x4000074c
         ECU_ADDRESS_EXTENSION    0x0
@@ -180,9 +180,9 @@ A2ML_VERSION 1 1
         /* Datatype       */     UWORD
         /* Conversion     */     NO_COMPU_METHOD
         /* Resolution     */     1
-        /* Accuracy       */     0
-        /* LowerLimit     */     0
-        /* UpperLimit     */     65535
+        /* Accuracy       */     0.
+        /* LowerLimit     */     0.
+        /* UpperLimit     */     65535.
         ECU_ADDRESS              0x4000074c
         ECU_ADDRESS_EXTENSION    0x0
         FORMAT "%8.5"
@@ -193,9 +193,9 @@ A2ML_VERSION 1 1
         /* Datatype       */     UWORD
         /* Conversion     */     NO_COMPU_METHOD
         /* Resolution     */     1
-        /* Accuracy       */     0
-        /* LowerLimit     */     0
-        /* UpperLimit     */     65535
+        /* Accuracy       */     0.
+        /* LowerLimit     */     0.
+        /* UpperLimit     */     65535.
         ECU_ADDRESS              0x4000074c
         ECU_ADDRESS_EXTENSION    0x0
 		DISPLAY_IDENTIFIER Measurement_2_ArrayDISPLAY_IDENTIFIER[1]
@@ -210,6 +210,407 @@ A2ML_VERSION 1 1
 			/end ANNOTATION_TEXT
 		/end ANNOTATION
     /end MEASUREMENT
+
+ /begin MEASUREMENT Measurement_01
+         "Preasure_chamber_01"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_01
+         ECU_ADDRESS 0xE0010000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+
+      /begin MEASUREMENT Measurement_02
+         "Preasure_chamber_02"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_02
+         ECU_ADDRESS 0xE0020000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_03
+         "Preasure_chamber_03"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_03
+         ECU_ADDRESS 0xE0030000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_04
+         "Preasure_chamber_04"
+         UWORD
+         CompuMethod_05
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_04
+         ECU_ADDRESS 0xE0040000
+         FORMAT "%6.3"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_05
+         "Preasure_chamber_05"
+         UWORD
+         CompuMethod_01
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_05
+         ECU_ADDRESS 0xE0050000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_06
+         "Preasure_chamber_06"
+         UWORD
+         CompuMethod_01
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_06
+         ECU_ADDRESS 0xE0060000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_07
+         "Preasure_chamber_07"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_07
+         ECU_ADDRESS 0xE0070000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_08
+         "Preasure_chamber_08"
+         UWORD
+         CompuMethod_05
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_08
+         ECU_ADDRESS 0xE0080000
+         FORMAT "%6.3"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_09
+         "Preasure_chamber_09"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_09
+         ECU_ADDRESS 0xE0090000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_10
+         "Preasure_chamber_10"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_10
+         ECU_ADDRESS 0xE00A0000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_11
+         "Preasure_chamber_11"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_11
+         ECU_ADDRESS 0xE00B0000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_12
+         "Preasure_chamber_12"
+         UWORD
+         CompuMethod_05
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_12
+         ECU_ADDRESS 0xE00C0000
+         FORMAT "%6.3"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_13
+         "Preasure_chamber_13"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_13
+         ECU_ADDRESS 0xE00D0000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_14
+         "Preasure_chamber_14"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_14
+         ECU_ADDRESS 0xE00E0000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+
+      /begin MEASUREMENT Measurement_15
+         "Preasure_chamber_15"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_15
+         ECU_ADDRESS 0xE00F0000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_16
+         "Preasure_chamber_16"
+         UWORD
+         CompuMethod_06
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_16
+         ECU_ADDRESS 0xE0100000
+         FORMAT "%6.3"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+
 	/begin COMPU_VTAB compu_vtab_boolean 
 		""
 		TAB_VERB
@@ -230,7 +631,7 @@ A2ML_VERSION 1 1
         DEFAULT_VALUE "compu_vtab_example1_error"
 	/end COMPU_VTAB
 
-	/begin COMPU_VTAB compu_vtab_example2 
+	/begin COMPU_VTAB compu_vtab_example2
 		""
 		TAB_VERB
 		3
@@ -238,5 +639,12 @@ A2ML_VERSION 1 1
 		1 "compu_vtab_example2_Strtg"
 		2 "compu_vtab_example2_Actv"
 	/end COMPU_VTAB
+	/begin COMPU_VTAB_RANGE compu_vtab_range_example1
+		""
+		3
+		0 1 "compu_vtab_example2_Idle"
+		1.1 3.5 "compu_vtab_example2_Strtg"
+		3.6 5.5 "compu_vtab_example2_Actv"
+	/end COMPU_VTAB_RANGE
  /end MODULE
 /end PROJECT

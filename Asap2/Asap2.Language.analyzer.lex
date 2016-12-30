@@ -7,31 +7,29 @@
 
 Identifier      [A-Za-z_][A-Za-z0-9\._]+[\[A-Za-z0-9\]]*
 Space           [ \t]
-Number          [\-]?[0-9]+
-Double          [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
+Decimal         [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
 HexNumber       0x[0-9A-Fa-f]+
 Eol             (\r?\n)
 Alignment       ALIGNMENT\_([A-Za-z0-9_]+)
 
+/* Single and Multiline comments */
+CommentStart	\/\*
+CommentEnd		\*\/
+LineComment		"//".*
+
 %x STATE_STRING
 %x STATE_IF_DATA
 %x STATE_A2ML
-%x COMMENT
-%x foo
+%x CMMT     // Inside a multi line comment.
+%x CMMT2    // Inside a single line comment.
 
 %{
-public int line_num = 1;
-public int chars_num = 1;
-int comment_caller;
 %}
 
 %%
 
-{Eol}      ++line_num;
-
 /* Scanner body */
 
-/* //[^\r\n]*((\r\n)|<<EOF>>) */
 
 {Space}+        /* skip */
 
@@ -90,30 +88,45 @@ CHARACTERISTIC                  { return (int)Token.CHARACTERISTIC; }
 FORMAT                          { return (int)Token.FORMAT; }
 MATRIX_DIM                      { return (int)Token.MATRIX_DIM; }
 
-{Identifier}        { yylval.s = yytext; return (int)Token.IDENTIFIER; }
-{Number}            { GetNumber(); return (int)Token.NUMBER; }
-{HexNumber}         { GetHexNumber(); return (int)Token.NUMBER; }
-{Double}            { GetDouble(); return (int)Token.DOUBLE; }
+{Identifier}    { yylval.s = yytext; return (int)Token.IDENTIFIER; }
+{HexNumber}     {
+    yylval.s = yytext;
+    var tmp = yytext;
+    if (tmp.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+    {
+        tmp = tmp.Substring(2);
+    }
+    yylval.d = long.Parse(tmp, NumberStyles.HexNumber);
+    return (int)Token.NUMBER;
+}
 
-"\/begin IF_DATA"   { BEGIN(STATE_IF_DATA); yylval.s = ""; }
+{Decimal}       {
+    yylval.s = yytext;
+    decimal.TryParse(yytext, NumberStyles.Float, CultureInfo.InvariantCulture, out yylval.d);
+    return (int)Token.NUMBER;
+}
+
+"\/begin IF_DATA"   { yy_push_state (STATE_IF_DATA); yylval.s = ""; }
 <STATE_IF_DATA> {
-    "\/end IF_DATA" { BEGIN(INITIAL); return (int)Token.IF_DATA; }
+    "\/end IF_DATA" { yy_pop_state(); return (int)Token.IF_DATA; }
     \\.             { yylval.s += yytext; }
     \r?\n           { yylval.s += "\r\n"; }
     .               { yylval.s += yytext; }
+    <<EOF>>         { ; /* raise an error. */ }
 }
 
-"\/begin A2ML"      { BEGIN(STATE_A2ML); yylval.s = ""; }
+"\/begin A2ML"      { yy_push_state (STATE_A2ML); yylval.s = ""; }
 <STATE_A2ML> {
-    "\/end A2ML"    { BEGIN(INITIAL); return (int)Token.A2ML; }
+    "\/end A2ML"    { yy_pop_state(); return (int)Token.A2ML; }
     \\.             { yylval.s += yytext; }
     \r?\n           { yylval.s += "\r\n"; }
     .               { yylval.s += yytext; }
+    <<EOF>>         { ; /* raise an error. */ }
 }
 
-\"                  { BEGIN(STATE_STRING); yylval.s = ""; }
+\"                  { yy_push_state(STATE_STRING); yylval.s = ""; }
 <STATE_STRING> {
-    \"              { BEGIN(INITIAL); return (int)Token.QUOTED_STRING; }
+    \"              { yy_pop_state(); return (int)Token.QUOTED_STRING; }
     \r?\n           { yylval.s += "\r\n"; }
     \\r             { yylval.s += "\r"; }
     \\n             { yylval.s += "\n"; }
@@ -123,19 +136,24 @@ MATRIX_DIM                      { return (int)Token.MATRIX_DIM; }
     \\              { yylval.s += "\\"; }
     \\.             { yylval.s += yytext; }
     .               { yylval.s += yytext; }
+    <<EOF>>         { ; /* raise an error. */ }
 }
 
-/* Comment handler. */
-"/*"                {comment_caller = INITIAL;    BEGIN(COMMENT);      }
+/* Single line comment handler. */
+{LineComment}+      { yy_push_state(CMMT2); }
+<CMMT2>{
+    {Eol}           { yy_pop_state(); }
+}
 
-<foo>"/*"           {
-            comment_caller = foo;
-            BEGIN(COMMENT);
-            }
+/* Move to a 'comment' state on seeing comments. */
+{CommentStart}      {  yy_push_state(CMMT); }
 
-<COMMENT>[^*\n]*       /* eat anything that's not a '*' */
-<COMMENT>"*"+[^*/\n]*  /* eat up '*'s not followed by '/'s */
-<COMMENT>\r?\n         ++line_num;
-<COMMENT>"*"+"/"       BEGIN(comment_caller);
+/* Inside a block comment. */
+<CMMT>{
+    [^*\n]+         /* eat up '*'s not followed by '/'s */
+    "*"             /* eat anything that's not a '*' */
+    {CommentEnd}    { yy_pop_state(); }
+    <<EOF>>         { ; /* raise an error. */ }
+}
 
 %%

@@ -37,7 +37,6 @@ namespace Asap2
             }
             else
             {
-                Console.WriteLine("Line {0} {1}", scanner.line_num, scanner.chars_num);
                 return null;
             }
         }

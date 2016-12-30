@@ -7,29 +7,6 @@ namespace Asap2
 {
     internal partial class Asap2Scanner
     {
-        void GetNumber()
-        {
-            yylval.s = yytext;
-            yylval.n = long.Parse(yytext);
-        }
-
-        void GetHexNumber()
-        {
-            yylval.s = yytext;
-            var tmp = yytext;
-            if (tmp.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-            {
-                tmp = tmp.Substring(2);
-            }
-            yylval.n = long.Parse(tmp, NumberStyles.HexNumber);
-        }
-
-        void GetDouble()
-        {
-            yylval.s = yytext;
-            yylval.d = long.Parse(yytext);
-        }
-
         void GetAlignment()
         {
             yylval.s = yytext;
@@ -45,8 +22,10 @@ namespace Asap2
 
         public override void yyerror(string format, params object[] args)
         {
-            base.yyerror(format, args);
-            Console.WriteLine(format, args);
+            StringBuilder errorMsg = new StringBuilder();
+            errorMsg.AppendFormat("Line: {0} : Row: {1} : {2}", yyline, yycol, string.Format(format, args));
+
+            Console.WriteLine(errorMsg);
             Console.WriteLine();
         }
     }

@@ -5,8 +5,7 @@
 %tokentype Token
 
 %union { 
-            public long n;
-            public double d;
+            public decimal d;
             public string s;
             public ALIGNMENT.ALIGNMENT_type alignment_token;
             public ALIGNMENT alignment;
@@ -40,8 +39,7 @@
 
 %start main
 
-%token <n> NUMBER
-%token <d> DOUBLE
+%token <d> NUMBER
 %token <s> QUOTED_STRING
 %token <s> IF_DATA
 %token <s> IDENTIFIER
@@ -145,6 +143,7 @@
 %type <measurement>         measurement
 %type <measurement>         measurement_data
 %type <if_data>             if_data
+%type <s>                   default_value
 
 %%
 
@@ -280,11 +279,11 @@ calibration_handle          : BEGIN CALIBRATION_HANDLE calibration_handle_data E
 
 calibration_handle_data     : NUMBER {
                                 $$ = new CALIBRATION_HANDLE();
-                                $$.Handles.Add($1);
+                                $$.Handles.Add((Int64)$1);
                             }
                             | calibration_handle_data NUMBER {
                                 $$ = $1;
-                                $$.Handles.Add($2);
+                                $$.Handles.Add((Int64)$2);
                             }
                             | calibration_handle_data CALIBRATION_HANDLE_TEXT QUOTED_STRING {
                                 $$ = $1;
@@ -308,13 +307,9 @@ compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
                                 $$ = $1;
                                 $$.data.Add(new COMPU_VTAB_DATA($2.ToString(), $3));
                             }
-                            | compu_vtab_data DOUBLE QUOTED_STRING {
+                            | compu_vtab_data default_value {
                                 $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_DATA($2.ToString(), $3));
-                            }
-                            | compu_vtab_data DEFAULT_VALUE QUOTED_STRING {
-                                $$ = $1;
-                                $$.default_value = $3;
+                                $$.default_value = $2;
                             }
                             ;
 
@@ -328,23 +323,16 @@ compu_vtab_range_data       : IDENTIFIER QUOTED_STRING NUMBER {
                             }
                             | compu_vtab_range_data NUMBER NUMBER QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+                                $$.data.Add(new COMPU_VTAB_RANGE_DATA($2, $3, $4));
                             }
-                            | compu_vtab_range_data DOUBLE NUMBER QUOTED_STRING {
+                            | compu_vtab_range_data default_value {
                                 $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
+                                $$.default_value = $2;
                             }
-                            | compu_vtab_range_data NUMBER DOUBLE QUOTED_STRING {
-                                $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
-                            }
-                            | compu_vtab_range_data DOUBLE DOUBLE QUOTED_STRING {
-                                $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_RANGE_DATA((decimal)$2, (decimal)$3, $4));
-                            }
-                            | compu_vtab_range_data DEFAULT_VALUE QUOTED_STRING {
-                                $$ = $1;
-                                $$.default_value = $3;
+                            ;
+
+default_value               : DEFAULT_VALUE QUOTED_STRING {
+                                $$ = $2;
                             }
                             ;
 
@@ -503,7 +491,7 @@ mod_par_data :  QUOTED_STRING {
                 }
                 |  mod_par_data ECU_CALIBRATION_OFFSET NUMBER {
                     $$ = $1;
-                    $$.ecu_calibration_offset = $3;
+                    $$.ecu_calibration_offset = (Int64)$3;
                 }
                 |  mod_par_data EPK QUOTED_STRING {
                     $$ = $1;
@@ -554,7 +542,11 @@ measurement     : BEGIN MEASUREMENT measurement_data END MEASUREMENT {
                 ;
 
 measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
-                    $$ = new MEASUREMENT($1, $2, $3, $4, (uint)$5, (uint)$6, (uint)$7, (uint)$8);
+                    $$ = new MEASUREMENT($1, $2, $3, $4, (uint)$5, $6, $7, $8);
+                }
+                |  measurement_data annotation {
+                    $$ = $1;
+                    $$.annotation = $2;
                 }
                 |  measurement_data ecu_address {
                     $$ = $1;
@@ -567,10 +559,6 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 |  measurement_data format {
                     $$ = $1;
                     $$.format = $2;
-                }
-                |  measurement_data annotation {
-                    $$ = $1;
-                    $$.annotation = $2;
                 }
                 |  measurement_data array_size {
                     $$ = $1;
@@ -591,6 +579,10 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 |  measurement_data DISPLAY_IDENTIFIER IDENTIFIER {
                     $$ = $1;
                     $$.display_identifier = $3;
+                }
+                | measurement_data if_data {
+                    $$ = $1;
+                    $$.if_data.Add($2);
                 }
                 ;
 
@@ -630,7 +622,7 @@ memory_segment_data : IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER IDENTIFIER 
                         throw new Exception("Unknown MEMORY_SEGMENT Attribute: " + $5);
                     }                    
 
-                    $$ = new MEMORY_SEGMENT($1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, $8, $9, $10, $11, $12);
+                    $$ = new MEMORY_SEGMENT($1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
                 }
                 |  memory_segment_data if_data {
                     $$ = $1;
@@ -653,7 +645,7 @@ memory_layout_data  : IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBE
                     {
                         throw new Exception("Unknown MEMORY_LAYOUT PrgType: " + $1);
                     }
-                    $$ = new MEMORY_LAYOUT(PrgType, (UInt64)$2, (UInt64)$3, $4, $5, $6, $7, $8);
+                    $$ = new MEMORY_LAYOUT(PrgType, (UInt64)$2, (UInt64)$3, (Int64)$4, (Int64)$5, (Int64)$6, (Int64)$7, (Int64)$8);
                 }
                 |  memory_layout_data if_data {
                     $$ = $1;

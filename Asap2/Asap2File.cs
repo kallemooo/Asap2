@@ -274,7 +274,7 @@ namespace Asap2
     [Base()]
     public class MEASUREMENT : Asap2Base
     {
-        public MEASUREMENT(string name, string LongIdentifier, string Datatype, string Conversion, uint Resolution, uint Accuracy, uint LowerLimit, uint UpperLimit)
+        public MEASUREMENT(string name, string LongIdentifier, string Datatype, string Conversion, uint Resolution, decimal Accuracy, decimal LowerLimit, decimal UpperLimit)
         {
             this.name = name;
             this.LongIdentifier = LongIdentifier;
@@ -296,11 +296,11 @@ namespace Asap2
         [Element(5, IsArgument = true, Comment = " Resolution     ")]
         public uint Resolution;
         [Element(6, IsArgument = true, Comment = " Accuracy       ")]
-        public uint Accuracy;
+        public decimal Accuracy;
         [Element(7, IsArgument = true, Comment = " LowerLimit     ")]
-        public uint LowerLimit;
+        public decimal LowerLimit;
         [Element(8, IsArgument = true, Comment = " UpperLimit     ")]
-        public uint UpperLimit;
+        public decimal UpperLimit;
 
         [Element(9, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
         public string display_identifier;
@@ -320,6 +320,8 @@ namespace Asap2
         public MATRIX_DIM matrix_dim;
         [Element(17)]
         public ANNOTATION annotation;
+        [Element(18, IsList = true)]
+        public List<IF_DATA> if_data = new List<IF_DATA>();
     }
 
     [Base(IsSimple = true)]
@@ -569,10 +571,10 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(0, IsName = true)]
+        [Element(0, IsName = true, ForceNewLine = true)]
         public string name = "";
 
-        [Element(1, IsArgument = true)]
+        [Element(1, IsArgument = true, ForceNewLine = true)]
         public decimal InValMin;
 
         [Element(2, IsArgument = true)]
