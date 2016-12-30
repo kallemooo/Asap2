@@ -1,4 +1,4 @@
-/*
+﻿/*
  * A2l file for testing ASAP2 parser.
  */
 
@@ -640,7 +640,7 @@ A2ML_VERSION 1 1
 		2 "compu_vtab_example2_Actv"
 	/end COMPU_VTAB
 	/begin COMPU_VTAB_RANGE compu_vtab_range_example1
-		""
+		"ÅÄÖ åäö"
 		3
 		0 1 "compu_vtab_example2_Idle"
 		1.1 3.5 "compu_vtab_example2_Strtg"
