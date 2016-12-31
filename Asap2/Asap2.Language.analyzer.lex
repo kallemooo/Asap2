@@ -97,6 +97,11 @@ MEASUREMENT                     { return (int)Token.MEASUREMENT; }
 CHARACTERISTIC                  { return (int)Token.CHARACTERISTIC; }
 FORMAT                          { return (int)Token.FORMAT; }
 MATRIX_DIM                      { return (int)Token.MATRIX_DIM; }
+GROUP                           { return (int)Token.GROUP; }
+SUB_GROUP                       { return (int)Token.SUB_GROUP; }
+REF_CHARACTERISTIC              { return (int)Token.REF_CHARACTERISTIC; }
+REF_MEASUREMENT                 { return (int)Token.REF_MEASUREMENT; }
+ROOT                            { return (int)Token.ROOT; }
 
 {Identifier}    { yylval.s = yytext; return (int)Token.IDENTIFIER; }
 {HexNumber}     {

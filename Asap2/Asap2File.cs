@@ -136,9 +136,6 @@ namespace Asap2
     {
         public MODULE()
         {
-            measurements = new Dictionary<string, MEASUREMENT>();
-            COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
-            COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
         }
 
         [Element(1, IsArgument = true)]
@@ -160,13 +157,16 @@ namespace Asap2
         public MOD_PAR mod_par;
 
         [Element(7, IsDictionary = true, Comment = " Measurment data for the module ")]
-        public Dictionary<string, MEASUREMENT> measurements;
+        public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
 
         [Element(8, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
-        public Dictionary<string, COMPU_VTAB> COMPU_VTABs;
+        public Dictionary<string, COMPU_VTAB> COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
 
         [Element(9, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
-        public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs;
+        public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
+
+        [Element(10, IsDictionary = true, Comment = " Groups for the module ")]
+        public Dictionary<string, GROUP> groups = new Dictionary<string, GROUP>();
     }
 
     [Base(IsSimple = true)]
@@ -343,7 +343,7 @@ namespace Asap2
         public UInt64? error_mask;
         [Element(19, IsString = true, Name = "FORMAT")]
         public string format;
-        [Element(20, Comment = " Lists the FUNCTIONs in which this object is listed. ")]
+        [Element(20)]
         public FUNCTION_LIST function_list;
         [Element(21, IsArgument = true, Name = "LAYOUT")]
         public LAYOUT? layout;
@@ -368,7 +368,7 @@ namespace Asap2
     [Base(IsObsolete = "Obsolete keyword. Please use FUNCTION instead.")]
     public class FUNCTION_LIST : Asap2Base
     {
-        [Element(0, IsArgument = true, IsList = true)]
+        [Element(0, IsArgument = true, IsList = true, Comment = " List of functions. ")]
         public List<string> functions = new List<string>();
     }
 
@@ -922,6 +922,61 @@ namespace Asap2
 
     [Base(IsSimple = true)]
     public class READ_WRITE : Asap2Base
+    {
+    }
+
+    [Base()]
+    public class GROUP : Asap2Base
+    {
+
+        public GROUP(string GroupName, string GroupLongIdentifier)
+        {
+            this.GroupName = GroupName;
+            this.GroupLongIdentifier = GroupLongIdentifier;
+        }
+        [Element(1, IsArgument = true, Comment = " GroupName           ")]
+        public string GroupName;
+        [Element(2, IsString = true, Comment   = " GroupLongIdentifier ")]
+        public string GroupLongIdentifier;
+        [Element(3)]
+        public List<ANNOTATION> annotation = new List<ANNOTATION>();
+        [Element(4)]
+        public FUNCTION_LIST function_list;
+        [Element(5, IsList = true)]
+        public List<IF_DATA> if_data = new List<IF_DATA>();
+        [Element(6)]
+        public REF_CHARACTERISTIC ref_characteristic;
+        [Element(7)]
+        public REF_MEASUREMENT ref_measurement;
+        [Element(8)]
+        public ROOT root;
+        [Element(9)]
+        public SUB_GROUP sub_group;
+    }
+
+    [Base()]
+    public class REF_CHARACTERISTIC : Asap2Base
+    {
+        [Element(0, IsArgument = true, IsList = true, Comment = " Characteristic references ")]
+        public List<string> reference = new List<string>();
+    }
+
+    [Base()]
+    public class REF_MEASUREMENT : Asap2Base
+    {
+        [Element(0, IsArgument = true, IsList = true, Comment = " Measurement references ")]
+        public List<string> reference = new List<string>();
+    }
+
+    [Base()]
+    public class SUB_GROUP : Asap2Base
+    {
+        [Element(0, IsArgument = true, IsList = true, Comment = " Sub groups ")]
+        public List<string> groups = new List<string>();
+    }
+
+    [Base(IsSimple = true)]
+    public class ROOT : Asap2Base
     {
     }
 }

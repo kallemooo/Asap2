@@ -39,6 +39,10 @@
             public MAX_REFRESH max_refresh;
             public SYMBOL_LINK symbol_link;
             public VIRTUAL Virtual;
+            public GROUP group;
+            public SUB_GROUP sub_group;
+            public REF_CHARACTERISTIC ref_characteristic;
+            public REF_MEASUREMENT ref_measurement;
 }
 
 %start main
@@ -111,6 +115,11 @@
 %token REF_MEMORY_SEGMENT
 %token SYMBOL_LINK
 %token VIRTUAL
+%token GROUP
+%token SUB_GROUP
+%token REF_CHARACTERISTIC
+%token REF_MEASUREMENT
+%token ROOT
 %token BEGIN
 %token END
 
@@ -161,6 +170,14 @@
 %type <if_data>             if_data
 %type <Virtual>             Virtual
 %type <Virtual>             Virtual_data
+%type <group>               group
+%type <group>               group_data
+%type <sub_group>           sub_group
+%type <sub_group>           sub_group_data
+%type <ref_characteristic>  ref_characteristic
+%type <ref_characteristic>  ref_characteristic_data
+%type <ref_measurement>     ref_measurement
+%type <ref_measurement>     ref_measurement_data
 %type <s>                   default_value
 
 %%
@@ -433,6 +450,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 | module_data compu_vtab_range {
                     $$ = $1;
                     $$.COMPU_VTAB_RANGEs.Add($2.Name, $2);
+                }
+                | module_data group {
+                    $$ = $1;
+                    $$.groups.Add($2.GroupName, $2);
                 }
                 | module_data mod_par {
                     $$ = $1;
@@ -808,4 +829,83 @@ ecu_address_extension       : ECU_ADDRESS_EXTENSION NUMBER {
                             }
                             ;
 
+group                       : BEGIN GROUP group_data END GROUP {
+                                $$ = $3;
+                            }
+                            ;
+
+group_data                  : IDENTIFIER QUOTED_STRING {
+                                $$ = new GROUP($1, $2);
+                            }
+                            |  group_data annotation {
+                                $$ = $1;
+                                $$.annotation.Add($2);
+                            }
+                            | group_data if_data {
+                                $$ = $1;
+                                $$.if_data.Add($2);
+                            }
+                            |  group_data function_list {
+                                $$ = $1;
+                                $$.function_list = $2;
+                            }
+                            |  group_data ref_characteristic {
+                                $$ = $1;
+                                $$.ref_characteristic = $2;
+                            }
+                            |  group_data ref_measurement {
+                                $$ = $1;
+                                $$.ref_measurement = $2;
+                            }
+                            |  group_data ROOT {
+                                $$ = $1;
+                                $$.root = new ROOT();
+                            }
+                            |  group_data sub_group {
+                                $$ = $1;
+                                $$.sub_group = $2;
+                            }
+                            ;
+
+ref_characteristic          : BEGIN REF_CHARACTERISTIC ref_characteristic_data END REF_CHARACTERISTIC {
+                                $$ = $3;
+                            }
+                            ;
+
+ref_characteristic_data     : /* start */  {
+                                $$ = new REF_CHARACTERISTIC();
+                            }
+                            |  ref_characteristic_data IDENTIFIER {
+                                $$ = $1;
+                                $$.reference.Add($2);
+                            }
+                            ;
+
+ref_measurement             : BEGIN REF_MEASUREMENT ref_measurement_data END REF_MEASUREMENT {
+                                $$ = $3;
+                            }
+                            ;
+
+ref_measurement_data        : /* start */  {
+                                $$ = new REF_MEASUREMENT();
+                            }
+                            |  ref_measurement_data IDENTIFIER {
+                                $$ = $1;
+                                $$.reference.Add($2);
+                            }
+                            ;
+
+sub_group                   : BEGIN SUB_GROUP sub_group_data END SUB_GROUP {
+                                $$ = $3;
+                            }
+                            ;
+
+sub_group_data              : /* start */  {
+                                $$ = new SUB_GROUP();
+                            }
+                            |  sub_group_data IDENTIFIER {
+                                $$ = $1;
+                                $$.groups.Add($2);
+                            }
+                            ;
 %%
