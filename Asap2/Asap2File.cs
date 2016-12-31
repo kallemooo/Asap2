@@ -159,16 +159,19 @@ namespace Asap2
         [Element(7, IsDictionary = true, Comment = " Measurment data for the module ")]
         public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
 
-        [Element(8, IsDictionary = true, Comment = " Conversion tables for the module COMPU_METHODs ")]
+        [Element(8, IsDictionary = true, Comment = " Module COMPU_METHODs ")]
+        public Dictionary<string, COMPU_METHOD> compu_methods = new Dictionary<string, COMPU_METHOD>();
+
+        [Element(9, IsDictionary = true, Comment = " Conversion tables for the module COMPU_METHODs ")]
         public Dictionary<string, COMPU_TAB> COMPU_TABs = new Dictionary<string, COMPU_TAB>();
 
-        [Element(9, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
+        [Element(10, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
         public Dictionary<string, COMPU_VTAB> COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
 
-        [Element(10, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
+        [Element(11, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
         public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
 
-        [Element(11, IsDictionary = true, Comment = " Groups for the module ")]
+        [Element(12, IsDictionary = true, Comment = " Groups for the module ")]
         public Dictionary<string, GROUP> groups = new Dictionary<string, GROUP>();
     }
 
@@ -598,23 +601,91 @@ namespace Asap2
         public COEFFS coeffs;
         [Element(7)]
         public COEFFS_LINEAR coeffs_linear;
+
+        /// <summary>
+        /// Reference to conversion table to use.
+        /// </summary>
+        [Element(8, IsArgument = true, Name = "COMPU_TAB_REF")]
+        public string compu_tab_ref;
+        [Element(9)]
+        public FORMULA formula;
+
+        /// <summary>
+        /// Reference to a physical unit.
+        /// </summary>
+        [Element(10, IsArgument = true, Name = "REF_UNIT")]
+        public string ref_unit;
     }
 
     [Base(IsSimple = true)]
     public class COEFFS : Asap2Base
     {
-        [Element(0, IsArgument = true, IsList = true, Comment = " Coefficients for the rational function (RAT_FUNC) ")]
-        public List<decimal> coeffs = new List<decimal>();
+        public COEFFS(decimal a, decimal b, decimal c, decimal d, decimal e, decimal f)
+        {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            this.d = d;
+            this.e = e;
+            this.f = f;
+        }
+        [Element(0, IsArgument = true, Comment = " Coefficients for the rational function (RAT_FUNC) ")]
+        public decimal a;
+
+        [Element(1, IsArgument = true)]
+        public decimal b;
+
+        [Element(2, IsArgument = true)]
+        public decimal c;
+
+        [Element(3, IsArgument = true)]
+        public decimal d;
+
+        [Element(4, IsArgument = true)]
+        public decimal e;
+
+        [Element(5, IsArgument = true)]
+        public decimal f;
     }
 
     [Base(IsSimple = true)]
     public class COEFFS_LINEAR : Asap2Base
     {
+        public COEFFS_LINEAR(decimal a, decimal b)
+        {
+            this.a = a;
+            this.b = b;
+        }
         [Element(0, IsArgument = true, Comment = " Coefficients for the linear function (LINEAR). ")]
         public decimal a;
 
         [Element(1, IsArgument = true)]
         public decimal b;
+    }
+
+    [Base()]
+    public class FORMULA : Asap2Base
+    {
+        public FORMULA(string formula)
+        {
+            this.formula = formula;
+        }
+
+        /// <summary>
+        /// Specifies a conversion formula to calculate the physical value from the ECU-internal value.
+        /// Expression of the formula complies with ANSI C notation.
+        /// Shall be used only, if linear or rational functions are not sufficient.
+        /// </summary>
+        [Element(1, IsString = true)]
+        public string formula;
+
+        /// <summary>
+        /// Specifies a conversion formula to calculate the ECU-internal value from the physical value.
+        /// Is the inversion of the referenced FORMULA.
+        /// Expression of the formula complies to ANSI C notation.
+        /// </summary>
+        [Element(2, IsString = true, Name = "FORMULA_INV")]
+        public string formula_inv;
     }
 
     [Base()]

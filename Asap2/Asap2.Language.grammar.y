@@ -44,6 +44,8 @@
             public SUB_GROUP sub_group;
             public REF_CHARACTERISTIC ref_characteristic;
             public REF_MEASUREMENT ref_measurement;
+            public COMPU_METHOD compu_method;
+            public FORMULA formula;
 }
 
 %start main
@@ -72,6 +74,10 @@
 %token COMPU_TAB
 %token COMPU_VTAB
 %token COMPU_VTAB_RANGE
+%token COMPU_METHOD
+%token COMPU_TAB_REF
+%token COEFFS
+%token COEFFS_LINEAR
 %token CPU_TYPE
 %token CUSTOMER
 %token CUSTOMER_NO
@@ -84,6 +90,9 @@
 %token ECU_CALIBRATION_OFFSET
 %token EPK
 %token ERROR_MASK
+%token FORMULA
+%token FORMULA_INV
+%token REF_UNIT
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
 %token SIGN_EXTEND
@@ -143,6 +152,8 @@
 %type <calibration_method>  calibration_method_data
 %type <calibration_handle>  calibration_handle
 %type <calibration_handle>  calibration_handle_data
+%type <compu_method>        compu_method
+%type <compu_method>        compu_method_data
 %type <compu_tab>           compu_tab
 %type <compu_tab>           compu_tab_data
 %type <compu_vtab>          compu_vtab
@@ -154,6 +165,7 @@
 %type <ecu_address_ext>     ecu_address_extension
 %type <function_list>       function_list
 %type <function_list>       function_list_data
+%type <formula>             formula
 %type <mod_common>          mod_common
 %type <mod_common>          mod_common_data
 %type <mod_par>             mod_par
@@ -332,6 +344,54 @@ calibration_handle_data     : NUMBER {
                             }
                             ;
 
+compu_method                : BEGIN COMPU_METHOD compu_method_data END COMPU_METHOD {
+                                $$ = $3;
+                            }
+                            ;
+
+compu_method_data           : IDENTIFIER QUOTED_STRING IDENTIFIER QUOTED_STRING QUOTED_STRING {
+                                COMPU_METHOD.ConversionType conversionType;  
+                                try
+                                {
+                                    conversionType = (COMPU_METHOD.ConversionType) Enum.Parse(typeof(COMPU_METHOD.ConversionType), $3);        
+                                }
+                                catch (ArgumentException)
+                                {
+                                    throw new Exception("Unknown COMPU_METHOD ConversionType: " + $3);
+                                }
+                                $$ = new COMPU_METHOD(Name: $1, LongIdentifier: $2, conversionType: conversionType, Format: $4, Unit: $5);
+                            }
+                            | compu_method_data COEFFS NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
+                                $$ = $1;
+                                $$.coeffs = new COEFFS(a: $3, b: $4, c: $5, d: $6, e: $7, f: $8);
+                            }
+                            | compu_method_data COEFFS_LINEAR NUMBER NUMBER {
+                                $$ = $1;
+                                $$.coeffs_linear = new COEFFS_LINEAR(a: $3, b: $4);
+                            }
+                            | compu_method_data COMPU_TAB_REF IDENTIFIER {
+                                $$ = $1;
+                                $$.compu_tab_ref = $3;
+                            }
+                            | compu_method_data formula {
+                                $$ = $1;
+                                $$.formula = $2;
+                            }
+                            | compu_method_data REF_UNIT IDENTIFIER {
+                                $$ = $1;
+                                $$.ref_unit = $3;
+                            }
+                            ;
+
+formula                     : BEGIN FORMULA QUOTED_STRING END FORMULA {
+                                $$ = new FORMULA($3);
+                            }
+                            | BEGIN FORMULA QUOTED_STRING FORMULA_INV QUOTED_STRING END FORMULA {
+                                $$ = new FORMULA($3);
+                                $$.formula_inv = $5;
+                            }
+                            ;
+
 compu_tab                   : BEGIN COMPU_TAB compu_tab_data END COMPU_TAB {
                                 $$ = $3;
                             }
@@ -480,6 +540,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 | module_data a2ml {
                     $$ = $1;
                     $$.A2MLs.Add($2);
+                }
+                | module_data compu_method {
+                    $$ = $1;
+                    $$.compu_methods.Add($2.Name, $2);
                 }
                 | module_data compu_tab {
                     $$ = $1;

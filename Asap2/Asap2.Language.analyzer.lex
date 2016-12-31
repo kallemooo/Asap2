@@ -50,9 +50,13 @@ CALIBRATION_ACCESS              { return (int)Token.CALIBRATION_ACCESS; }
 CALIBRATION_METHOD              { return (int)Token.CALIBRATION_METHOD; }
 CALIBRATION_HANDLE              { return (int)Token.CALIBRATION_HANDLE; }
 CALIBRATION_HANDLE_TEXT         { return (int)Token.CALIBRATION_HANDLE_TEXT; }
+COMPU_METHOD                    { return (int)Token.COMPU_METHOD; }
+COMPU_TAB_REF                   { return (int)Token.COMPU_TAB_REF; }
 COMPU_TAB                       { return (int)Token.COMPU_TAB; }
 COMPU_VTAB                      { return (int)Token.COMPU_VTAB; }
 COMPU_VTAB_RANGE                { return (int)Token.COMPU_VTAB_RANGE; }
+COEFFS                          { return (int)Token.COEFFS; }
+COEFFS_LINEAR                   { return (int)Token.COEFFS_LINEAR; }
 CPU_TYPE                        { return (int)Token.CPU_TYPE; }
 CUSTOMER                        { return (int)Token.CUSTOMER; }
 CUSTOMER_NO                     { return (int)Token.CUSTOMER_NO; }
@@ -65,6 +69,9 @@ ECU_CALIBRATION_OFFSET          { return (int)Token.ECU_CALIBRATION_OFFSET; }
 ERROR_MASK                      { return (int)Token.ERROR_MASK; }
 FUNCTION_LIST                   { return (int)Token.FUNCTION_LIST; }
 EPK                             { return (int)Token.EPK; }
+FORMULA                         { return (int)Token.FORMULA; }
+FORMULA_INV                     { return (int)Token.FORMULA_INV; }
+REF_UNIT                        { return (int)Token.REF_UNIT; }
 LAYOUT                          { return (int)Token.LAYOUT; }
 MAX_REFRESH                     { return (int)Token.MAX_REFRESH; }
 PHYS_UNIT                       { return (int)Token.PHYS_UNIT; }
