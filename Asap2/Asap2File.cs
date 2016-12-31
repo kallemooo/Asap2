@@ -563,6 +563,61 @@ namespace Asap2
     }
 
     [Base()]
+    public class COMPU_METHOD : Asap2Base
+    {
+        public enum ConversionType
+        {
+            IDENTICAL,
+            FORM,
+            LINEAR,
+            RAT_FUNC,
+            TAB_INTP,
+            TAB_NOINTP,
+            TAB_VERB,
+        }
+
+        public COMPU_METHOD(string Name, string LongIdentifier, ConversionType conversionType, string Format, string Unit)
+        {
+            this.Name = Name;
+            this.LongIdentifier = LongIdentifier;
+            this.conversionType = conversionType;
+            this.Format = Format;
+        }
+
+        [Element(1, IsArgument = true, Comment = " Name           ")]
+        public string Name;
+        [Element(2, IsString = true, Comment   = " LongIdentifier ")]
+        public string LongIdentifier;
+        [Element(3, IsArgument = true, Comment = " ConversionType ")]
+        public ConversionType conversionType;
+        [Element(4, IsString = true, Comment   = " Display Format ")]
+        public string Format;
+        [Element(5, IsString = true, Comment   = " Physical Unit  ")]
+        public string Unit;
+        [Element(6)]
+        public COEFFS coeffs;
+        [Element(7)]
+        public COEFFS_LINEAR coeffs_linear;
+    }
+
+    [Base(IsSimple = true)]
+    public class COEFFS : Asap2Base
+    {
+        [Element(0, IsArgument = true, IsList = true, Comment = " Coefficients for the rational function (RAT_FUNC) ")]
+        public List<decimal> coeffs = new List<decimal>();
+    }
+
+    [Base(IsSimple = true)]
+    public class COEFFS_LINEAR : Asap2Base
+    {
+        [Element(0, IsArgument = true, Comment = " Coefficients for the linear function (LINEAR). ")]
+        public decimal a;
+
+        [Element(1, IsArgument = true)]
+        public decimal b;
+    }
+
+    [Base()]
     public class COMPU_TAB : Asap2Base
     {
         public enum ConversionType
