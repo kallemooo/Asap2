@@ -159,13 +159,16 @@ namespace Asap2
         [Element(7, IsDictionary = true, Comment = " Measurment data for the module ")]
         public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
 
-        [Element(8, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
+        [Element(8, IsDictionary = true, Comment = " Conversion tables for the module COMPU_METHODs ")]
+        public Dictionary<string, COMPU_TAB> COMPU_TABs = new Dictionary<string, COMPU_TAB>();
+
+        [Element(9, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
         public Dictionary<string, COMPU_VTAB> COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
 
-        [Element(9, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
+        [Element(10, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
         public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
 
-        [Element(10, IsDictionary = true, Comment = " Groups for the module ")]
+        [Element(11, IsDictionary = true, Comment = " Groups for the module ")]
         public Dictionary<string, GROUP> groups = new Dictionary<string, GROUP>();
     }
 
@@ -560,6 +563,59 @@ namespace Asap2
     }
 
     [Base()]
+    public class COMPU_TAB : Asap2Base
+    {
+        public enum ConversionType
+        {
+            TAB_INTP,
+            TAB_NOINTP,
+        }
+
+        public COMPU_TAB(string Name, string LongIdentifier, ConversionType conversionType, uint NumberValuePairs)
+        {
+            this.Name = Name;
+            this.LongIdentifier = LongIdentifier;
+            this.conversionType = conversionType;
+            this.NumberValuePairs = NumberValuePairs;
+            data = new List<COMPU_TAB_DATA>();
+        }
+
+        [Element(1, IsArgument = true, Comment = " Name             ")]
+        public string Name;
+        [Element(2, IsString = true, Comment   = " LongIdentifier   ")]
+        public string LongIdentifier;
+        [Element(3, IsArgument = true, Comment = " ConversionType   ")]
+        public ConversionType conversionType;
+        [Element(4, IsArgument = true, Comment = " NumberValuePairs ")]
+        public uint NumberValuePairs;
+        [Element(5, IsList = true, Comment     = " ValuePairs       ")]
+        public List<COMPU_TAB_DATA> data;
+        [Element(6, IsString = true, Name = "DEFAULT_VALUE")]
+        public string default_value;
+        [Element(7, IsArgument = true, Name = "DEFAULT_VALUE_NUMERIC")]
+        public decimal default_value_numeric;
+    }
+
+    [Base(IsSimple = true)]
+    public class COMPU_TAB_DATA : Asap2Base
+    {
+        public COMPU_TAB_DATA(decimal InVal, decimal OutVal)
+        {
+            this.InVal = InVal;
+            this.OutVal = OutVal;
+        }
+
+        [Element(0, IsName = true, ForceNewLine = true)]
+        public string name = "";
+
+        [Element(1, IsArgument = true, ForceNewLine = true)]
+        public decimal InVal;
+
+        [Element(2, IsString = true)]
+        public decimal OutVal;
+    }
+
+    [Base()]
     public class COMPU_VTAB : Asap2Base
     {
         public COMPU_VTAB(string Name, string LongIdentifier, uint NumberValuePairs)
@@ -570,11 +626,11 @@ namespace Asap2
             data = new List<COMPU_VTAB_DATA>();
         }
 
-        [Element(1, IsArgument = true, Comment = " Name           ")]
+        [Element(1, IsArgument = true, Comment = " Name             ")]
         public string Name;
-        [Element(2, IsString = true, Comment   = " LongIdentifier ")]
+        [Element(2, IsString = true, Comment   = " LongIdentifier   ")]
         public string LongIdentifier;
-        [Element(3, IsArgument = true, Comment = " ConversionType ")]
+        [Element(3, IsArgument = true, Comment = " ConversionType   ")]
         public string ConversionType = "TAB_VERB";
         [Element(4, IsArgument = true, Comment = " NumberValuePairs ")]
         public uint NumberValuePairs;

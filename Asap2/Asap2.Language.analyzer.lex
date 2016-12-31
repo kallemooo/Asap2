@@ -50,12 +50,14 @@ CALIBRATION_ACCESS              { return (int)Token.CALIBRATION_ACCESS; }
 CALIBRATION_METHOD              { return (int)Token.CALIBRATION_METHOD; }
 CALIBRATION_HANDLE              { return (int)Token.CALIBRATION_HANDLE; }
 CALIBRATION_HANDLE_TEXT         { return (int)Token.CALIBRATION_HANDLE_TEXT; }
+COMPU_TAB                       { return (int)Token.COMPU_TAB; }
 COMPU_VTAB                      { return (int)Token.COMPU_VTAB; }
 COMPU_VTAB_RANGE                { return (int)Token.COMPU_VTAB_RANGE; }
 CPU_TYPE                        { return (int)Token.CPU_TYPE; }
 CUSTOMER                        { return (int)Token.CUSTOMER; }
 CUSTOMER_NO                     { return (int)Token.CUSTOMER_NO; }
 DEFAULT_VALUE                   { return (int)Token.DEFAULT_VALUE; }
+DEFAULT_VALUE_NUMERIC           { return (int)Token.DEFAULT_VALUE_NUMERIC; }
 DISPLAY_IDENTIFIER              { return (int)Token.DISPLAY_IDENTIFIER; }
 DISCRETE                        { return (int)Token.DISCRETE; }
 ECU                             { return (int)Token.ECU; }

@@ -27,6 +27,7 @@
             public ARRAY_SIZE array_size;
             public BIT_OPERATION bit_operation;
             public CALIBRATION_ACCESS calibration_access;
+            public COMPU_TAB compu_tab;
             public COMPU_VTAB compu_vtab;
             public COMPU_VTAB_RANGE compu_vtab_range;
             public MATRIX_DIM matrix_dim;
@@ -68,12 +69,14 @@
 %token CALIBRATION_METHOD
 %token CALIBRATION_HANDLE
 %token CALIBRATION_HANDLE_TEXT
+%token COMPU_TAB
 %token COMPU_VTAB
 %token COMPU_VTAB_RANGE
 %token CPU_TYPE
 %token CUSTOMER
 %token CUSTOMER_NO
 %token DEFAULT_VALUE
+%token DEFAULT_VALUE_NUMERIC
 %token DEPOSIT
 %token DISPLAY_IDENTIFIER
 %token DISCRETE
@@ -140,6 +143,8 @@
 %type <calibration_method>  calibration_method_data
 %type <calibration_handle>  calibration_handle
 %type <calibration_handle>  calibration_handle_data
+%type <compu_tab>           compu_tab
+%type <compu_tab>           compu_tab_data
 %type <compu_vtab>          compu_vtab
 %type <compu_vtab>          compu_vtab_data
 %type <compu_vtab_range>    compu_vtab_range
@@ -179,6 +184,7 @@
 %type <ref_measurement>     ref_measurement
 %type <ref_measurement>     ref_measurement_data
 %type <s>                   default_value
+%type <d>                   default_value_numeric
 
 %%
 
@@ -326,6 +332,38 @@ calibration_handle_data     : NUMBER {
                             }
                             ;
 
+compu_tab                   : BEGIN COMPU_TAB compu_tab_data END COMPU_TAB {
+                                $$ = $3;
+                            }
+                            ;
+
+compu_tab_data              : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
+                                COMPU_TAB.ConversionType conversionType;  
+                                try
+                                {
+                                    conversionType = (COMPU_TAB.ConversionType) Enum.Parse(typeof(COMPU_TAB.ConversionType), $3);        
+                                }
+                                catch (ArgumentException)
+                                {
+                                    throw new Exception("Unknown COMPU_TAB ConversionType: " + $3);
+                                }
+                                $$ = new COMPU_TAB(Name: $1, LongIdentifier: $2, conversionType: conversionType, NumberValuePairs: (uint)$4);
+                            }
+                            | compu_tab_data NUMBER NUMBER {
+                                $$ = $1;
+                                $$.data.Add(new COMPU_TAB_DATA($2, $3));
+                            }
+                            | compu_tab_data default_value {
+                                $$ = $1;
+                                $$.default_value = $2;
+                            }
+                            | compu_tab_data default_value_numeric {
+                                $$ = $1;
+                                $$.default_value_numeric = $2;
+                            }
+                            ;
+
+
 compu_vtab                  : BEGIN COMPU_VTAB compu_vtab_data END COMPU_VTAB {
                                 $$ = $3;
                             }
@@ -371,6 +409,10 @@ default_value               : DEFAULT_VALUE QUOTED_STRING {
                             }
                             ;
 
+default_value_numeric       : DEFAULT_VALUE_NUMERIC NUMBER {
+                                $$ = $2;
+                            }
+                            ;
 project                     : BEGIN PROJECT project_data END PROJECT {
                                 $$ = $3;
                                 Asap2File.project = $3;
@@ -438,6 +480,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 | module_data a2ml {
                     $$ = $1;
                     $$.A2MLs.Add($2);
+                }
+                | module_data compu_tab {
+                    $$ = $1;
+                    $$.COMPU_TABs.Add($2.Name, $2);
                 }
                 | module_data compu_vtab {
                     $$ = $1;
