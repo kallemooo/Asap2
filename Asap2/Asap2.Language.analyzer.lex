@@ -3,7 +3,7 @@
 %visibility internal
 %tokentype Token
 
-%option stack, minimize, parser, verbose, persistbuffer, noembedbuffers, unicode, codePage:utf-8
+%option stack, minimize, parser, verbose, persistbuffer, noembedbuffers, unicode, codePage:ISO-8859-1
 
 Identifier      [A-Za-z_][A-Za-z0-9\._]+[\[A-Za-z0-9\]]*
 Space           [ \t\u000c]
