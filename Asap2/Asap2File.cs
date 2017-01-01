@@ -327,7 +327,7 @@ namespace Asap2
         public decimal LowerLimit;
         [Element(8, IsArgument = true, Comment = " UpperLimit     ")]
         public decimal UpperLimit;
-        [Element(9)]
+        [Element(9, IsList = true)]
         public List<ANNOTATION> annotation = new List<ANNOTATION>();
         [Element(10)]
         public ARRAY_SIZE array_size;
@@ -1120,7 +1120,7 @@ namespace Asap2
         public string GroupName;
         [Element(2, IsString = true, Comment   = " GroupLongIdentifier ")]
         public string GroupLongIdentifier;
-        [Element(3)]
+        [Element(3, IsList = true)]
         public List<ANNOTATION> annotation = new List<ANNOTATION>();
         [Element(4)]
         public FUNCTION_LIST function_list;
