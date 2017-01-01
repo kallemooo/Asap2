@@ -134,6 +134,7 @@
 %token ROOT
 %token BEGIN
 %token END
+%token maxParseToken COMMENT
 
 %type <deposit>             deposit
 %type <byte_order>          byte_order
