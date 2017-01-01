@@ -47,6 +47,7 @@ CALIBRATION_ACCESS              { return Make(Token.CALIBRATION_ACCESS); }
 CALIBRATION_METHOD              { return Make(Token.CALIBRATION_METHOD); }
 CALIBRATION_HANDLE              { return Make(Token.CALIBRATION_HANDLE); }
 CALIBRATION_HANDLE_TEXT         { return Make(Token.CALIBRATION_HANDLE_TEXT); }
+COMPARISON_QUANTITY             { return Make(Token.COMPARISON_QUANTITY); }
 COMPU_METHOD                    { return Make(Token.COMPU_METHOD); }
 COMPU_TAB_REF                   { return Make(Token.COMPU_TAB_REF); }
 COMPU_TAB                       { return Make(Token.COMPU_TAB); }

@@ -69,6 +69,7 @@
 %token ARRAY_SIZE
 %token BIT_MASK
 %token BIT_OPERATION
+%token COMPARISON_QUANTITY
 %token CALIBRATION_ACCESS
 %token CALIBRATION_METHOD
 %token CALIBRATION_HANDLE
@@ -444,6 +445,10 @@ characteristic_data
     |  characteristic_data byte_order {
         $$ = $1;
         $$.byte_order = $2;
+    }
+    |  characteristic_data COMPARISON_QUANTITY IDENTIFIER {
+        $$ = $1;
+        $$.comparison_quantity = $3;
     }
     |  characteristic_data calibration_access {
         $$ = $1;

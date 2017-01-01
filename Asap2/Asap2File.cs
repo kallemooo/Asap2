@@ -379,6 +379,12 @@ namespace Asap2
         public BIT_OPERATION bit_operation;
         [Element(13)]
         public BYTE_ORDER byte_order;
+
+        /// <summary>
+        /// Reference to a <see cref="MEASUREMENT"/>, which represents the working point on a curve.
+        /// </summary>
+        [Element(13, IsArgument = true, Name = "COMPARISON_QUANTITY")]
+        public string comparison_quantity;        
         [Element(14)]
         public CALIBRATION_ACCESS calibration_access;
         [Element(14)]
