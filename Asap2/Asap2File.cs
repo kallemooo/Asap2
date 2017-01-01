@@ -144,8 +144,8 @@ namespace Asap2
         [Element(2, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;
 
-        [Element(3, IsList = true)]
-        public List<A2ML> A2MLs = new List<A2ML>();
+        [Element(3)]
+        public A2ML A2ML;
 
         [Element(4, IsDictionary = true)]
         public Dictionary<string, IF_DATA> IF_DATAs = new Dictionary<string, IF_DATA>();

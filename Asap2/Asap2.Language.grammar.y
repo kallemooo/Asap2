@@ -540,7 +540,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
                 | module_data a2ml {
                     $$ = $1;
-                    $$.A2MLs.Add($2);
+                    $$.A2ML = $2;
                 }
                 | module_data compu_method {
                     $$ = $1;
