@@ -84,6 +84,7 @@ SIGN_EXTEND                     { return Make(Token.SIGN_EXTEND); }
 ECU_ADDRESS                     { return Make(Token.ECU_ADDRESS); }
 ECU_ADDRESS_EXTENSION           { return Make(Token.ECU_ADDRESS_EXTENSION); }
 PROJECT                         { return Make(Token.PROJECT); }
+GUARD_RAILS                     { return Make(Token.GUARD_RAILS); }
 HEADER                          { return Make(Token.HEADER); }
 MODULE                          { return Make(Token.MODULE); }
 MOD_COMMON                      { return Make(Token.MOD_COMMON); }

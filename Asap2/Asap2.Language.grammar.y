@@ -102,6 +102,7 @@
 %token SIGN_EXTEND
 %token MATRIX_DIM
 %token PROJECT
+%token GUARD_RAILS
 %token HEADER
 %token MODULE
 %token MOD_COMMON
@@ -482,6 +483,10 @@ characteristic_data
     |  characteristic_data function_list {
         $$ = $1;
         $$.function_list = $2;
+    }
+    |  characteristic_data GUARD_RAILS {
+        $$ = $1;
+        $$.guard_rails = new GUARD_RAILS();
     }
     | characteristic_data if_data {
         $$ = $1;

@@ -403,6 +403,11 @@ namespace Asap2
         public string format;
         [Element(21)]
         public FUNCTION_LIST function_list;
+        /// <summary>
+        /// Determines that the outermost values of axes, curves and maps are calculated and cannot be adjusted.
+        /// </summary>
+        [Element(21)]
+        public GUARD_RAILS guard_rails;
         [Element(22)]
         public MATRIX_DIM matrix_dim;
         [Element(23)]
@@ -1238,6 +1243,11 @@ namespace Asap2
 
     [Base(IsSimple = true)]
     public class READ_WRITE : Asap2Base
+    {
+    }
+
+    [Base(IsSimple = true)]
+    public class GUARD_RAILS : Asap2Base
     {
     }
 
