@@ -200,7 +200,6 @@ public int MakeAlignment()
 public int MakeStringBuilder(Token token)
 {
     yylval.s = yylval.sb.ToString();
-    Console.WriteLine(yylval.s);
     yylloc = new QUT.Gppg.LexLocation(yyline,yycol,yyline,yycol + yyleng);
     return (int)token;
 }
