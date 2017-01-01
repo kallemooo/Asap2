@@ -42,6 +42,7 @@ ANNOTATION_TEXT                 { return Make(Token.ANNOTATION_TEXT); }
 ARRAY_SIZE                      { return Make(Token.ARRAY_SIZE); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }
+CHARACTERISTIC                  { return Make(Token.CHARACTERISTIC); }
 CALIBRATION_ACCESS              { return Make(Token.CALIBRATION_ACCESS); }
 CALIBRATION_METHOD              { return Make(Token.CALIBRATION_METHOD); }
 CALIBRATION_HANDLE              { return Make(Token.CALIBRATION_HANDLE); }
@@ -56,6 +57,7 @@ COEFFS_LINEAR                   { return Make(Token.COEFFS_LINEAR); }
 CPU_TYPE                        { return Make(Token.CPU_TYPE); }
 CUSTOMER                        { return Make(Token.CUSTOMER); }
 CUSTOMER_NO                     { return Make(Token.CUSTOMER_NO); }
+DEPENDENT_CHARACTERISTIC        { return Make(Token.DEPENDENT_CHARACTERISTIC); }
 DEFAULT_VALUE                   { return Make(Token.DEFAULT_VALUE); }
 DEFAULT_VALUE_NUMERIC           { return Make(Token.DEFAULT_VALUE_NUMERIC); }
 DISPLAY_IDENTIFIER              { return Make(Token.DISPLAY_IDENTIFIER); }
@@ -63,6 +65,7 @@ DISCRETE                        { return Make(Token.DISCRETE); }
 ECU                             { return Make(Token.ECU); }
 ECU_CALIBRATION_OFFSET          { return Make(Token.ECU_CALIBRATION_OFFSET); }
 ERROR_MASK                      { return Make(Token.ERROR_MASK); }
+EXTENDED_LIMITS                 { return Make(Token.EXTENDED_LIMITS); }
 FUNCTION_LIST                   { return Make(Token.FUNCTION_LIST); }
 EPK                             { return Make(Token.EPK); }
 FORMULA                         { return Make(Token.FORMULA); }
@@ -71,6 +74,7 @@ REF_UNIT                        { return Make(Token.REF_UNIT); }
 LAYOUT                          { return Make(Token.LAYOUT); }
 MAX_REFRESH                     { return Make(Token.MAX_REFRESH); }
 PHYS_UNIT                       { return Make(Token.PHYS_UNIT); }
+READ_ONLY                       { return Make(Token.READ_ONLY); }
 READ_WRITE                      { return Make(Token.READ_WRITE); }
 RIGHT_SHIFT                     { return Make(Token.RIGHT_SHIFT); }
 LEFT_SHIFT                      { return Make(Token.LEFT_SHIFT); }
@@ -84,7 +88,9 @@ MODULE                          { return Make(Token.MODULE); }
 MOD_COMMON                      { return Make(Token.MOD_COMMON); }
 MEMORY_SEGMENT                  { return Make(Token.MEMORY_SEGMENT); }
 MEMORY_LAYOUT                   { return Make(Token.MEMORY_LAYOUT); }
+NUMBER                          { return Make(Token.NUMBER_token); }
 REF_MEMORY_SEGMENT              { return Make(Token.REF_MEMORY_SEGMENT); }
+STEP_SIZE                       { return Make(Token.STEP_SIZE); }
 SYMBOL_LINK                     { return Make(Token.SYMBOL_LINK); }
 VIRTUAL                         { return Make(Token.VIRTUAL); }
 MOD_PAR                         { return Make(Token.MOD_PAR); }
@@ -99,13 +105,13 @@ DATA_SIZE                       { return Make(Token.DATA_SIZE); }
 VERSION                         { return Make(Token.VERSION); }
 PROJECT_NO                      { return Make(Token.PROJECT_NO); }
 MEASUREMENT                     { return Make(Token.MEASUREMENT); }
-CHARACTERISTIC                  { return Make(Token.CHARACTERISTIC); }
 FORMAT                          { return Make(Token.FORMAT); }
 MATRIX_DIM                      { return Make(Token.MATRIX_DIM); }
 GROUP                           { return Make(Token.GROUP); }
 SUB_GROUP                       { return Make(Token.SUB_GROUP); }
 REF_CHARACTERISTIC              { return Make(Token.REF_CHARACTERISTIC); }
 REF_MEASUREMENT                 { return Make(Token.REF_MEASUREMENT); }
+VIRTUAL_CHARACTERISTIC          { return Make(Token.VIRTUAL_CHARACTERISTIC); }
 ROOT                            { return Make(Token.ROOT); }
 IF_DATA                         { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }
 A2ML                            { yy_push_state (STATE_A2ML); yylval.sb = new StringBuilder(); }

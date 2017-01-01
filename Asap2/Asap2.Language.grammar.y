@@ -46,6 +46,8 @@
             public REF_MEASUREMENT ref_measurement;
             public COMPU_METHOD compu_method;
             public FORMULA formula;
+            public CHARACTERISTIC characteristic;
+            public List<string> IDENTIFIER_list;
 }
 
 %start main
@@ -90,6 +92,7 @@
 %token ECU_CALIBRATION_OFFSET
 %token EPK
 %token ERROR_MASK
+%token EXTENDED_LIMITS
 %token FORMULA
 %token FORMULA_INV
 %token REF_UNIT
@@ -104,8 +107,10 @@
 %token MOD_PAR
 %token MEMORY_SEGMENT
 %token MEMORY_LAYOUT
+%token NUMBER_token
 %token NO_OF_INTERFACES
 %token BYTE_ORDER
+%token DEPENDENT_CHARACTERISTIC
 %token DATA_SIZE
 %token S_REC_LAYOUT
 %token VERSION
@@ -113,6 +118,7 @@
 %token PHONE_NO
 %token SUPPLIER
 %token SYSTEM_CONSTANT
+%token STEP_SIZE
 %token MEASUREMENT
 %token CHARACTERISTIC
 %token ECU_ADDRESS
@@ -120,6 +126,7 @@
 %token FORMAT
 %token LAYOUT
 %token MAX_REFRESH
+%token READ_ONLY
 %token READ_WRITE
 %token PHYS_UNIT
 %token FUNCTION_LIST
@@ -132,6 +139,7 @@
 %token REF_CHARACTERISTIC
 %token REF_MEASUREMENT
 %token ROOT
+%token VIRTUAL_CHARACTERISTIC
 %token BEGIN
 %token END
 %token maxParseToken COMMENT
@@ -148,6 +156,8 @@
 %type <array_size>          array_size
 %type <bit_operation>       bit_operation
 %type <bit_operation>       bit_operation_data
+%type <characteristic>      characteristic
+%type <characteristic>      characteristic_data
 %type <calibration_access>  calibration_access
 %type <calibration_method>  calibration_method
 %type <calibration_method>  calibration_method_data
@@ -198,6 +208,7 @@
 %type <ref_measurement>     ref_measurement_data
 %type <s>                   default_value
 %type <d>                   default_value_numeric
+%type <IDENTIFIER_list>     IDENTIFIER_list
 
 %%
 
@@ -206,6 +217,15 @@ main    : project
         | asap2_version a2ml_version project
         ;
 
+IDENTIFIER_list
+    : /* generic IDENTIFIER list handler */ {
+        $$ = new List<string>();
+    }
+    | IDENTIFIER_list IDENTIFIER {
+        $$ = $1;
+        $$.Add($2);
+    }
+    ;
 
 a2ml                        : BEGIN A2ML {
                                 $$ = new A2ML($2);
@@ -393,6 +413,110 @@ formula                     : BEGIN FORMULA QUOTED_STRING END FORMULA {
                             }
                             ;
 
+characteristic
+    : BEGIN CHARACTERISTIC characteristic_data END CHARACTERISTIC {
+        $$ = $3;
+    }
+    ;
+
+characteristic_data
+    : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER IDENTIFIER NUMBER IDENTIFIER NUMBER NUMBER {
+        CHARACTERISTIC.Type type;
+        try
+        {
+            type = (CHARACTERISTIC.Type) Enum.Parse(typeof(CHARACTERISTIC.Type), $3);
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown CHARACTERISTIC Type: " + $3);
+        }                    
+
+        $$ = new CHARACTERISTIC(Name: $1, LongIdentifier: $2, type: type, Address: (UInt64)$4, Deposit: $5, MaxDiff: $6, Conversion: $7, LowerLimit: $8, UpperLimit: $9);
+    }
+    |  characteristic_data annotation {
+        $$ = $1;
+        $$.annotation.Add($2);
+    }
+    |  characteristic_data BIT_MASK NUMBER {
+        $$ = $1;
+        $$.bit_mask = (UInt64)$3;
+    }
+    |  characteristic_data byte_order {
+        $$ = $1;
+        $$.byte_order = $2;
+    }
+    |  characteristic_data BEGIN DEPENDENT_CHARACTERISTIC QUOTED_STRING IDENTIFIER_list END DEPENDENT_CHARACTERISTIC {
+        $$ = $1;
+        $$.dependent_characteristic = new DEPENDENT_CHARACTERISTIC($4);
+        $$.dependent_characteristic.Characteristic = $5;
+    }
+    |  characteristic_data DISCRETE {
+        $$ = $1;
+        $$.discrete = new DISCRETE();
+    }
+    |  characteristic_data DISPLAY_IDENTIFIER IDENTIFIER {
+        $$ = $1;
+        $$.display_identifier = $3;
+    }
+    |  characteristic_data ecu_address_extension {
+        $$ = $1;
+        $$.ecu_address_extension = $2;
+    }
+    |  characteristic_data FORMAT QUOTED_STRING {
+        $$ = $1;
+        $$.format = $3;
+    }
+    |  characteristic_data EXTENDED_LIMITS NUMBER NUMBER {
+        $$ = $1;
+        $$.extended_limits = new EXTENDED_LIMITS($3, $4);
+    }
+    |  characteristic_data function_list {
+        $$ = $1;
+        $$.function_list = $2;
+    }
+    | characteristic_data if_data {
+        $$ = $1;
+        $$.if_data.Add($2);
+    }
+    |  characteristic_data matrix_dim {
+        $$ = $1;
+        $$.matrix_dim = $2;
+    }
+    |  characteristic_data max_refresh {
+        $$ = $1;
+        $$.max_refresh = $2;
+    }
+    |  characteristic_data NUMBER_token NUMBER {
+        $$ = $1;
+        $$.number = (UInt64)$3;
+    }
+    |  characteristic_data PHYS_UNIT QUOTED_STRING {
+        $$ = $1;
+        $$.phys_unit = $3;
+    }
+    |  characteristic_data READ_ONLY {
+        $$ = $1;
+        $$.read_only = new READ_ONLY();
+    }
+    |  characteristic_data REF_MEMORY_SEGMENT IDENTIFIER {
+        $$ = $1;
+        $$.ref_memory_segment = $3;
+    }
+    |  characteristic_data STEP_SIZE NUMBER {
+        $$ = $1;
+        $$.step_size = $3;
+    }
+    |  characteristic_data symbol_link {
+        $$ = $1;
+        $$.symbol_link = $2;
+    }
+    |  characteristic_data BEGIN VIRTUAL_CHARACTERISTIC QUOTED_STRING IDENTIFIER_list END VIRTUAL_CHARACTERISTIC {
+        $$ = $1;
+        $$.virtual_characteristic = new VIRTUAL_CHARACTERISTIC($4);
+        $$.virtual_characteristic.Characteristic = $5;
+    }
+    ;
+
 compu_tab                   : BEGIN COMPU_TAB compu_tab_data END COMPU_TAB {
                                 $$ = $3;
                             }
@@ -565,6 +689,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 | module_data mod_par {
                     $$ = $1;
                     $$.mod_par = $2;
+                }
+                | module_data characteristic {
+                    $$ = $1;
+                    $$.characteristics.Add($2.Name, $2);
                 }
                 ;
 
@@ -808,7 +936,7 @@ function_list  : BEGIN FUNCTION_LIST function_list_data END FUNCTION_LIST {
                 }
                 ;
 
-function_list_data  : /* start */  {
+function_list_data  : /* start */ {
                     $$ = new FUNCTION_LIST();
                 }
                 |  function_list_data IDENTIFIER {

@@ -52,7 +52,6 @@ namespace Asap2
     /// </summary>
     public enum ConversionType
     {
-        NO_COMPU_METHOD,
         IDENTICAL,
         FORM,
         LINEAR,
@@ -188,6 +187,9 @@ namespace Asap2
 
         [Element(12, IsDictionary = true, Comment = " Groups for the module ")]
         public Dictionary<string, GROUP> groups = new Dictionary<string, GROUP>();
+
+        [Element(13, IsDictionary = true, Comment = " Characteristic data for the module ")]
+        public Dictionary<string, CHARACTERISTIC> characteristics = new Dictionary<string, CHARACTERISTIC>();
     }
 
     [Base(IsSimple = true)]
@@ -304,6 +306,127 @@ namespace Asap2
         }
         [Element(0, IsArgument = true)]
         public string data;
+    }
+
+    [Base(IsSimple = true)]
+    public class EXTENDED_LIMITS : Asap2Base
+    {
+        public EXTENDED_LIMITS(decimal LowerLimit, decimal UpperLimit)
+        {
+            this.LowerLimit = LowerLimit;
+            this.UpperLimit = UpperLimit;
+        }
+        [Element(1, IsArgument = true, Comment = " LowerLimit     ")]
+        public decimal LowerLimit;
+        [Element(2, IsArgument = true, Comment = " UpperLimit     ")]
+        public decimal UpperLimit;
+    }
+
+    [Base()]
+    public class CHARACTERISTIC : Asap2Base
+    {
+        /// <summary>
+        /// Characteristic types 
+        /// </summary>
+        public enum Type
+        {
+            ASCII,
+            CURVE,
+            MAP,
+            CUBOID,
+            CUBE_4,
+            CUBE_5,
+            VAL_BLK,
+            VALUE,
+        }
+
+        public CHARACTERISTIC(string Name, string LongIdentifier, Type type, UInt64 Address, string Deposit, decimal MaxDiff, string Conversion, decimal LowerLimit, decimal UpperLimit)
+        {
+            this.Name = Name;
+            this.LongIdentifier = LongIdentifier;
+            this.type = type;
+            this.Address = Address;
+            this.Deposit = Deposit;
+            this.MaxDiff = MaxDiff;
+            this.Conversion = Conversion;
+            this.LowerLimit = LowerLimit;
+            this.UpperLimit = UpperLimit;
+        }
+        [Element(1, IsArgument = true, Comment = " Name           ")]
+        public string Name;
+        [Element(2, IsString = true, Comment   = " LongIdentifier ")]
+        public string LongIdentifier;
+        [Element(3, IsArgument = true, Comment = " Type           ")]
+        public Type type;
+        [Element(4, IsArgument = true, Comment = " Address        ", CodeAsHex = true)]
+        public UInt64 Address;
+        [Element(5, IsArgument = true, Comment = " Deposit        ")]
+        public string Deposit;
+        [Element(6, IsArgument = true, Comment = " MaxDiff        ")]
+        public decimal MaxDiff;
+        [Element(7, IsArgument = true, Comment = " Conversion     ")]
+        public string Conversion;
+        [Element(8, IsArgument = true, Comment = " LowerLimit     ")]
+        public decimal LowerLimit;
+        [Element(9, IsArgument = true, Comment = " UpperLimit     ")]
+        public decimal UpperLimit;
+
+        [Element(10, IsList = true)]
+        public List<ANNOTATION> annotation = new List<ANNOTATION>();
+        [Element(11, IsArgument = true, CodeAsHex = true, Name = "BIT_MASK")]
+        public UInt64? bit_mask;
+        [Element(12)]
+        public BIT_OPERATION bit_operation;
+        [Element(13)]
+        public BYTE_ORDER byte_order;
+        [Element(14)]
+        public DEPENDENT_CHARACTERISTIC dependent_characteristic;
+        [Element(14)]
+        public DISCRETE discrete;
+        [Element(15, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
+        public string display_identifier;
+        [Element(17)]
+        public ECU_ADDRESS_EXTENSION ecu_address_extension;
+        [Element(18, IsArgument = true, CodeAsHex = true, Name = "ERROR_MASK")]
+        public UInt64? error_mask;
+        [Element(19)]
+        public EXTENDED_LIMITS extended_limits;
+        [Element(20, IsString = true, Name = "FORMAT")]
+        public string format;
+        [Element(21)]
+        public FUNCTION_LIST function_list;
+        [Element(22)]
+        public MATRIX_DIM matrix_dim;
+        [Element(23)]
+        public MAX_REFRESH max_refresh;
+
+        /// <summary>
+        /// Specifies the number of elements (ASCII characters or values) in a 1D array.
+        /// Obsolete keyword. Please use <see cref="MATRIX_DIM"/> instead.
+        /// </summary>
+        /// <remarks>
+        /// Obsolete keyword. Please use <see cref="MATRIX_DIM"/> instead.
+        /// </remarks>
+        [Element(24, IsArgument = true, Name = "NUMBER", IsObsolete = "Obsolete keyword. Please use MATRIX_DIM instead.")]
+        public UInt64? number;
+        [Element(25, IsString = true, Name = "PHYS_UNIT")]
+        public string phys_unit;
+        [Element(26, Comment = "Write-access is not allowed for this CHARACTERISTIC")]
+        public READ_ONLY read_only;
+        [Element(27, IsArgument = true, Name = "REF_MEMORY_SEGMENT")]
+        public string ref_memory_segment;
+
+        /// <summary>
+        /// Specifies an increment value that is added or subtracted when using the up/down keys while calibrating.
+        /// </summary>
+        [Element(27, IsArgument = true, Name = "STEP_SIZE")]
+        public decimal? step_size;
+        [Element(28)]
+        public SYMBOL_LINK symbol_link;
+        [Element(14)]
+        public VIRTUAL_CHARACTERISTIC virtual_characteristic;
+        [Element(40, IsList = true)]
+        public List<IF_DATA> if_data = new List<IF_DATA>();
     }
 
     [Base()]
@@ -1101,6 +1224,11 @@ namespace Asap2
     }
 
     [Base(IsSimple = true)]
+    public class READ_ONLY : Asap2Base
+    {
+    }
+
+    [Base(IsSimple = true)]
     public class READ_WRITE : Asap2Base
     {
     }
@@ -1158,5 +1286,40 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ROOT : Asap2Base
     {
+    }
+
+    /// <summary>
+    /// Specifies a formula to calculate the initialization value of this virtual characteristic based upon referenced <see cref="CHARACTERISTIC"/>s.
+    /// The value of the virtual characteristic is not stored in ECU memory. It is typically used to calculate <see cref="DEPENDENT_CHARACTERISTIC"/>s.
+    /// </summary>
+    [Base()]
+    public class VIRTUAL_CHARACTERISTIC : Asap2Base
+    {
+        public VIRTUAL_CHARACTERISTIC(string Formula)
+        {
+            this.Formula = Formula;
+        }
+        [Element(0, IsString = true)]
+        public string Formula;
+        [Element(1, IsArgument = true, IsList = true)]
+        public List<string> Characteristic = new List<string>();
+    }
+
+    /// <summary>
+    /// The value of the <see cref="CHARACTERISTIC"/>, which references this DEPENDENT_CHARACTERISTIC, is calculated instead of read from ECU memory.
+    /// DEPENDENT_CHARACTERISTIC specifies a formula and references to other parameters (in memory or virtual) for the purpose to calculate the value.
+    /// The value changes automatically, once one of the referenced parameters has changed its value.
+    /// </summary>
+    [Base()]
+    public class DEPENDENT_CHARACTERISTIC : Asap2Base
+    {
+        public DEPENDENT_CHARACTERISTIC(string Formula)
+        {
+            this.Formula = Formula;
+        }
+        [Element(0, IsString = true)]
+        public string Formula;
+        [Element(1, IsArgument = true, IsList = true)]
+        public List<string> Characteristic = new List<string>();
     }
 }
