@@ -207,8 +207,8 @@ main    : project
         ;
 
 
-a2ml                        : A2ML {
-                                $$ = new A2ML($1);
+a2ml                        : BEGIN A2ML {
+                                $$ = new A2ML($2);
                             }
                             ;
 
@@ -558,10 +558,6 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.COMPU_VTAB_RANGEs.Add($2.Name, $2);
                 }
-                | module_data compu_vtab_range {
-                    $$ = $1;
-                    $$.COMPU_VTAB_RANGEs.Add($2.Name, $2);
-                }
                 | module_data group {
                     $$ = $1;
                     $$.groups.Add($2.GroupName, $2);
@@ -572,8 +568,8 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
                 ;
 
-if_data      : IF_DATA {
-                    $$ = new IF_DATA($1);
+if_data         : BEGIN IF_DATA {
+                    $$ = new IF_DATA($2);
                 }
                 ;
 

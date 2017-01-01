@@ -107,12 +107,13 @@ SUB_GROUP                       { return Make(Token.SUB_GROUP); }
 REF_CHARACTERISTIC              { return Make(Token.REF_CHARACTERISTIC); }
 REF_MEASUREMENT                 { return Make(Token.REF_MEASUREMENT); }
 ROOT                            { return Make(Token.ROOT); }
+IF_DATA                         { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }
+A2ML                            { yy_push_state (STATE_A2ML); yylval.sb = new StringBuilder(); }
 
 {Identifier}                    { return Make(Token.IDENTIFIER); }
 {HexNumber}                     { return MakeHexNumber(); }
 {Decimal}                       { return MakeNumber(); }
 
-"\/begin IF_DATA"   { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }
 <STATE_IF_DATA> {
     "\/end IF_DATA" { yy_pop_state(); return MakeStringBuilder(Token.IF_DATA); }
     \\.             { yylval.sb.Append(yytext); }
@@ -121,7 +122,6 @@ ROOT                            { return Make(Token.ROOT); }
     <<EOF>>         { ; /* raise an error. */ }
 }
 
-"\/begin A2ML"      { yy_push_state (STATE_A2ML); yylval.sb = new StringBuilder(); }
 <STATE_A2ML> {
     "\/end A2ML"    { yy_pop_state(); return MakeStringBuilder(Token.A2ML); }
     \\.             { yylval.sb.Append(yytext); }
