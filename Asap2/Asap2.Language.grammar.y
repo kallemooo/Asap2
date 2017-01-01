@@ -351,14 +351,14 @@ compu_method                : BEGIN COMPU_METHOD compu_method_data END COMPU_MET
                             ;
 
 compu_method_data           : IDENTIFIER QUOTED_STRING IDENTIFIER QUOTED_STRING QUOTED_STRING {
-                                COMPU_METHOD.ConversionType conversionType;  
+                                ConversionType conversionType;  
                                 try
                                 {
-                                    conversionType = (COMPU_METHOD.ConversionType) Enum.Parse(typeof(COMPU_METHOD.ConversionType), $3);        
+                                    conversionType = (ConversionType) Enum.Parse(typeof(ConversionType), $3);        
                                 }
                                 catch (ArgumentException)
                                 {
-                                    throw new Exception("Unknown COMPU_METHOD ConversionType: " + $3);
+                                    throw new Exception("Unknown ConversionType: " + $3);
                                 }
                                 $$ = new COMPU_METHOD(Name: $1, LongIdentifier: $2, conversionType: conversionType, Format: $4, Unit: $5);
                             }
@@ -399,14 +399,14 @@ compu_tab                   : BEGIN COMPU_TAB compu_tab_data END COMPU_TAB {
                             ;
 
 compu_tab_data              : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
-                                COMPU_TAB.ConversionType conversionType;  
+                                ConversionType conversionType;  
                                 try
                                 {
-                                    conversionType = (COMPU_TAB.ConversionType) Enum.Parse(typeof(COMPU_TAB.ConversionType), $3);        
+                                    conversionType = (ConversionType) Enum.Parse(typeof(ConversionType), $3);
                                 }
                                 catch (ArgumentException)
                                 {
-                                    throw new Exception("Unknown COMPU_TAB ConversionType: " + $3);
+                                    throw new Exception("Unknown ConversionType: " + $3);
                                 }
                                 $$ = new COMPU_TAB(Name: $1, LongIdentifier: $2, conversionType: conversionType, NumberValuePairs: (uint)$4);
                             }

@@ -47,6 +47,21 @@ namespace Asap2
         FLOAT64_IEEE
     }
 
+    /// <summary>
+    /// Conversion types used by CHARACTERISTICs and MEASUREMENT.
+    /// </summary>
+    public enum ConversionType
+    {
+        NO_COMPU_METHOD,
+        IDENTICAL,
+        FORM,
+        LINEAR,
+        RAT_FUNC,
+        TAB_INTP,
+        TAB_NOINTP,
+        TAB_VERB,
+    }
+
     public class Asap2File : Asap2Base
     {
         [Element(0, IsComment = true, IsPreComment = true)]
@@ -568,17 +583,6 @@ namespace Asap2
     [Base()]
     public class COMPU_METHOD : Asap2Base
     {
-        public enum ConversionType
-        {
-            IDENTICAL,
-            FORM,
-            LINEAR,
-            RAT_FUNC,
-            TAB_INTP,
-            TAB_NOINTP,
-            TAB_VERB,
-        }
-
         public COMPU_METHOD(string Name, string LongIdentifier, ConversionType conversionType, string Format, string Unit)
         {
             this.Name = Name;
@@ -691,12 +695,6 @@ namespace Asap2
     [Base()]
     public class COMPU_TAB : Asap2Base
     {
-        public enum ConversionType
-        {
-            TAB_INTP,
-            TAB_NOINTP,
-        }
-
         public COMPU_TAB(string Name, string LongIdentifier, ConversionType conversionType, uint NumberValuePairs)
         {
             this.Name = Name;
