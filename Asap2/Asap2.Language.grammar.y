@@ -445,6 +445,10 @@ characteristic_data
         $$ = $1;
         $$.byte_order = $2;
     }
+    |  characteristic_data calibration_access {
+        $$ = $1;
+        $$.calibration_access = $2;
+    }
     |  characteristic_data BEGIN DEPENDENT_CHARACTERISTIC QUOTED_STRING IDENTIFIER_list END DEPENDENT_CHARACTERISTIC {
         $$ = $1;
         $$.dependent_characteristic = new DEPENDENT_CHARACTERISTIC($4);

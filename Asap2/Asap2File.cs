@@ -380,6 +380,8 @@ namespace Asap2
         [Element(13)]
         public BYTE_ORDER byte_order;
         [Element(14)]
+        public CALIBRATION_ACCESS calibration_access;
+        [Element(14)]
         public DEPENDENT_CHARACTERISTIC dependent_characteristic;
         [Element(14)]
         public DISCRETE discrete;
