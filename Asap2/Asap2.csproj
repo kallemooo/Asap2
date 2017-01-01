@@ -94,7 +94,7 @@
       <Output TaskParameter="Outputs" ItemName="Asap2Scanner" />
     </Exec>
     <Message Text="Generating parser for $(Asap2Parser) ..." />
-    <Exec Command="$(GppgTool) /no-lines /gplex &quot;$(Asap2Parser).Language.grammar.y&quot; &gt; &quot;$(Asap2Parser).Parser.Generated.cs&quot;" WorkingDirectory="$(ProjectDir)" Outputs="$(Asap2Parser).Parser.Generated.cs">
+    <Exec Command="$(GppgTool) /no-lines /verbose /listing /conflicts /gplex &quot;$(Asap2Parser).Language.grammar.y&quot; &gt; &quot;$(Asap2Parser).Parser.Generated.cs&quot;" WorkingDirectory="$(ProjectDir)" Outputs="$(Asap2Parser).Parser.Generated.cs">
       <Output TaskParameter="Outputs" ItemName="Asap2" />
     </Exec>
   </Target>
