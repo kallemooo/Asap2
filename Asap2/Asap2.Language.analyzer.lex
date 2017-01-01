@@ -86,6 +86,7 @@ ECU_ADDRESS_EXTENSION           { return Make(Token.ECU_ADDRESS_EXTENSION); }
 PROJECT                         { return Make(Token.PROJECT); }
 GUARD_RAILS                     { return Make(Token.GUARD_RAILS); }
 HEADER                          { return Make(Token.HEADER); }
+MAP_LIST                        { return Make(Token.MAP_LIST); }
 MODULE                          { return Make(Token.MODULE); }
 MOD_COMMON                      { return Make(Token.MOD_COMMON); }
 MEMORY_SEGMENT                  { return Make(Token.MEMORY_SEGMENT); }

@@ -121,6 +121,7 @@
 %token SUPPLIER
 %token SYSTEM_CONSTANT
 %token STEP_SIZE
+%token MAP_LIST
 %token MEASUREMENT
 %token CHARACTERISTIC
 %token ECU_ADDRESS
@@ -491,6 +492,11 @@ characteristic_data
     | characteristic_data if_data {
         $$ = $1;
         $$.if_data.Add($2);
+    }
+    |  characteristic_data BEGIN MAP_LIST IDENTIFIER_list END MAP_LIST {
+        $$ = $1;
+        $$.map_list = new MAP_LIST();
+        $$.map_list.MapList = $4;
     }
     |  characteristic_data matrix_dim {
         $$ = $1;

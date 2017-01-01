@@ -408,6 +408,8 @@ namespace Asap2
         /// </summary>
         [Element(21)]
         public GUARD_RAILS guard_rails;
+        [Element(21)]
+        public MAP_LIST map_list;
         [Element(22)]
         public MATRIX_DIM matrix_dim;
         [Element(23)]
@@ -1304,6 +1306,19 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ROOT : Asap2Base
     {
+    }
+
+    /// <summary>
+    /// Lists the maps which comprise a cuboid.
+    /// </summary>
+    [Base()]
+    public class MAP_LIST : Asap2Base
+    {
+        public MAP_LIST()
+        {
+        }
+        [Element(1, IsArgument = true, IsList = true)]
+        public List<string> MapList = new List<string>();
     }
 
     /// <summary>
