@@ -218,6 +218,105 @@ namespace Asap2
         public uint value;
     }
 
+    [Base()]
+    public class AXIS_DESCR : Asap2Base
+    {
+        /// <summary>
+        /// Specifies the properties of an axis that belongs to a tunable curve, map or cuboid.
+        /// </summary>
+        public enum Attribute
+        {
+            /// <summary>
+            /// Axis shared by various tables and rescaled, i.e. normalized, by a curve (CURVE_AXIS_REF).
+            /// </summary>
+            CURVE_AXIS,
+            /// <summary>
+            /// Axis shared by various tables.
+            /// </summary>
+            COM_AXIS,
+            /// <summary>
+            /// Axis specific to one table with calculated axis points. Axis points are not stored in ECU memory
+            /// </summary>
+            FIX_AXIS,
+            /// <summary>
+            /// Axis shared by various tables and rescaled, i.e. normalized, by another axis (AXIS_PTS_REF).
+            /// </summary>
+            RES_AXIS,
+            /// <summary>
+            ///  Axis specific to one table.
+            /// </summary>
+            STD_AXIS,
+        }
+
+        public AXIS_DESCR(Attribute attribute, string InputQuantity, string Conversion, UInt64 MaxAxisPoints, decimal LowerLimit, decimal UpperLimit)
+        {
+            this.attribute = attribute;
+            this.InputQuantity = InputQuantity;
+            this.Conversion = Conversion;
+            this.MaxAxisPoints = MaxAxisPoints;
+            this.LowerLimit = LowerLimit;
+            this.UpperLimit = UpperLimit;
+        }
+        [Element(1, IsArgument = true, Comment = " Type           ")]
+        public Attribute attribute;
+        [Element(2, IsArgument = true, Comment = " InputQuantity  ")]
+        public string InputQuantity;
+        [Element(3, IsArgument = true, Comment = " Conversion     ")]
+        public string Conversion;
+        [Element(4, IsArgument = true, Comment = " MaxAxisPoints  ")]
+        public UInt64 MaxAxisPoints;
+        [Element(5, IsArgument = true, Comment = " LowerLimit     ")]
+        public decimal LowerLimit;
+        [Element(6, IsArgument = true, Comment = " UpperLimit     ")]
+        public decimal UpperLimit;
+        [Element(7, IsList = true)]
+        public List<ANNOTATION> annotation = new List<ANNOTATION>();
+
+        /// <summary>
+        /// Reference to AXIS_PTS in case the axis values are stored in a different memory location than the values of
+        /// the <see cref="CHARACTERISTIC"/> the axis description belongs to.
+        /// </summary>
+        [Element(8, IsArgument = true, Name = "AXIS_PTS_REF")]
+        public string axis_pts_ref;
+        [Element(9)]
+        public BYTE_ORDER byte_order;
+
+        /// <summary>
+        /// Reference to the curve's <see cref="CHARACTERISTIC"/> that is used to normalize or scale the axis.
+        /// </summary>
+        [Element(10, IsArgument = true, Name = "CURVE_AXIS_REF")]
+        public string curve_axis_ref;
+        [Element(11)]
+        public DEPOSIT deposit;
+        [Element(12)]
+        public EXTENDED_LIMITS extended_limits;
+        [Element(13)]
+        public FIX_AXIS_PAR fix_axis_par;
+        [Element(14)]
+        public FIX_AXIS_PAR_DIST fix_axis_par_dist;
+        [Element(15)]
+        public FIX_AXIS_PAR_LIST fix_axis_par_list;
+        [Element(16, IsString = true, Name = "FORMAT")]
+        public string format;
+
+        /// <summary>
+        /// Specifies the maximum permissible gradient for this axis.
+        /// </summary>
+        [Element(17, IsArgument = true, Name = "MAX_GRAD")]
+        public decimal? max_grad;
+        [Element(18)]
+        public MONOTONY monotony;
+        [Element(19, IsString = true, Name = "PHYS_UNIT")]
+        public string phys_unit;
+        [Element(20, Comment = "Write-access is not allowed for this AXIS_DESCR")]
+        public READ_ONLY read_only;
+        /// <summary>
+        /// Specifies an increment value that is added or subtracted when using the up/down keys while calibrating.
+        /// </summary>
+        [Element(21, IsArgument = true, Name = "STEP_SIZE")]
+        public decimal? step_size;
+    }
+
     [Base(IsSimple = true)]
     public class DEPOSIT : Asap2Base
     {
@@ -233,6 +332,113 @@ namespace Asap2
 
         [Element(0, IsArgument = true)]
         public DEPOSIT_type value;
+    }
+
+    /// <summary>
+    /// Specifies which kind of monotony for the sample values is allowed for a <see cref="AXIS_DESCR"/> or <see cref="AXIS_PTS"/>.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class MONOTONY : Asap2Base
+    {
+        public enum MONOTONY_type
+        {
+            /// <summary>
+            /// Monotonously decresing.
+            /// </summary>
+            MON_DECRESE,
+            /// <summary>
+            /// Monotonously incresing.
+            /// </summary>
+            MON_INCRESE,
+            /// <summary>
+            /// Strict monotonously decresing.
+            /// </summary>
+            STRICT_DECRESE,
+            /// <summary>
+            /// Strict monotonously incresing.
+            /// </summary>
+            STRICT_INCRESE,
+            /// <summary>
+            /// Monotonously in- or decresing.
+            /// </summary>
+            MONOTONOUS,
+            /// <summary>
+            /// Strict monotonously in- or decresing.
+            /// </summary>
+            STRICT_MON,
+            /// <summary>
+            /// No monotony required.
+            /// </summary>
+            NOT_MON,
+        }
+        public MONOTONY(MONOTONY_type value)
+        {
+            this.value = value;
+        }
+
+        [Element(0, IsArgument = true)]
+        public MONOTONY_type value;
+    }
+
+
+    /// <summary>
+    /// Specifies the value of the first sample point, the power-of-two exponent of the increment value and total number of
+    /// sample points for computing the sample point values of an equidistant axis of type FIX_AXIS.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class FIX_AXIS_PAR : Asap2Base
+    {
+        public FIX_AXIS_PAR(Int64 Offset, Int64 Shift, UInt64 NumberAPo)
+        {
+            this.Offset = Offset;
+            this.Shift = Shift;
+            this.NumberAPo = NumberAPo;
+        }
+
+        [Element(0, IsArgument = true, Comment = " Offset                ")]
+        public Int64 Offset;
+        [Element(0, IsArgument = true, Comment = " Shift                 ")]
+        public Int64 Shift;
+        /// <summary>
+        /// Number of axis points.
+        /// </summary>
+        [Element(0, IsArgument = true, Comment = " Number of axis points ")]
+        public UInt64 NumberAPo;
+    }
+
+    /// <summary>
+    /// Specifies the value of the first sample point, the increment value and the total number of sample points
+    /// for computing the sample point values of an equidistant axis of type FIX_AXIS.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class FIX_AXIS_PAR_DIST : Asap2Base
+    {
+        public FIX_AXIS_PAR_DIST(Int64 Offset, Int64 Distance, UInt64 NumberAPo)
+        {
+            this.Offset = Offset;
+            this.Distance = Distance;
+            this.NumberAPo = NumberAPo;
+        }
+
+        [Element(0, IsArgument = true, Comment = " Offset                ")]
+        public Int64 Offset;
+        [Element(0, IsArgument = true, Comment = " Distance              ")]
+        public Int64 Distance;
+        /// <summary>
+        /// Number of axis points.
+        /// </summary>
+        [Element(0, IsArgument = true, Comment = " Number of axis points ")]
+        public UInt64 NumberAPo;
+    }
+
+    /// <summary>
+    /// Explicitly specifies the sample point values of the axis of type FIX_AXIS.
+    /// </summary>
+    [Base()]
+    public class FIX_AXIS_PAR_LIST : Asap2Base
+    {
+        [Element(0, IsArgument = true, IsList = true, Comment = " Sample point values ")]
+        public List<decimal> AxisPts_Values = new List<decimal>();
     }
 
     [Base(IsSimple = true)]
@@ -373,48 +579,44 @@ namespace Asap2
 
         [Element(10, IsList = true)]
         public List<ANNOTATION> annotation = new List<ANNOTATION>();
-        [Element(11, IsArgument = true, CodeAsHex = true, Name = "BIT_MASK")]
+        [Element(11, IsList = true)]
+        public List<AXIS_DESCR> axis_descr = new List<AXIS_DESCR>();
+        [Element(12, IsArgument = true, CodeAsHex = true, Name = "BIT_MASK")]
         public UInt64? bit_mask;
-        [Element(12)]
-        public BIT_OPERATION bit_operation;
         [Element(13)]
         public BYTE_ORDER byte_order;
         [Element(14)]
         public CALIBRATION_ACCESS calibration_access;
-
         /// <summary>
         /// Reference to a <see cref="MEASUREMENT"/>, which represents the working point on a curve.
         /// </summary>
-        [Element(14, IsArgument = true, Name = "COMPARISON_QUANTITY")]
+        [Element(15, IsArgument = true, Name = "COMPARISON_QUANTITY")]
         public string comparison_quantity;        
-        [Element(14)]
+        [Element(16)]
         public DEPENDENT_CHARACTERISTIC dependent_characteristic;
-        [Element(14)]
-        public DISCRETE discrete;
-        [Element(15, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
-        public string display_identifier;
         [Element(17)]
-        public ECU_ADDRESS_EXTENSION ecu_address_extension;
-        [Element(18, IsArgument = true, CodeAsHex = true, Name = "ERROR_MASK")]
-        public UInt64? error_mask;
+        public DISCRETE discrete;
+        [Element(18, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
+        public string display_identifier;
         [Element(19)]
+        public ECU_ADDRESS_EXTENSION ecu_address_extension;
+        [Element(20)]
         public EXTENDED_LIMITS extended_limits;
-        [Element(20, IsString = true, Name = "FORMAT")]
+        [Element(21, IsString = true, Name = "FORMAT")]
         public string format;
-        [Element(21)]
+        [Element(22)]
         public FUNCTION_LIST function_list;
         /// <summary>
         /// Determines that the outermost values of axes, curves and maps are calculated and cannot be adjusted.
         /// </summary>
-        [Element(21)]
-        public GUARD_RAILS guard_rails;
-        [Element(21)]
-        public MAP_LIST map_list;
-        [Element(22)]
-        public MATRIX_DIM matrix_dim;
         [Element(23)]
+        public GUARD_RAILS guard_rails;
+        [Element(24)]
+        public MAP_LIST map_list;
+        [Element(25)]
+        public MATRIX_DIM matrix_dim;
+        [Element(26)]
         public MAX_REFRESH max_refresh;
-
         /// <summary>
         /// Specifies the number of elements (ASCII characters or values) in a 1D array.
         /// Obsolete keyword. Please use <see cref="MATRIX_DIM"/> instead.
@@ -422,25 +624,24 @@ namespace Asap2
         /// <remarks>
         /// Obsolete keyword. Please use <see cref="MATRIX_DIM"/> instead.
         /// </remarks>
-        [Element(24, IsArgument = true, Name = "NUMBER", IsObsolete = "Obsolete keyword. Please use MATRIX_DIM instead.")]
+        [Element(27, IsArgument = true, Name = "NUMBER", IsObsolete = "Obsolete keyword. Please use MATRIX_DIM instead.")]
         public UInt64? number;
-        [Element(25, IsString = true, Name = "PHYS_UNIT")]
+        [Element(28, IsString = true, Name = "PHYS_UNIT")]
         public string phys_unit;
-        [Element(26, Comment = "Write-access is not allowed for this CHARACTERISTIC")]
+        [Element(29, Comment = "Write-access is not allowed for this CHARACTERISTIC")]
         public READ_ONLY read_only;
-        [Element(27, IsArgument = true, Name = "REF_MEMORY_SEGMENT")]
+        [Element(30, IsArgument = true, Name = "REF_MEMORY_SEGMENT")]
         public string ref_memory_segment;
-
         /// <summary>
         /// Specifies an increment value that is added or subtracted when using the up/down keys while calibrating.
         /// </summary>
-        [Element(27, IsArgument = true, Name = "STEP_SIZE")]
+        [Element(31, IsArgument = true, Name = "STEP_SIZE")]
         public decimal? step_size;
-        [Element(28)]
+        [Element(32)]
         public SYMBOL_LINK symbol_link;
-        [Element(14)]
+        [Element(33)]
         public VIRTUAL_CHARACTERISTIC virtual_characteristic;
-        [Element(40, IsList = true)]
+        [Element(34, IsList = true)]
         public List<IF_DATA> if_data = new List<IF_DATA>();
     }
 

@@ -40,6 +40,8 @@ ANNOTATION_LABEL                { return Make(Token.ANNOTATION_LABEL); }
 ANNOTATION_ORIGIN               { return Make(Token.ANNOTATION_ORIGIN); }
 ANNOTATION_TEXT                 { return Make(Token.ANNOTATION_TEXT); }
 ARRAY_SIZE                      { return Make(Token.ARRAY_SIZE); }
+AXIS_DESCR                      { return Make(Token.AXIS_DESCR); }
+AXIS_PTS_REF                    { return Make(Token.AXIS_PTS_REF); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }
 CHARACTERISTIC                  { return Make(Token.CHARACTERISTIC); }
@@ -56,6 +58,7 @@ COMPU_VTAB_RANGE                { return Make(Token.COMPU_VTAB_RANGE); }
 COEFFS                          { return Make(Token.COEFFS); }
 COEFFS_LINEAR                   { return Make(Token.COEFFS_LINEAR); }
 CPU_TYPE                        { return Make(Token.CPU_TYPE); }
+CURVE_AXIS_REF                  { return Make(Token.CURVE_AXIS_REF); }
 CUSTOMER                        { return Make(Token.CUSTOMER); }
 CUSTOMER_NO                     { return Make(Token.CUSTOMER_NO); }
 DEPENDENT_CHARACTERISTIC        { return Make(Token.DEPENDENT_CHARACTERISTIC); }
@@ -68,6 +71,9 @@ ECU_CALIBRATION_OFFSET          { return Make(Token.ECU_CALIBRATION_OFFSET); }
 ERROR_MASK                      { return Make(Token.ERROR_MASK); }
 EXTENDED_LIMITS                 { return Make(Token.EXTENDED_LIMITS); }
 FUNCTION_LIST                   { return Make(Token.FUNCTION_LIST); }
+FIX_AXIS_PAR                    { return Make(Token.FIX_AXIS_PAR); }
+FIX_AXIS_PAR_DIST               { return Make(Token.FIX_AXIS_PAR_DIST); }
+FIX_AXIS_PAR_LIST               { return Make(Token.FIX_AXIS_PAR_LIST); }
 EPK                             { return Make(Token.EPK); }
 FORMULA                         { return Make(Token.FORMULA); }
 FORMULA_INV                     { return Make(Token.FORMULA_INV); }
@@ -87,8 +93,10 @@ PROJECT                         { return Make(Token.PROJECT); }
 GUARD_RAILS                     { return Make(Token.GUARD_RAILS); }
 HEADER                          { return Make(Token.HEADER); }
 MAP_LIST                        { return Make(Token.MAP_LIST); }
+MAX_GRAD                        { return Make(Token.MAX_GRAD); }
 MODULE                          { return Make(Token.MODULE); }
 MOD_COMMON                      { return Make(Token.MOD_COMMON); }
+MONOTONY                        { return Make(Token.MONOTONY); }
 MEMORY_SEGMENT                  { return Make(Token.MEMORY_SEGMENT); }
 MEMORY_LAYOUT                   { return Make(Token.MEMORY_LAYOUT); }
 NUMBER                          { return Make(Token.NUMBER_token); }

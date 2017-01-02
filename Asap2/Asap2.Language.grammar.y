@@ -48,6 +48,9 @@
             public FORMULA formula;
             public CHARACTERISTIC characteristic;
             public List<string> IDENTIFIER_list;
+            public AXIS_DESCR axis_descr;
+            public FIX_AXIS_PAR_LIST fix_axis_par_list;
+            public MONOTONY monotony;
 }
 
 %start main
@@ -67,6 +70,8 @@
 %token ANNOTATION_ORIGIN
 %token ANNOTATION_TEXT
 %token ARRAY_SIZE
+%token AXIS_DESCR
+%token AXIS_PTS_REF
 %token BIT_MASK
 %token BIT_OPERATION
 %token COMPARISON_QUANTITY
@@ -82,6 +87,7 @@
 %token COEFFS
 %token COEFFS_LINEAR
 %token CPU_TYPE
+%token CURVE_AXIS_REF
 %token CUSTOMER
 %token CUSTOMER_NO
 %token DEFAULT_VALUE
@@ -96,6 +102,9 @@
 %token EXTENDED_LIMITS
 %token FORMULA
 %token FORMULA_INV
+%token FIX_AXIS_PAR
+%token FIX_AXIS_PAR_DIST
+%token FIX_AXIS_PAR_LIST
 %token REF_UNIT
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
@@ -104,6 +113,7 @@
 %token PROJECT
 %token GUARD_RAILS
 %token HEADER
+%token MAX_GRAD
 %token MODULE
 %token MOD_COMMON
 %token MOD_PAR
@@ -123,6 +133,7 @@
 %token STEP_SIZE
 %token MAP_LIST
 %token MEASUREMENT
+%token MONOTONY
 %token CHARACTERISTIC
 %token ECU_ADDRESS
 %token ECU_ADDRESS_EXTENSION
@@ -157,6 +168,7 @@
 %type <annotation_text>     annotation_text
 %type <annotation_text>     annotation_text_data
 %type <array_size>          array_size
+%type <axis_descr>          axis_descr
 %type <bit_operation>       bit_operation
 %type <bit_operation>       bit_operation_data
 %type <characteristic>      characteristic
@@ -177,6 +189,7 @@
 %type <matrix_dim>          matrix_dim
 %type <ecu_address>         ecu_address
 %type <ecu_address_ext>     ecu_address_extension
+%type <fix_axis_par_list>   fix_axis_par_list
 %type <function_list>       function_list
 %type <function_list>       function_list_data
 %type <formula>             formula
@@ -186,6 +199,7 @@
 %type <mod_par>             mod_par_data
 %type <module>              module
 %type <module>              module_data
+%type <monotony>            monotony
 %type <memory_segment>      memory_segment
 %type <memory_segment>      memory_segment_data
 %type <memory_layout>       memory_layout
@@ -296,6 +310,91 @@ array_size                  : ARRAY_SIZE NUMBER {
                                 $$ = new ARRAY_SIZE((ulong)$2);
                             }
                             ;
+
+axis_descr
+    : IDENTIFIER IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER{
+        AXIS_DESCR.Attribute attribute;  
+        try
+        {
+            attribute = (AXIS_DESCR.Attribute) Enum.Parse(typeof(AXIS_DESCR.Attribute), $1);        
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown AXIS_DESCR Attribute: " + $1);
+        }
+        $$ = new AXIS_DESCR(attribute: attribute, InputQuantity: $2, Conversion: $3, MaxAxisPoints: (UInt64)$4, LowerLimit: $5, UpperLimit: $6);
+    }
+    |  axis_descr annotation {
+        $$ = $1;
+        $$.annotation.Add($2);
+    }
+    |  axis_descr AXIS_PTS_REF IDENTIFIER {
+        $$ = $1;
+        $$.axis_pts_ref = $3;
+    }
+    |  axis_descr byte_order {
+        $$ = $1;
+        $$.byte_order = $2;
+    }
+    |  axis_descr CURVE_AXIS_REF IDENTIFIER {
+        $$ = $1;
+        $$.curve_axis_ref = $3;
+    }
+    |  axis_descr deposit {
+        $$ = $1;
+        $$.deposit = $2;
+    }
+    |  axis_descr EXTENDED_LIMITS NUMBER NUMBER {
+        $$ = $1;
+        $$.extended_limits = new EXTENDED_LIMITS($3, $4);
+    }
+    |  axis_descr FIX_AXIS_PAR NUMBER NUMBER NUMBER {
+        $$ = $1;
+        $$.fix_axis_par = new FIX_AXIS_PAR((Int64)$3, (Int64)$4, (UInt64)$5);
+    }
+    |  axis_descr FIX_AXIS_PAR_DIST NUMBER NUMBER NUMBER {
+        $$ = $1;
+        $$.fix_axis_par_dist = new FIX_AXIS_PAR_DIST((Int64)$3, (Int64)$4, (UInt64)$5);
+    }
+    |  axis_descr BEGIN FIX_AXIS_PAR_LIST fix_axis_par_list END FIX_AXIS_PAR_LIST {
+        $$ = $1;
+        $$.fix_axis_par_list = $4;
+    }
+    |  axis_descr FORMAT QUOTED_STRING {
+        $$ = $1;
+        $$.format = $3;
+    }
+    |  axis_descr MAX_GRAD NUMBER {
+        $$ = $1;
+        $$.max_grad = $3;
+    }
+    |  axis_descr monotony {
+        $$ = $1;
+        $$.monotony = $2;
+    }
+    |  axis_descr PHYS_UNIT QUOTED_STRING {
+        $$ = $1;
+        $$.phys_unit = $3;
+    }
+    |  axis_descr READ_ONLY {
+        $$ = $1;
+        $$.read_only = new READ_ONLY();
+    }
+    |  axis_descr STEP_SIZE NUMBER {
+        $$ = $1;
+        $$.step_size = $3;
+    }
+    ;
+
+fix_axis_par_list
+    : /* empty */ {
+        $$ = new FIX_AXIS_PAR_LIST();
+    }
+    | fix_axis_par_list NUMBER {
+        $$ = $1;
+        $$.AxisPts_Values.Add($2);
+    }
+    ;
 
 bit_operation               : BEGIN BIT_OPERATION bit_operation_data END BIT_OPERATION {
                                 $$ = $3;
@@ -439,6 +538,10 @@ characteristic_data
     |  characteristic_data annotation {
         $$ = $1;
         $$.annotation.Add($2);
+    }
+    |  characteristic_data BEGIN AXIS_DESCR axis_descr END AXIS_DESCR {
+        $$ = $1;
+        $$.axis_descr.Add($4);
     }
     |  characteristic_data BIT_MASK NUMBER {
         $$ = $1;
@@ -945,6 +1048,21 @@ max_refresh     : MAX_REFRESH NUMBER NUMBER {
                     $$ = new MAX_REFRESH((UInt64)$2, (UInt64)$3);
                 }
                 ;
+
+monotony
+    : MONOTONY IDENTIFIER {
+        MONOTONY.MONOTONY_type type;  
+        try
+        {
+            type = (MONOTONY.MONOTONY_type) Enum.Parse(typeof(MONOTONY.MONOTONY_type), $2);        
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown MONOTONY type: " + $2);
+        }
+        $$ = new MONOTONY(type);
+    }
+    ;
 
 symbol_link     : SYMBOL_LINK QUOTED_STRING NUMBER {
                     $$ = new SYMBOL_LINK($2, (UInt64)$3);
