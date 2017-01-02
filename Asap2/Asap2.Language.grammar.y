@@ -75,6 +75,7 @@
 %token AXIS_DESCR
 %token AXIS_PTS
 %token AXIS_PTS_REF
+%token <s> AXIS_PTS_XYZ45
 %token BIT_MASK
 %token BIT_OPERATION
 %token COMPARISON_QUANTITY
@@ -1036,17 +1037,7 @@ measurement     : BEGIN MEASUREMENT measurement_data END MEASUREMENT {
                 ;
 
 measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
-                    DataType Datatype;  
-                    try
-                    {
-                        Datatype = (DataType) Enum.Parse(typeof(DataType), $3);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown DataType: " + $3);
-                    }                    
-
-                    $$ = new MEASUREMENT($1, $2, Datatype, $4, (uint)$5, $6, $7, $8);
+                    $$ = new MEASUREMENT($1, $2, GetDataType($3), $4, (uint)$5, $6, $7, $8);
                 }
                 |  measurement_data annotation {
                     $$ = $1;
@@ -1378,17 +1369,11 @@ record_layout_data
         $$ = $1;
         $$.alignments.Add($2.name, $2);
     }
+    | record_layout_data AXIS_PTS_XYZ45 NUMBER IDENTIFIER IDENTIFIER IDENTIFIER {
+        $$ = $1;
+        $$.axis_pts_xyz45 = new AXIS_PTS_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), indexIncr: GetIndexOrder($5), addrType: GetAddrType($6));
+    }
     | record_layout_data FNC_VALUES NUMBER IDENTIFIER IDENTIFIER IDENTIFIER{
-        DataType datatype;
-        try
-        {
-            datatype = (DataType) Enum.Parse(typeof(DataType), $4);
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown DataType: " + $4);
-        }
-
         FNC_VALUES.IndexMode indexMode;
         try
         {
@@ -1399,18 +1384,8 @@ record_layout_data
             throw new Exception("Unknown FNC_VALUES IndexMode: " + $5);
         }
 
-        AddrType addrType;
-        try
-        {
-            addrType = (AddrType) Enum.Parse(typeof(AddrType), $6);
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown DataType: " + $6);
-        }
-
         $$ = $1;
-        $$.fnc_values = new FNC_VALUES(Position: (UInt64)$3, dataType: datatype, indexMode: indexMode, addrType: addrType);
+        $$.fnc_values = new FNC_VALUES(Position: (UInt64)$3, dataType: GetDataType($4), indexMode: indexMode, addrType: GetAddrType($6));
     }
     ;
 
@@ -1428,3 +1403,45 @@ sub_group_data              : /* start */  {
                             }
                             ;
 %%
+
+private AddrType GetAddrType(string strIn)
+{
+    AddrType valOut;
+    try
+    {
+        valOut = (AddrType) Enum.Parse(typeof(AddrType), strIn);
+    }
+    catch (ArgumentException)
+    {
+        throw new Exception("Unknown AddrType: " + strIn);
+    }
+    return valOut;
+}
+
+private DataType GetDataType(string strIn)
+{
+    DataType valOut;
+    try
+    {
+        valOut = (DataType) Enum.Parse(typeof(DataType), strIn);
+    }
+    catch (ArgumentException)
+    {
+        throw new Exception("Unknown DataType: " + strIn);
+    }
+    return valOut;
+}
+
+private IndexOrder GetIndexOrder(string strIn)
+{
+    IndexOrder valOut;
+    try
+    {
+        valOut = (IndexOrder) Enum.Parse(typeof(IndexOrder), strIn);
+    }
+    catch (ArgumentException)
+    {
+        throw new Exception("Unknown IndexOrder: " + strIn);
+    }
+    return valOut;
+}

@@ -57,6 +57,19 @@ namespace Asap2
         PLONG,
         DIRECT
     }
+
+    public enum IndexOrder
+    {
+        /// <summary>
+        /// Increasing index with increasing address.
+        /// </summary>
+        INDEX_INCR,
+        /// <summary>
+        /// Decreasing index with increasing address.
+        /// </summary>
+        INDEX_DECR,
+    }
+    
     /// <summary>
     /// Conversion types used by CHARACTERISTICs and MEASUREMENT.
     /// </summary>
@@ -436,6 +449,33 @@ namespace Asap2
         public SYMBOL_LINK symbol_link;
     }
 
+    /// <summary>
+    /// Specifies position, datatype, index increment and addressing method of the X, Y, Z, Z4 or Z5 axis points in memory.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class AXIS_PTS_XYZ45 : Asap2Base
+    {
+        public AXIS_PTS_XYZ45(string Name, UInt64 Position, DataType dataType, IndexOrder indexIncr, AddrType addrType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+            this.indexIncr = indexIncr;
+            this.addrType = addrType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position  ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " dataType  ")]
+        public DataType dataType;
+        [Element(3, IsArgument = true, Comment = " indexIncr ")]
+        public IndexOrder indexIncr;
+        [Element(4, IsArgument = true, Comment = " addrType  ")]
+        public AddrType addrType;
+    }
+
     [Base(IsSimple = true)]
     public class DEPOSIT : Asap2Base
     {
@@ -656,6 +696,9 @@ namespace Asap2
 
         [Element(1, IsDictionary = true)]
         public Dictionary<string, ALIGNMENT> alignments;
+
+        [Element(2)]
+        public AXIS_PTS_XYZ45 axis_pts_xyz45;
 
         [Element(6)]
         public FNC_VALUES fnc_values;

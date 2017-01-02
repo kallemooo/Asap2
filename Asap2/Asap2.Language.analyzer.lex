@@ -11,6 +11,7 @@ Decimal         [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
 HexNumber       0x[0-9A-Fa-f]+
 Eol             (\r?\n)
 Alignment       ALIGNMENT\_([A-Za-z0-9_]+)
+AXIS_PTS_XYZ45  AXIS_PTS\_([XYZ45])
 
 /* Single and Multiline comments */
 CommentStart	\/\*
@@ -43,6 +44,7 @@ ARRAY_SIZE                      { return Make(Token.ARRAY_SIZE); }
 AXIS_DESCR                      { return Make(Token.AXIS_DESCR); }
 AXIS_PTS                        { return Make(Token.AXIS_PTS); }
 AXIS_PTS_REF                    { return Make(Token.AXIS_PTS_REF); }
+{AXIS_PTS_XYZ45}                { return Make(Token.AXIS_PTS_XYZ45); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }
 CHARACTERISTIC                  { return Make(Token.CHARACTERISTIC); }
