@@ -41,6 +41,7 @@ ANNOTATION_ORIGIN               { return Make(Token.ANNOTATION_ORIGIN); }
 ANNOTATION_TEXT                 { return Make(Token.ANNOTATION_TEXT); }
 ARRAY_SIZE                      { return Make(Token.ARRAY_SIZE); }
 AXIS_DESCR                      { return Make(Token.AXIS_DESCR); }
+AXIS_PTS                        { return Make(Token.AXIS_PTS); }
 AXIS_PTS_REF                    { return Make(Token.AXIS_PTS_REF); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }

@@ -51,6 +51,7 @@
             public AXIS_DESCR axis_descr;
             public FIX_AXIS_PAR_LIST fix_axis_par_list;
             public MONOTONY monotony;
+            public AXIS_PTS axis_pts;
 }
 
 %start main
@@ -71,6 +72,7 @@
 %token ANNOTATION_TEXT
 %token ARRAY_SIZE
 %token AXIS_DESCR
+%token AXIS_PTS
 %token AXIS_PTS_REF
 %token BIT_MASK
 %token BIT_OPERATION
@@ -169,6 +171,8 @@
 %type <annotation_text>     annotation_text_data
 %type <array_size>          array_size
 %type <axis_descr>          axis_descr
+%type <axis_pts>            axis_pts
+%type <axis_pts>            axis_pts_data
 %type <bit_operation>       bit_operation
 %type <bit_operation>       bit_operation_data
 %type <characteristic>      characteristic
@@ -383,6 +387,86 @@ axis_descr
     |  axis_descr STEP_SIZE NUMBER {
         $$ = $1;
         $$.step_size = $3;
+    }
+    ;
+
+axis_pts
+    : BEGIN AXIS_PTS axis_pts_data END AXIS_PTS {
+        $$ = $3;
+    }
+    ;
+
+axis_pts_data
+    : IDENTIFIER QUOTED_STRING NUMBER IDENTIFIER IDENTIFIER NUMBER IDENTIFIER NUMBER NUMBER NUMBER {
+        $$ = new AXIS_PTS(Name: $1, LongIdentifier: $2, Address: (UInt64)$3, InputQuantity: $4, Deposit: $5, MaxDiff: $6, Conversion: $7, MaxAxisPoints: (UInt64)$8, LowerLimit: $9, UpperLimit: $10);
+    }
+    | axis_pts_data annotation {
+        $$ = $1;
+        $$.annotation.Add($2);
+    }
+    | axis_pts_data byte_order {
+        $$ = $1;
+        $$.byte_order = $2;
+    }
+    | axis_pts_data calibration_access {
+        $$ = $1;
+        $$.calibration_access = $2;
+    }
+    | axis_pts_data deposit {
+        $$ = $1;
+        $$.deposit = $2;
+    }
+    | axis_pts_data DISPLAY_IDENTIFIER IDENTIFIER {
+        $$ = $1;
+        $$.display_identifier = $3;
+    }
+    | axis_pts_data ecu_address_extension {
+        $$ = $1;
+        $$.ecu_address_extension = $2;
+    }
+    | axis_pts_data EXTENDED_LIMITS NUMBER NUMBER {
+        $$ = $1;
+        $$.extended_limits = new EXTENDED_LIMITS($3, $4);
+    }
+    | axis_pts_data FORMAT QUOTED_STRING {
+        $$ = $1;
+        $$.format = $3;
+    }
+    | axis_pts_data function_list {
+        $$ = $1;
+        $$.function_list = $2;
+    }
+    | axis_pts_data GUARD_RAILS {
+        $$ = $1;
+        $$.guard_rails = new GUARD_RAILS();
+    }
+    | axis_pts if_data {
+        $$ = $1;
+        $$.if_data.Add($2);
+    }
+    | axis_pts_data monotony {
+        $$ = $1;
+        $$.monotony = $2;
+    }
+    | axis_pts_data PHYS_UNIT QUOTED_STRING {
+        $$ = $1;
+        $$.phys_unit = $3;
+    }
+    | axis_pts_data READ_ONLY {
+        $$ = $1;
+        $$.read_only = new READ_ONLY();
+    }
+    | axis_pts_data REF_MEMORY_SEGMENT IDENTIFIER {
+        $$ = $1;
+        $$.ref_memory_segment = $3;
+    }
+    | axis_pts_data STEP_SIZE NUMBER {
+        $$ = $1;
+        $$.step_size = $3;
+    }
+    | axis_pts_data symbol_link {
+        $$ = $1;
+        $$.symbol_link = $2;
     }
     ;
 
@@ -816,6 +900,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 | module_data characteristic {
                     $$ = $1;
                     $$.characteristics.Add($2.Name, $2);
+                }
+                | module_data axis_pts {
+                    $$ = $1;
+                    $$.axis_pts.Add($2.Name, $2);
                 }
                 ;
 
