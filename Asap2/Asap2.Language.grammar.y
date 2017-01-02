@@ -52,6 +52,7 @@
             public FIX_AXIS_PAR_LIST fix_axis_par_list;
             public MONOTONY monotony;
             public AXIS_PTS axis_pts;
+            public RECORD_LAYOUT record_layout;
 }
 
 %start main
@@ -107,6 +108,7 @@
 %token FIX_AXIS_PAR
 %token FIX_AXIS_PAR_DIST
 %token FIX_AXIS_PAR_LIST
+%token FNC_VALUES
 %token REF_UNIT
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
@@ -154,6 +156,7 @@
 %token SUB_GROUP
 %token REF_CHARACTERISTIC
 %token REF_MEASUREMENT
+%token RECORD_LAYOUT
 %token ROOT
 %token VIRTUAL_CHARACTERISTIC
 %token BEGIN
@@ -227,6 +230,8 @@
 %type <ref_characteristic>  ref_characteristic_data
 %type <ref_measurement>     ref_measurement
 %type <ref_measurement>     ref_measurement_data
+%type <record_layout>       record_layout
+%type <record_layout>       record_layout_data
 %type <s>                   default_value
 %type <d>                   default_value_numeric
 %type <IDENTIFIER_list>     IDENTIFIER_list
@@ -905,6 +910,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.axis_pts.Add($2.Name, $2);
                 }
+                | module_data record_layout {
+                    $$ = $1;
+                    $$.record_layout.Add($2.Name, $2);
+                }
                 ;
 
 if_data         : BEGIN IF_DATA {
@@ -1355,6 +1364,55 @@ ref_measurement_data        : /* start */  {
                                 $$.reference.Add($2);
                             }
                             ;
+record_layout
+    : BEGIN RECORD_LAYOUT record_layout_data END RECORD_LAYOUT {
+         $$ = $3;
+    }
+    ;
+
+record_layout_data
+    : IDENTIFIER {
+        $$ = new RECORD_LAYOUT($1);
+    }
+    | record_layout_data alignment {
+        $$ = $1;
+        $$.alignments.Add($2.name, $2);
+    }
+    | record_layout_data FNC_VALUES NUMBER IDENTIFIER IDENTIFIER IDENTIFIER{
+        DataType datatype;
+        try
+        {
+            datatype = (DataType) Enum.Parse(typeof(DataType), $4);
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown DataType: " + $4);
+        }
+
+        FNC_VALUES.IndexMode indexMode;
+        try
+        {
+            indexMode = (FNC_VALUES.IndexMode) Enum.Parse(typeof(FNC_VALUES.IndexMode), $5);
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown FNC_VALUES IndexMode: " + $5);
+        }
+
+        AddrType addrType;
+        try
+        {
+            addrType = (AddrType) Enum.Parse(typeof(AddrType), $6);
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown DataType: " + $6);
+        }
+
+        $$ = $1;
+        $$.fnc_values = new FNC_VALUES(Position: (UInt64)$3, dataType: datatype, indexMode: indexMode, addrType: addrType);
+    }
+    ;
 
 sub_group                   : BEGIN SUB_GROUP sub_group_data END SUB_GROUP {
                                 $$ = $3;

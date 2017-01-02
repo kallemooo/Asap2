@@ -33,6 +33,9 @@ namespace Asap2
         }
     }
 
+    /// <summary>
+    /// Data types defined by the standard.
+    /// </summary>
     public enum DataType
     {
         UBYTE,
@@ -47,6 +50,13 @@ namespace Asap2
         FLOAT64_IEEE
     }
 
+    public enum AddrType
+    {
+        PBYTE,
+        PWORD,
+        PLONG,
+        DIRECT
+    }
     /// <summary>
     /// Conversion types used by CHARACTERISTICs and MEASUREMENT.
     /// </summary>
@@ -193,6 +203,9 @@ namespace Asap2
 
         [Element(14, IsDictionary = true, Comment = " AXIS_PTS data for the module ")]
         public Dictionary<string, AXIS_PTS> axis_pts = new Dictionary<string, AXIS_PTS>();
+
+        [Element(14, IsDictionary = true, Comment = " RECORD_LAYOUT data for the module ")]
+        public Dictionary<string, RECORD_LAYOUT> record_layout = new Dictionary<string, RECORD_LAYOUT>();
     }
 
     [Base(IsSimple = true)]
@@ -547,6 +560,38 @@ namespace Asap2
         public List<decimal> AxisPts_Values = new List<decimal>();
     }
 
+    /// <summary>
+    /// Specifies position, datatype, orientation and addressing method to store table data in the <see cref="RECORD_LAYOUT"/>.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class FNC_VALUES : Asap2Base
+    {
+        public enum IndexMode
+        {
+            ALTERNATE_CURVES,
+            ALTERNATE_WITH_X,
+            ALTERNATE_WITH_Y,
+            COLUMN_DIR,
+            ROW_DIR,
+        }
+        public FNC_VALUES(UInt64 Position, DataType dataType, IndexMode indexMode, AddrType addrType)
+        {
+            this.Position = Position;
+            this.dataType = dataType;
+            this.indexMode = indexMode;
+            this.addrType = addrType;
+        }
+
+        [Element(0, IsArgument = true)]
+        public UInt64 Position;
+        [Element(1, IsArgument = true)]
+        public DataType dataType;
+        [Element(2, IsArgument = true)]
+        public IndexMode indexMode;
+        [Element(3, IsArgument = true)]
+        public AddrType addrType;
+    }
+
     [Base(IsSimple = true)]
     public class BYTE_ORDER : Asap2Base
     {
@@ -592,6 +637,28 @@ namespace Asap2
 
         [Element(5, IsArgument = true, Name = "S_REC_LAYOUT")]
         public string s_rec_layout;
+    }
+
+    /// <summary>
+    /// Describes how structures of tunable parameters (<see cref="CHARACTERISTIC"/>) and axes (<see cref="AXIS_PTS"/>) are stored in memory.
+    /// It describes byte alignments, order and position of calibration objects in memory, their rescaling, memory offset and further properties.
+    /// </summary>
+    [Base()]
+    public class RECORD_LAYOUT : Asap2Base
+    {
+        public RECORD_LAYOUT(string Name)
+        {
+            this.Name = Name;
+        }
+
+        [Element(0, IsArgument = true)]
+        public string Name;
+
+        [Element(1, IsDictionary = true)]
+        public Dictionary<string, ALIGNMENT> alignments;
+
+        [Element(6)]
+        public FNC_VALUES fnc_values;
     }
 
     [Base()]

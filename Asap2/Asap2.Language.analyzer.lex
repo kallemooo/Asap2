@@ -72,6 +72,7 @@ ECU_CALIBRATION_OFFSET          { return Make(Token.ECU_CALIBRATION_OFFSET); }
 ERROR_MASK                      { return Make(Token.ERROR_MASK); }
 EXTENDED_LIMITS                 { return Make(Token.EXTENDED_LIMITS); }
 FUNCTION_LIST                   { return Make(Token.FUNCTION_LIST); }
+FNC_VALUES                      { return Make(Token.FNC_VALUES); }
 FIX_AXIS_PAR                    { return Make(Token.FIX_AXIS_PAR); }
 FIX_AXIS_PAR_DIST               { return Make(Token.FIX_AXIS_PAR_DIST); }
 FIX_AXIS_PAR_LIST               { return Make(Token.FIX_AXIS_PAR_LIST); }
@@ -102,6 +103,7 @@ MEMORY_SEGMENT                  { return Make(Token.MEMORY_SEGMENT); }
 MEMORY_LAYOUT                   { return Make(Token.MEMORY_LAYOUT); }
 NUMBER                          { return Make(Token.NUMBER_token); }
 REF_MEMORY_SEGMENT              { return Make(Token.REF_MEMORY_SEGMENT); }
+RECORD_LAYOUT                   { return Make(Token.RECORD_LAYOUT); }
 STEP_SIZE                       { return Make(Token.STEP_SIZE); }
 SYMBOL_LINK                     { return Make(Token.SYMBOL_LINK); }
 VIRTUAL                         { return Make(Token.VIRTUAL); }
