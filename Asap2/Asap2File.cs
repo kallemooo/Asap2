@@ -476,6 +476,37 @@ namespace Asap2
         public AddrType addrType;
     }
 
+
+    /// <summary>
+    /// Specifies the rescale mapping between stored axis points and used points for curve and maps.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class AXIS_RESCALE_XYZ45 : Asap2Base
+    {
+        public AXIS_RESCALE_XYZ45(string Name, UInt64 Position, DataType dataType, UInt64 MaxNoOfRescalePairs, IndexOrder indexIncr, AddrType addrType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+            this.MaxNoOfRescalePairs = MaxNoOfRescalePairs;
+            this.indexIncr = indexIncr;
+            this.addrType = addrType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position            ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " dataType            ")]
+        public DataType dataType;
+        [Element(2, IsArgument = true, Comment = " MaxNoOfRescalePairs ")]
+        public UInt64 MaxNoOfRescalePairs;
+        [Element(3, IsArgument = true, Comment = " indexIncr           ")]
+        public IndexOrder indexIncr;
+        [Element(4, IsArgument = true, Comment = " addrType            ")]
+        public AddrType addrType;
+    }
+
     [Base(IsSimple = true)]
     public class DEPOSIT : Asap2Base
     {
@@ -502,27 +533,27 @@ namespace Asap2
         public enum MONOTONY_type
         {
             /// <summary>
-            /// Monotonously decresing.
+            /// Monotonously decreasing.
             /// </summary>
-            MON_DECRESE,
+            MON_DECREASE,
             /// <summary>
-            /// Monotonously incresing.
+            /// Monotonously increasing.
             /// </summary>
-            MON_INCRESE,
+            MON_INCREASE,
             /// <summary>
-            /// Strict monotonously decresing.
+            /// Strict monotonously decreasing.
             /// </summary>
-            STRICT_DECRESE,
+            STRICT_DECREASE,
             /// <summary>
-            /// Strict monotonously incresing.
+            /// Strict monotonously increasing.
             /// </summary>
-            STRICT_INCRESE,
+            STRICT_INCREASE,
             /// <summary>
-            /// Monotonously in- or decresing.
+            /// Monotonously in- or decreasing.
             /// </summary>
             MONOTONOUS,
             /// <summary>
-            /// Strict monotonously in- or decresing.
+            /// Strict monotonously in- or decreasing.
             /// </summary>
             STRICT_MON,
             /// <summary>
@@ -697,8 +728,11 @@ namespace Asap2
         [Element(1, IsDictionary = true)]
         public Dictionary<string, ALIGNMENT> alignments;
 
-        [Element(2)]
-        public AXIS_PTS_XYZ45 axis_pts_xyz45;
+        [Element(2, IsDictionary = true)]
+        public Dictionary<string, AXIS_PTS_XYZ45> axis_pts_xyz45 = new Dictionary<string, AXIS_PTS_XYZ45>();
+
+        [Element(3, IsDictionary = true)]
+        public Dictionary<string, AXIS_RESCALE_XYZ45> axis_rescale_xyz45 = new Dictionary<string, AXIS_RESCALE_XYZ45>();
 
         [Element(6)]
         public FNC_VALUES fnc_values;
