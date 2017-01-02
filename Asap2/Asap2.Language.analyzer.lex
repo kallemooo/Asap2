@@ -15,6 +15,9 @@ AXIS_PTS_XYZ45  AXIS_PTS_([XYZ45])
 AXIS_RESCALE_XYZ45  AXIS_RESCALE_([XYZ45])
 DIST_OP_XYZ45   DIST_OP_([XYZ45])
 FIX_NO_AXIS_PTS_XYZ45 FIX_NO_AXIS_PTS_([XYZ45])
+NO_AXIS_PTS_XYZ45 NO_AXIS_PTS_([XYZ45])
+NO_RESCALE_XYZ45 NO_RESCALE_([XYZ45])
+OFFSET_XYZ45    OFFSET_([XYZ45])
 
 /* Single and Multiline comments */
 CommentStart	\/\*
@@ -51,6 +54,10 @@ AXIS_PTS_REF                    { return Make(Token.AXIS_PTS_REF); }
 {AXIS_RESCALE_XYZ45}            { return Make(Token.AXIS_RESCALE_XYZ45); }
 {DIST_OP_XYZ45}                 { return Make(Token.DIST_OP_XYZ45); }
 {FIX_NO_AXIS_PTS_XYZ45}         { return Make(Token.FIX_NO_AXIS_PTS_XYZ45); }
+{NO_AXIS_PTS_XYZ45}             { return Make(Token.NO_AXIS_PTS_XYZ45); }
+{NO_RESCALE_XYZ45}              { return Make(Token.NO_RESCALE_XYZ45); }
+{OFFSET_XYZ45}                  { return Make(Token.OFFSET_XYZ45); }
+RESERVED                        { return Make(Token.RESERVED); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }
 CHARACTERISTIC                  { return Make(Token.CHARACTERISTIC); }
@@ -102,6 +109,7 @@ ECU_ADDRESS_EXTENSION           { return Make(Token.ECU_ADDRESS_EXTENSION); }
 PROJECT                         { return Make(Token.PROJECT); }
 GUARD_RAILS                     { return Make(Token.GUARD_RAILS); }
 HEADER                          { return Make(Token.HEADER); }
+IDENTIFICATION                  { return Make(Token.IDENTIFICATION); }
 MAP_LIST                        { return Make(Token.MAP_LIST); }
 MAX_GRAD                        { return Make(Token.MAX_GRAD); }
 MODULE                          { return Make(Token.MODULE); }

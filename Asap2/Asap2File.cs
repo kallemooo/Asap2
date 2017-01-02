@@ -50,6 +50,16 @@ namespace Asap2
         FLOAT64_IEEE
     }
 
+    /// <summary>
+    /// Data sizes defined by the standard.
+    /// </summary>
+    public enum DataSize
+    {
+        BYTE,
+        WORD,
+        LONG,
+    }
+
     public enum AddrType
     {
         PBYTE,
@@ -517,6 +527,7 @@ namespace Asap2
         {
             this.Name = Name;
             this.Position = Position;
+            this.dataType = dataType;
         }
 
         [Element(0, IsName = true)]
@@ -543,6 +554,106 @@ namespace Asap2
         public string Name;
         [Element(1, IsArgument = true, Comment = " NumberOfAxisPoints ")]
         public UInt64 NumberOfAxisPoints;
+    }
+
+    /// <summary>
+    /// Specifies position and data type of an identification number for the stored object.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class IDENTIFICATION : Asap2Base
+    {
+        public IDENTIFICATION(UInt64 Position, DataType dataType)
+        {
+            this.Position = Position;
+            this.dataType = dataType;
+        }
+
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " DataType ")]
+        public DataType dataType;
+    }
+
+    /// <summary>
+    /// Specifies position and datatype of the number of axis points within the record layout.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class NO_AXIS_PTS_XYZ45 : Asap2Base
+    {
+        public NO_AXIS_PTS_XYZ45(string Name, UInt64 Position, DataType dataType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " dataType ")]
+        public DataType dataType;
+    }
+
+    /// <summary>
+    /// Specifies position and datatype of the number of rescaling values within the record layout.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class NO_RESCALE_XYZ45 : Asap2Base
+    {
+        public NO_RESCALE_XYZ45(string Name, UInt64 Position, DataType dataType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " dataType ")]
+        public DataType dataType;
+    }
+
+    /// <summary>
+    /// Specifies position and datatype of the offset value within the record layout.
+    /// The offset value is used to calculate the axis points for the described FIX_AXIS.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class OFFSET_XYZ45 : Asap2Base
+    {
+        public OFFSET_XYZ45(string Name, UInt64 Position, DataType dataType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " dataType ")]
+        public DataType dataType;
+    }
+
+    /// <summary>
+    /// Specifies a position in this record layout that shall be ignored (i.e. not interpreted).
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class RESERVED : Asap2Base
+    {
+        public RESERVED(UInt64 Position, DataSize dataSize)
+        {
+            this.Position = Position;
+            this.dataSize = dataSize;
+        }
+
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " DataSize ")]
+        public DataSize dataSize;
     }
 
     [Base(IsSimple = true)]
@@ -780,6 +891,21 @@ namespace Asap2
 
         [Element(6)]
         public FNC_VALUES fnc_values;
+
+        [Element(7)]
+        public IDENTIFICATION identification;
+
+        [Element(8)]
+        public Dictionary<string, NO_AXIS_PTS_XYZ45> no_axis_pts_xyz45 = new Dictionary<string, NO_AXIS_PTS_XYZ45>();
+
+        [Element(9)]
+        public Dictionary<string, NO_RESCALE_XYZ45> no_rescale_xyz45 = new Dictionary<string, NO_RESCALE_XYZ45>();
+
+        [Element(10)]
+        public Dictionary<string, OFFSET_XYZ45> offset_xyz45 = new Dictionary<string, OFFSET_XYZ45>();
+
+        [Element(11)]
+        public RESERVED reserved;
     }
 
     [Base()]

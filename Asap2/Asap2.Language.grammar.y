@@ -79,6 +79,10 @@
 %token <s> AXIS_RESCALE_XYZ45
 %token <s> DIST_OP_XYZ45
 %token <s> FIX_NO_AXIS_PTS_XYZ45
+%token <s> NO_AXIS_PTS_XYZ45
+%token <s> NO_RESCALE_XYZ45
+%token <s> OFFSET_XYZ45
+%token RESERVED
 %token BIT_MASK
 %token BIT_OPERATION
 %token COMPARISON_QUANTITY
@@ -114,6 +118,7 @@
 %token FIX_AXIS_PAR_LIST
 %token FNC_VALUES
 %token REF_UNIT
+%token IDENTIFICATION
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
 %token SIGN_EXTEND
@@ -1402,6 +1407,26 @@ record_layout_data
         $$ = $1;
         $$.fnc_values = new FNC_VALUES(Position: (UInt64)$3, dataType: GetDataType($4), indexMode: indexMode, addrType: GetAddrType($6));
     }
+    | record_layout_data IDENTIFICATION NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.identification = new IDENTIFICATION(Position: (UInt64)$3, dataType: GetDataType($4));
+    }
+    | record_layout_data NO_AXIS_PTS_XYZ45 NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.no_axis_pts_xyz45.Add($2, new NO_AXIS_PTS_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+    }
+    | record_layout_data NO_RESCALE_XYZ45 NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.no_rescale_xyz45.Add($2, new NO_RESCALE_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+    }
+    | record_layout_data OFFSET_XYZ45 NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.offset_xyz45.Add($2, new OFFSET_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+    }
+    | record_layout_data RESERVED NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.reserved = new RESERVED(Position: (UInt64)$3, dataSize: GetDataSize($4));
+    }
     ;
 
 sub_group                   : BEGIN SUB_GROUP sub_group_data END SUB_GROUP {
@@ -1443,6 +1468,20 @@ private DataType GetDataType(string strIn)
     catch (ArgumentException)
     {
         throw new Exception("Unknown DataType: " + strIn);
+    }
+    return valOut;
+}
+
+private DataSize GetDataSize(string strIn)
+{
+    DataSize valOut;
+    try
+    {
+        valOut = (DataSize) Enum.Parse(typeof(DataSize), strIn);
+    }
+    catch (ArgumentException)
+    {
+        throw new Exception("Unknown DataSize: " + strIn);
     }
     return valOut;
 }
