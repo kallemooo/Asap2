@@ -656,6 +656,75 @@ namespace Asap2
         public DataSize dataSize;
     }
 
+    /// <summary>
+    /// Specifies position and datatype to store the result of interpolation for the X, Y, Z, Z4 or Z5 axis and the look-up table's output W.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class RIP_ADDR_WXYZ45 : Asap2Base
+    {
+        public RIP_ADDR_WXYZ45(string Name, UInt64 Position, DataType dataType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " DataType ")]
+        public DataType dataType;
+    }
+
+    /// <summary>
+    /// Specifies position and datatype of the power-of-two exponent of the distance (i.e. slope) value within the record layout.
+    /// The distance value is used to calculate the axis points for the described FIX_AXIS.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class SHIFT_OP_XYZ45 : Asap2Base
+    {
+        public SHIFT_OP_XYZ45(string Name, UInt64 Position, DataType dataType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " DataType ")]
+        public DataType dataType;
+    }
+
+    /// <summary>
+    /// Specifies position and datatype of the address of the axis' input value within the record layout.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class SRC_ADDR_XYZ45 : Asap2Base
+    {
+        public SRC_ADDR_XYZ45(string Name, UInt64 Position, DataType dataType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.dataType = dataType;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " DataType ")]
+        public DataType dataType;
+    }
+
+    [Base(IsSimple = true)]
+    public class STATIC_RECORD_LAYOUT : Asap2Base
+    {
+    }
+
     [Base(IsSimple = true)]
     public class DEPOSIT : Asap2Base
     {
@@ -906,6 +975,21 @@ namespace Asap2
 
         [Element(11)]
         public RESERVED reserved;
+
+        [Element(12)]
+        public Dictionary<string, RIP_ADDR_WXYZ45> rip_addr_wxyz45 = new Dictionary<string, RIP_ADDR_WXYZ45>();
+
+        [Element(13)]
+        public Dictionary<string, SHIFT_OP_XYZ45> shift_op_xyz45 = new Dictionary<string, SHIFT_OP_XYZ45>();
+
+        [Element(14)]
+        public Dictionary<string, SRC_ADDR_XYZ45> src_addr_xyz45 = new Dictionary<string, SRC_ADDR_XYZ45>();
+
+        /// <summary>
+        /// Specifies that a tunable axis with a dynamic number of axis points does not compact or expand in memory when removing or inserting axis points.
+        /// </summary>
+        [Element(15)]
+        public STATIC_RECORD_LAYOUT static_record_layout;
     }
 
     [Base()]

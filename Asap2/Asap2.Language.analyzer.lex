@@ -18,6 +18,9 @@ FIX_NO_AXIS_PTS_XYZ45 FIX_NO_AXIS_PTS_([XYZ45])
 NO_AXIS_PTS_XYZ45 NO_AXIS_PTS_([XYZ45])
 NO_RESCALE_XYZ45 NO_RESCALE_([XYZ45])
 OFFSET_XYZ45    OFFSET_([XYZ45])
+RIP_ADDR_WXYZ45 RIP_ADDR_([WXYZ45])
+SHIFT_OP_XYZ45  SHIFT_OP_([XYZ45])
+SRC_ADDR_XYZ45  SRC_ADDR_([XYZ45])
 
 /* Single and Multiline comments */
 CommentStart	\/\*
@@ -57,7 +60,11 @@ AXIS_PTS_REF                    { return Make(Token.AXIS_PTS_REF); }
 {NO_AXIS_PTS_XYZ45}             { return Make(Token.NO_AXIS_PTS_XYZ45); }
 {NO_RESCALE_XYZ45}              { return Make(Token.NO_RESCALE_XYZ45); }
 {OFFSET_XYZ45}                  { return Make(Token.OFFSET_XYZ45); }
+{RIP_ADDR_WXYZ45}               { return Make(Token.RIP_ADDR_WXYZ45); }
+{SHIFT_OP_XYZ45}                { return Make(Token.SHIFT_OP_XYZ45); }
+{SRC_ADDR_XYZ45}                { return Make(Token.SRC_ADDR_XYZ45); }
 RESERVED                        { return Make(Token.RESERVED); }
+STATIC_RECORD_LAYOUT            { return Make(Token.STATIC_RECORD_LAYOUT); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }
 CHARACTERISTIC                  { return Make(Token.CHARACTERISTIC); }

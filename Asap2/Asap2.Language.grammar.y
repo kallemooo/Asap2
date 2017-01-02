@@ -82,7 +82,11 @@
 %token <s> NO_AXIS_PTS_XYZ45
 %token <s> NO_RESCALE_XYZ45
 %token <s> OFFSET_XYZ45
+%token <s> RIP_ADDR_WXYZ45
+%token <s> SHIFT_OP_XYZ45
+%token <s> SRC_ADDR_XYZ45
 %token RESERVED
+%token STATIC_RECORD_LAYOUT
 %token BIT_MASK
 %token BIT_OPERATION
 %token COMPARISON_QUANTITY
@@ -1426,6 +1430,22 @@ record_layout_data
     | record_layout_data RESERVED NUMBER IDENTIFIER {
         $$ = $1;
         $$.reserved = new RESERVED(Position: (UInt64)$3, dataSize: GetDataSize($4));
+    }
+    | record_layout_data RIP_ADDR_WXYZ45 NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.rip_addr_wxyz45.Add($2, new RIP_ADDR_WXYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+    }
+    | record_layout_data SHIFT_OP_XYZ45 NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.shift_op_xyz45.Add($2, new SHIFT_OP_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+    }
+    | record_layout_data SRC_ADDR_XYZ45 NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.src_addr_xyz45.Add($2, new SRC_ADDR_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+    }
+    | record_layout_data STATIC_RECORD_LAYOUT {
+        $$ = $1;
+        $$.static_record_layout = new STATIC_RECORD_LAYOUT();
     }
     ;
 
