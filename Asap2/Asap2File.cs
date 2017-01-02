@@ -227,8 +227,11 @@ namespace Asap2
         [Element(14, IsDictionary = true, Comment = " AXIS_PTS data for the module ")]
         public Dictionary<string, AXIS_PTS> axis_pts = new Dictionary<string, AXIS_PTS>();
 
-        [Element(14, IsDictionary = true, Comment = " RECORD_LAYOUT data for the module ")]
+        [Element(15, IsDictionary = true, Comment = " RECORD_LAYOUT data for the module ")]
         public Dictionary<string, RECORD_LAYOUT> record_layout = new Dictionary<string, RECORD_LAYOUT>();
+
+        [Element(16, IsDictionary = true, Comment = " FUNCTIONs for the module ")]
+        public Dictionary<string, FUNCTION> functions = new Dictionary<string, FUNCTION>();
     }
 
     [Base(IsSimple = true)]
@@ -1991,13 +1994,6 @@ namespace Asap2
         public ROOT root;
         [Element(9)]
         public SUB_GROUP sub_group;
-    }
-
-    [Base()]
-    public class REF_CHARACTERISTIC : Asap2Base
-    {
-        [Element(0, IsArgument = true, IsList = true, Comment = " Characteristic references ")]
-        public List<string> reference = new List<string>();
     }
 
     [Base()]

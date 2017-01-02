@@ -53,6 +53,7 @@
             public MONOTONY monotony;
             public AXIS_PTS axis_pts;
             public RECORD_LAYOUT record_layout;
+            public FUNCTION function;
 }
 
 %start main
@@ -117,6 +118,13 @@
 %token EXTENDED_LIMITS
 %token FORMULA
 %token FORMULA_INV
+%token FUNCTION
+%token FUNCTION_VERSION
+%token SUB_FUNCTION
+%token IN_MEASUREMENT
+%token LOC_MEASUREMENT
+%token OUT_MEASUREMENT
+%token DEF_CHARACTERISTIC
 %token FIX_AXIS_PAR
 %token FIX_AXIS_PAR_DIST
 %token FIX_AXIS_PAR_LIST
@@ -210,6 +218,8 @@
 %type <ecu_address>         ecu_address
 %type <ecu_address_ext>     ecu_address_extension
 %type <fix_axis_par_list>   fix_axis_par_list
+%type <function>            function
+%type <function>            function_data
 %type <function_list>       function_list
 %type <function_list>       function_list_data
 %type <formula>             formula
@@ -927,6 +937,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.record_layout.Add($2.Name, $2);
                 }
+                | module_data function {
+                    $$ = $1;
+                    $$.functions.Add($2.Name, $2);
+                }
                 ;
 
 if_data         : BEGIN IF_DATA {
@@ -1168,6 +1182,59 @@ symbol_link     : SYMBOL_LINK QUOTED_STRING NUMBER {
                     $$ = new SYMBOL_LINK($2, (UInt64)$3);
                 }
                 ;
+
+function
+    : BEGIN FUNCTION function_data END FUNCTION {
+        $$ = $3;
+    }
+    ;
+
+function_data
+    : IDENTIFIER QUOTED_STRING {
+        $$ = new FUNCTION($1, $2);
+    }
+    |  function_data annotation {
+        $$ = $1;
+        $$.annotation.Add($2);
+    }
+    |  function_data FUNCTION_VERSION QUOTED_STRING {
+        $$ = $1;
+        $$.function_version = $3;
+    }
+    | function_data BEGIN DEF_CHARACTERISTIC IDENTIFIER_list END DEF_CHARACTERISTIC {
+        $$ = $1;
+        $$.def_characteristic = new DEF_CHARACTERISTIC();
+        $$.def_characteristic.def_characteristics = $4;
+    }
+    | function_data if_data {
+        $$ = $1;
+        $$.if_data.Add($2);
+    }
+    | function_data BEGIN IN_MEASUREMENT IDENTIFIER_list END IN_MEASUREMENT {
+        $$ = $1;
+        $$.in_measurement = new IN_MEASUREMENT();
+        $$.in_measurement.measurements = $4;
+    }
+    | function_data BEGIN LOC_MEASUREMENT IDENTIFIER_list END LOC_MEASUREMENT {
+        $$ = $1;
+        $$.loc_measurement = new LOC_MEASUREMENT();
+        $$.loc_measurement.measurements = $4;
+    }
+    | function_data BEGIN OUT_MEASUREMENT IDENTIFIER_list END OUT_MEASUREMENT {
+        $$ = $1;
+        $$.out_measurement = new OUT_MEASUREMENT();
+        $$.out_measurement.measurements = $4;
+    }
+    | function_data ref_characteristic {
+        $$ = $1;
+        $$.ref_characteristic = $2;
+    }
+    | function_data BEGIN SUB_FUNCTION IDENTIFIER_list END SUB_FUNCTION {
+        $$ = $1;
+        $$.sub_function = new SUB_FUNCTION();
+        $$.sub_function.sub_functions = $4;
+    }
+    ;
 
 function_list  : BEGIN FUNCTION_LIST function_list_data END FUNCTION_LIST {
                     $$ = $3;

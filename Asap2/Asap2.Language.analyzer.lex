@@ -101,6 +101,13 @@ FIX_AXIS_PAR_LIST               { return Make(Token.FIX_AXIS_PAR_LIST); }
 EPK                             { return Make(Token.EPK); }
 FORMULA                         { return Make(Token.FORMULA); }
 FORMULA_INV                     { return Make(Token.FORMULA_INV); }
+FUNCTION                        { return Make(Token.FUNCTION); }
+FUNCTION_VERSION                { return Make(Token.FUNCTION_VERSION); }
+SUB_FUNCTION                    { return Make(Token.SUB_FUNCTION); }
+DEF_CHARACTERISTIC              { return Make(Token.DEF_CHARACTERISTIC); }
+IN_MEASUREMENT                  { return Make(Token.IN_MEASUREMENT); }
+LOC_MEASUREMENT                 { return Make(Token.LOC_MEASUREMENT); }
+OUT_MEASUREMENT                 { return Make(Token.OUT_MEASUREMENT); }
 REF_UNIT                        { return Make(Token.REF_UNIT); }
 LAYOUT                          { return Make(Token.LAYOUT); }
 MAX_REFRESH                     { return Make(Token.MAX_REFRESH); }
