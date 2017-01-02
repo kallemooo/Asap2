@@ -527,6 +527,24 @@ namespace Asap2
         public DataType dataType;
     }
 
+    /// <summary>
+    /// Specifies the number of axis points. This number is fixed and not stored in memory.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class FIX_NO_AXIS_PTS_XYZ45 : Asap2Base
+    {
+        public FIX_NO_AXIS_PTS_XYZ45(string Name, UInt64 NumberOfAxisPoints)
+        {
+            this.Name = Name;
+            this.NumberOfAxisPoints = NumberOfAxisPoints;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " NumberOfAxisPoints ")]
+        public UInt64 NumberOfAxisPoints;
+    }
+
     [Base(IsSimple = true)]
     public class DEPOSIT : Asap2Base
     {
@@ -756,6 +774,9 @@ namespace Asap2
 
         [Element(4, IsDictionary = true)]
         public Dictionary<string, DIST_OP_XYZ45> dist_op_xyz45 = new Dictionary<string, DIST_OP_XYZ45>();
+
+        [Element(5, IsDictionary = true)]
+        public Dictionary<string, FIX_NO_AXIS_PTS_XYZ45> fix_no_axis_pts_xyz45 = new Dictionary<string, FIX_NO_AXIS_PTS_XYZ45>();
 
         [Element(6)]
         public FNC_VALUES fnc_values;
