@@ -77,6 +77,7 @@
 %token AXIS_PTS_REF
 %token <s> AXIS_PTS_XYZ45
 %token <s> AXIS_RESCALE_XYZ45
+%token <s> DIST_OP_XYZ45
 %token BIT_MASK
 %token BIT_OPERATION
 %token COMPARISON_QUANTITY
@@ -1377,6 +1378,10 @@ record_layout_data
     | record_layout_data AXIS_RESCALE_XYZ45 NUMBER IDENTIFIER NUMBER IDENTIFIER IDENTIFIER {
         $$ = $1;
         $$.axis_rescale_xyz45.Add($2, new AXIS_RESCALE_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), MaxNoOfRescalePairs: (UInt64)$5, indexIncr: GetIndexOrder($6), addrType: GetAddrType($7)));
+    }
+    | record_layout_data DIST_OP_XYZ45 NUMBER IDENTIFIER {
+        $$ = $1;
+        $$.dist_op_xyz45.Add($2, new DIST_OP_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data FNC_VALUES NUMBER IDENTIFIER IDENTIFIER IDENTIFIER{
         FNC_VALUES.IndexMode indexMode;

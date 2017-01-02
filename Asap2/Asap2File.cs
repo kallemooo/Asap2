@@ -476,7 +476,6 @@ namespace Asap2
         public AddrType addrType;
     }
 
-
     /// <summary>
     /// Specifies the rescale mapping between stored axis points and used points for curve and maps.
     /// </summary>
@@ -499,12 +498,33 @@ namespace Asap2
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " dataType            ")]
         public DataType dataType;
-        [Element(2, IsArgument = true, Comment = " MaxNoOfRescalePairs ")]
+        [Element(3, IsArgument = true, Comment = " MaxNoOfRescalePairs ")]
         public UInt64 MaxNoOfRescalePairs;
-        [Element(3, IsArgument = true, Comment = " indexIncr           ")]
+        [Element(4, IsArgument = true, Comment = " indexIncr           ")]
         public IndexOrder indexIncr;
-        [Element(4, IsArgument = true, Comment = " addrType            ")]
+        [Element(5, IsArgument = true, Comment = " addrType            ")]
         public AddrType addrType;
+    }
+
+    /// <summary>
+    /// Specifies position and datatype of the distance (i.e. slope) value within the record layout.
+    /// The distance value is used to calculate the axis points for the described FIX_AXIS.
+    /// </summary>
+    [Base(IsSimple = true)]
+    public class DIST_OP_XYZ45 : Asap2Base
+    {
+        public DIST_OP_XYZ45(string Name, UInt64 Position, DataType dataType)
+        {
+            this.Name = Name;
+            this.Position = Position;
+        }
+
+        [Element(0, IsName = true)]
+        public string Name;
+        [Element(1, IsArgument = true, Comment = " Position            ")]
+        public UInt64 Position;
+        [Element(2, IsArgument = true, Comment = " dataType            ")]
+        public DataType dataType;
     }
 
     [Base(IsSimple = true)]
@@ -733,6 +753,9 @@ namespace Asap2
 
         [Element(3, IsDictionary = true)]
         public Dictionary<string, AXIS_RESCALE_XYZ45> axis_rescale_xyz45 = new Dictionary<string, AXIS_RESCALE_XYZ45>();
+
+        [Element(4, IsDictionary = true)]
+        public Dictionary<string, DIST_OP_XYZ45> dist_op_xyz45 = new Dictionary<string, DIST_OP_XYZ45>();
 
         [Element(6)]
         public FNC_VALUES fnc_values;

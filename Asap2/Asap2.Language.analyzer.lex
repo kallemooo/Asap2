@@ -10,9 +10,10 @@ Space           [ \t\u000c]
 Decimal         [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
 HexNumber       0x[0-9A-Fa-f]+
 Eol             (\r?\n)
-Alignment       ALIGNMENT\_([A-Za-z0-9_]+)
-AXIS_PTS_XYZ45  AXIS_PTS\_([XYZ45])
+Alignment       ALIGNMENT_([A-Za-z0-9_]+)
+AXIS_PTS_XYZ45  AXIS_PTS_([XYZ45])
 AXIS_RESCALE_XYZ45  AXIS_RESCALE_([XYZ45])
+DIST_OP_XYZ45   DIST_OP_([XYZ45])
 
 /* Single and Multiline comments */
 CommentStart	\/\*
@@ -47,6 +48,7 @@ AXIS_PTS                        { return Make(Token.AXIS_PTS); }
 AXIS_PTS_REF                    { return Make(Token.AXIS_PTS_REF); }
 {AXIS_PTS_XYZ45}                { return Make(Token.AXIS_PTS_XYZ45); }
 {AXIS_RESCALE_XYZ45}            { return Make(Token.AXIS_RESCALE_XYZ45); }
+{DIST_OP_XYZ45}                 { return Make(Token.DIST_OP_XYZ45); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }
 CHARACTERISTIC                  { return Make(Token.CHARACTERISTIC); }
