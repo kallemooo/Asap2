@@ -56,6 +56,7 @@
             public FUNCTION function;
             public UNIT unit;
             public USER_RIGHTS user_rights;
+            public FRAME frame;
 }
 
 %start main
@@ -120,6 +121,8 @@
 %token EXTENDED_LIMITS
 %token FORMULA
 %token FORMULA_INV
+%token FRAME
+%token FRAME_MEASUREMENT
 %token FUNCTION
 %token FUNCTION_VERSION
 %token SUB_FUNCTION
@@ -226,6 +229,8 @@
 %type <ecu_address>         ecu_address
 %type <ecu_address_ext>     ecu_address_extension
 %type <fix_axis_par_list>   fix_axis_par_list
+%type <frame>               frame
+%type <frame>               frame_data
 %type <function>            function
 %type <function>            function_data
 %type <function_list>       function_list
@@ -965,6 +970,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.user_rights.Add($2.Name, $2);
                 }
+                | module_data frame {
+                    $$ = $1;
+                    $$.frames.Add($2.Name, $2);
+                }
                 ;
 
 if_data         : BEGIN IF_DATA {
@@ -1610,6 +1619,25 @@ user_rights_data
     }
     ;
 
+frame
+    : BEGIN FRAME frame_data END FRAME {
+        $$ = $3;
+    }
+    ;
+
+frame_data
+    : IDENTIFIER QUOTED_STRING NUMBER NUMBER {
+        $$ = new FRAME($1, $2, (UInt64)$3, (UInt64)$4);
+    }
+    |  frame_data FRAME_MEASUREMENT IDENTIFIER_list {
+        $$ = $1;
+        $$.frame_measurement = $3;
+    }
+    | frame_data if_data {
+        $$ = $1;
+        $$.if_data.Add($2);
+    }
+    ;
 %%
 
 private AddrType GetAddrType(string strIn)

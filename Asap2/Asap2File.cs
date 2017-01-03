@@ -238,6 +238,9 @@ namespace Asap2
 
         [Element(18, IsDictionary = true, Comment = " USER_RIGHTS for the module ")]
         public Dictionary<string, USER_RIGHTS> user_rights = new Dictionary<string, USER_RIGHTS>();
+
+        [Element(19, IsDictionary = true, Comment = " FRAMEs for the module ")]
+        public Dictionary<string, FRAME> frames = new Dictionary<string, FRAME>();
     }
 
     [Base(IsSimple = true)]

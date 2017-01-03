@@ -143,6 +143,8 @@ VERSION                         { return Make(Token.VERSION); }
 PROJECT_NO                      { return Make(Token.PROJECT_NO); }
 MEASUREMENT                     { return Make(Token.MEASUREMENT); }
 FORMAT                          { return Make(Token.FORMAT); }
+FRAME_MEASUREMENT               { return Make(Token.FRAME_MEASUREMENT); }
+FRAME                           { return Make(Token.FRAME); }
 MATRIX_DIM                      { return Make(Token.MATRIX_DIM); }
 GROUP                           { return Make(Token.GROUP); }
 SUB_GROUP                       { return Make(Token.SUB_GROUP); }
