@@ -151,6 +151,8 @@ REF_MEASUREMENT                 { return Make(Token.REF_MEASUREMENT); }
 VIRTUAL_CHARACTERISTIC          { return Make(Token.VIRTUAL_CHARACTERISTIC); }
 ROOT                            { return Make(Token.ROOT); }
 UNIT                            { return Make(Token.UNIT); }
+USER_RIGHTS                     { return Make(Token.USER_RIGHTS); }
+REF_GROUP                       { return Make(Token.REF_GROUP); }
 UNIT_CONVERSION                 { return Make(Token.UNIT_CONVERSION); }
 SI_EXPONENTS                    { return Make(Token.SI_EXPONENTS); }
 IF_DATA                         { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }

@@ -55,6 +55,7 @@
             public RECORD_LAYOUT record_layout;
             public FUNCTION function;
             public UNIT unit;
+            public USER_RIGHTS user_rights;
 }
 
 %start main
@@ -185,6 +186,8 @@
 %token ROOT
 %token VIRTUAL_CHARACTERISTIC
 %token UNIT
+%token USER_RIGHTS
+%token REF_GROUP
 %token BEGIN
 %token END
 %token maxParseToken COMMENT
@@ -262,6 +265,8 @@
 %type <record_layout>       record_layout_data
 %type <unit>                unit
 %type <unit>                unit_data
+%type <user_rights>         user_rights
+%type <user_rights>         user_rights_data
 %type <s>                   default_value
 %type <d>                   default_value_numeric
 %type <IDENTIFIER_list>     IDENTIFIER_list
@@ -956,6 +961,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.units.Add($2.Name, $2);
                 }
+                | module_data user_rights {
+                    $$ = $1;
+                    $$.user_rights.Add($2.Name, $2);
+                }
                 ;
 
 if_data         : BEGIN IF_DATA {
@@ -1544,6 +1553,7 @@ sub_group_data              : /* start */  {
                                 $$.groups.Add($2);
                             }
                             ;
+
 unit
     : BEGIN UNIT unit_data END UNIT {
         $$ = $3;
@@ -1577,6 +1587,29 @@ unit_data
         $$.unit_conversion = new UNIT_CONVERSION($3, $4);
     }
     ;
+
+user_rights
+    : BEGIN USER_RIGHTS user_rights_data END USER_RIGHTS {
+        $$ = $3;
+    }
+    ;
+
+user_rights_data
+    : IDENTIFIER {
+        $$ = new USER_RIGHTS($1);
+    }
+    |  user_rights_data BEGIN REF_GROUP IDENTIFIER_list END REF_GROUP {
+        var ref_group = new REF_GROUP();
+        ref_group.reference = $4;
+        $$ = $1;
+        $$.ref_group.Add(ref_group);
+    }
+    |  user_rights_data READ_ONLY {
+        $$ = $1;
+        $$.read_only = new READ_ONLY();
+    }
+    ;
+
 %%
 
 private AddrType GetAddrType(string strIn)

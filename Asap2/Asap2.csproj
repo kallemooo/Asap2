@@ -62,6 +62,7 @@
     <Compile Include="Export\SUB_FUNCTION.cs" />
     <Compile Include="Export\UNIT.cs" />
     <Compile Include="Export\UNIT_CONVERSION.cs" />
+    <Compile Include="Export\USER_RIGHTS.cs" />
     <Compile Include="GplexBuffers.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
