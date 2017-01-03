@@ -5,22 +5,14 @@
 
 %option summary, stack, minimize, parser, verbose, persistbuffer, noembedbuffers, unicode, codePage:ISO-8859-1
 
-Identifier      [A-Za-z_][A-Za-z0-9\._]+[\[A-Za-z0-9\]]*
-Space           [ \t\u000c]
-Decimal         [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
-HexNumber       0x[0-9A-Fa-f]+
-Eol             (\r?\n)
-Alignment       ALIGNMENT_([A-Za-z0-9_]+)
-AXIS_PTS_XYZ45  AXIS_PTS_([XYZ45])
-AXIS_RESCALE_XYZ45  AXIS_RESCALE_([XYZ45])
-DIST_OP_XYZ45   DIST_OP_([XYZ45])
-FIX_NO_AXIS_PTS_XYZ45 FIX_NO_AXIS_PTS_([XYZ45])
-NO_AXIS_PTS_XYZ45 NO_AXIS_PTS_([XYZ45])
-NO_RESCALE_XYZ45 NO_RESCALE_([XYZ45])
-OFFSET_XYZ45    OFFSET_([XYZ45])
-RIP_ADDR_WXYZ45 RIP_ADDR_([WXYZ45])
-SHIFT_OP_XYZ45  SHIFT_OP_([XYZ45])
-SRC_ADDR_XYZ45  SRC_ADDR_([XYZ45])
+Identifier              [A-Za-z_][A-Za-z0-9_\.\[\]]*
+Space                   [ \t\u000c]
+Decimal                 [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
+HexNumber               0x[0-9A-Fa-f]+
+Eol                     (\r?\n)
+Alignment               ALIGNMENT_[A-Za-z0-9_]+
+XYZ45                   [XYZ45]
+WXYZ45                  [WXYZ45]
 
 /* Single and Multiline comments */
 CommentStart	\/\*
@@ -53,16 +45,16 @@ ARRAY_SIZE                      { return Make(Token.ARRAY_SIZE); }
 AXIS_DESCR                      { return Make(Token.AXIS_DESCR); }
 AXIS_PTS                        { return Make(Token.AXIS_PTS); }
 AXIS_PTS_REF                    { return Make(Token.AXIS_PTS_REF); }
-{AXIS_PTS_XYZ45}                { return Make(Token.AXIS_PTS_XYZ45); }
-{AXIS_RESCALE_XYZ45}            { return Make(Token.AXIS_RESCALE_XYZ45); }
-{DIST_OP_XYZ45}                 { return Make(Token.DIST_OP_XYZ45); }
-{FIX_NO_AXIS_PTS_XYZ45}         { return Make(Token.FIX_NO_AXIS_PTS_XYZ45); }
-{NO_AXIS_PTS_XYZ45}             { return Make(Token.NO_AXIS_PTS_XYZ45); }
-{NO_RESCALE_XYZ45}              { return Make(Token.NO_RESCALE_XYZ45); }
-{OFFSET_XYZ45}                  { return Make(Token.OFFSET_XYZ45); }
-{RIP_ADDR_WXYZ45}               { return Make(Token.RIP_ADDR_WXYZ45); }
-{SHIFT_OP_XYZ45}                { return Make(Token.SHIFT_OP_XYZ45); }
-{SRC_ADDR_XYZ45}                { return Make(Token.SRC_ADDR_XYZ45); }
+AXIS_PTS_{XYZ45}                { return Make(Token.AXIS_PTS_XYZ45); }
+AXIS_RESCALE_{XYZ45}            { return Make(Token.AXIS_RESCALE_XYZ45); }
+DIST_OP_{XYZ45}                 { return Make(Token.DIST_OP_XYZ45); }
+FIX_NO_AXIS_PTS_{XYZ45}         { return Make(Token.FIX_NO_AXIS_PTS_XYZ45); }
+NO_AXIS_PTS_{XYZ45}             { return Make(Token.NO_AXIS_PTS_XYZ45); }
+NO_RESCALE_{XYZ45}              { return Make(Token.NO_RESCALE_XYZ45); }
+OFFSET_{XYZ45}                  { return Make(Token.OFFSET_XYZ45); }
+RIP_ADDR_{WXYZ45}               { return Make(Token.RIP_ADDR_WXYZ45); }
+SHIFT_OP_{XYZ45}                { return Make(Token.SHIFT_OP_XYZ45); }
+SRC_ADDR_{XYZ45}                { return Make(Token.SRC_ADDR_XYZ45); }
 RESERVED                        { return Make(Token.RESERVED); }
 STATIC_RECORD_LAYOUT            { return Make(Token.STATIC_RECORD_LAYOUT); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
@@ -158,9 +150,13 @@ REF_CHARACTERISTIC              { return Make(Token.REF_CHARACTERISTIC); }
 REF_MEASUREMENT                 { return Make(Token.REF_MEASUREMENT); }
 VIRTUAL_CHARACTERISTIC          { return Make(Token.VIRTUAL_CHARACTERISTIC); }
 ROOT                            { return Make(Token.ROOT); }
+UNIT                            { return Make(Token.UNIT); }
+UNIT_CONVERSION                 { return Make(Token.UNIT_CONVERSION); }
+SI_EXPONENTS                    { return Make(Token.SI_EXPONENTS); }
 IF_DATA                         { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }
 A2ML                            { yy_push_state (STATE_A2ML); yylval.sb = new StringBuilder(); }
 
+\"                              { yy_push_state(STATE_STRING); yylval.sb = new StringBuilder(); }
 {Identifier}                    { return Make(Token.IDENTIFIER); }
 {HexNumber}                     { return MakeHexNumber(); }
 {Decimal}                       { return MakeNumber(); }
@@ -181,7 +177,6 @@ A2ML                            { yy_push_state (STATE_A2ML); yylval.sb = new St
     <<EOF>>         { ; /* raise an error. */ }
 }
 
-\"                  { yy_push_state(STATE_STRING); yylval.sb = new StringBuilder(); }
 <STATE_STRING> {
     \"              { yy_pop_state(); return MakeStringBuilder(Token.QUOTED_STRING); }
     \r?\n           { yylval.sb.Append("\r\n"); }
