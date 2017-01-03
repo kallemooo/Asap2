@@ -134,6 +134,7 @@ MEMORY_LAYOUT                   { return Make(Token.MEMORY_LAYOUT); }
 NUMBER                          { return Make(Token.NUMBER_token); }
 REF_MEMORY_SEGMENT              { return Make(Token.REF_MEMORY_SEGMENT); }
 RECORD_LAYOUT                   { return Make(Token.RECORD_LAYOUT); }
+STATUS_STRING_REF               { return Make(Token.STATUS_STRING_REF); }
 STEP_SIZE                       { return Make(Token.STEP_SIZE); }
 SYMBOL_LINK                     { return Make(Token.SYMBOL_LINK); }
 VIRTUAL                         { return Make(Token.VIRTUAL); }

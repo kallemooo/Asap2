@@ -1471,6 +1471,14 @@ namespace Asap2
         /// </summary>
         [Element(10, IsArgument = true, Name = "REF_UNIT")]
         public string ref_unit;
+
+        /// <summary>
+        /// Reference to a verbal conversion table (<see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/>).
+        /// Used to split up the value range of the measurement to a numerical part and a verbal part.
+        /// The latter contains status information about the numerical part such as providing an error or describing the quality of the measurement.
+        /// </summary>
+        [Element(11, IsArgument = true, Name = "STATUS_STRING_REF")]
+        public string status_string_ref;
     }
 
     [Base(IsSimple = true)]

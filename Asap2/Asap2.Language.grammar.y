@@ -155,6 +155,7 @@
 %token PHONE_NO
 %token SUPPLIER
 %token SYSTEM_CONSTANT
+%token STATUS_STRING_REF
 %token STEP_SIZE
 %token MAP_LIST
 %token MEASUREMENT
@@ -615,6 +616,10 @@ compu_method_data           : IDENTIFIER QUOTED_STRING IDENTIFIER QUOTED_STRING 
                             | compu_method_data REF_UNIT IDENTIFIER {
                                 $$ = $1;
                                 $$.ref_unit = $3;
+                            }
+                            | compu_method_data STATUS_STRING_REF IDENTIFIER {
+                                $$ = $1;
+                                $$.status_string_ref = $3;
                             }
                             ;
 
