@@ -54,6 +54,7 @@
             public AXIS_PTS axis_pts;
             public RECORD_LAYOUT record_layout;
             public FUNCTION function;
+            public UNIT unit;
 }
 
 %start main
@@ -130,6 +131,8 @@
 %token FIX_AXIS_PAR_LIST
 %token FNC_VALUES
 %token REF_UNIT
+%token UNIT_CONVERSION
+%token SI_EXPONENTS
 %token IDENTIFICATION
 %token RIGHT_SHIFT
 %token LEFT_SHIFT
@@ -181,6 +184,7 @@
 %token RECORD_LAYOUT
 %token ROOT
 %token VIRTUAL_CHARACTERISTIC
+%token UNIT
 %token BEGIN
 %token END
 %token maxParseToken COMMENT
@@ -256,6 +260,8 @@
 %type <ref_measurement>     ref_measurement_data
 %type <record_layout>       record_layout
 %type <record_layout>       record_layout_data
+%type <unit>                unit
+%type <unit>                unit_data
 %type <s>                   default_value
 %type <d>                   default_value_numeric
 %type <IDENTIFIER_list>     IDENTIFIER_list
@@ -946,6 +952,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.functions.Add($2.Name, $2);
                 }
+                | module_data unit {
+                    $$ = $1;
+                    $$.units.Add($2.Name, $2);
+                }
                 ;
 
 if_data         : BEGIN IF_DATA {
@@ -1534,6 +1544,39 @@ sub_group_data              : /* start */  {
                                 $$.groups.Add($2);
                             }
                             ;
+unit
+    : BEGIN UNIT unit_data END UNIT {
+        $$ = $3;
+    }
+    ;
+
+unit_data
+    : IDENTIFIER QUOTED_STRING QUOTED_STRING IDENTIFIER {
+        UNIT.Type type;  
+        try
+        {
+            type = (UNIT.Type) Enum.Parse(typeof(UNIT.Type), $4);
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown MEMORY_SEGMENT PrgType: " + $4);
+        }                    
+
+        $$ = new UNIT(Name: $1, LongIdentifier: $2, Display: $3, type: type);
+    }
+    |  unit_data REF_UNIT IDENTIFIER {
+        $$ = $1;
+        $$.ref_unit = $3;
+    }
+    |  unit_data SI_EXPONENTS NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
+        $$ = $1;
+        $$.si_exponents = new SI_EXPONENTS((Int64)$3, (Int64)$4, (Int64)$5, (Int64)$6, (Int64)$7, (Int64)$8, (Int64)$9);
+    }
+    |  unit_data UNIT_CONVERSION NUMBER NUMBER {
+        $$ = $1;
+        $$.unit_conversion = new UNIT_CONVERSION($3, $4);
+    }
+    ;
 %%
 
 private AddrType GetAddrType(string strIn)

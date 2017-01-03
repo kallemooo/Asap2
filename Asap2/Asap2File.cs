@@ -232,6 +232,9 @@ namespace Asap2
 
         [Element(16, IsDictionary = true, Comment = " FUNCTIONs for the module ")]
         public Dictionary<string, FUNCTION> functions = new Dictionary<string, FUNCTION>();
+
+        [Element(17, IsDictionary = true, Comment = " UNITs for the module ")]
+        public Dictionary<string, UNIT> units = new Dictionary<string, UNIT>();
     }
 
     [Base(IsSimple = true)]
