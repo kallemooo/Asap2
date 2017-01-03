@@ -42,7 +42,7 @@ namespace Asap2
             }
         }
         
-        public class compareFieldInfo : IComparer
+        private class compareFieldInfo : IComparer
         {
 
             // Calls CaseInsensitiveComparer.Compare with the parameters reversed.
