@@ -57,6 +57,7 @@
     <Compile Include="Export\FUNCTION.cs" />
     <Compile Include="Export\IN_MEASUREMENT.cs" />
     <Compile Include="Export\LOC_MEASUREMENT.cs" />
+    <Compile Include="Export\MODULE.cs" />
     <Compile Include="Export\OUT_MEASUREMENT.cs" />
     <Compile Include="Export\REF_CHARACTERISTIC.cs" />
     <Compile Include="Export\SI_EXPONENTS.cs" />
