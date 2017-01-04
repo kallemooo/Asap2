@@ -57,6 +57,11 @@
             public UNIT unit;
             public USER_RIGHTS user_rights;
             public FRAME frame;
+            public VARIANT_CODING variant_coding;
+            public VAR_FORBIDDEN_COMB var_forbidden_comb;
+            public VAR_CRITERION var_criterion;
+            public VAR_CHARACTERISTIC var_characteristic;
+            public VAR_ADDRESS var_address;
 }
 
 %start main
@@ -191,6 +196,15 @@
 %token UNIT
 %token USER_RIGHTS
 %token REF_GROUP
+%token VAR_ADDRESS
+%token VAR_CHARACTERISTIC
+%token VAR_CRITERION
+%token VAR_MEASUREMENT
+%token VAR_SELECTION_CHARACTERISTIC
+%token VARIANT_CODING
+%token VAR_FORBIDDEN_COMB
+%token VAR_SEPERATOR
+%token VAR_NAMING
 %token BEGIN
 %token END
 %token maxParseToken COMMENT
@@ -256,6 +270,12 @@
 %type <max_refresh>         max_refresh
 %type <symbol_link>         symbol_link
 %type <if_data>             if_data
+%type <var_address>         var_address
+%type <var_characteristic> var_characteristic
+%type <var_criterion>       var_criterion
+%type <variant_coding>      variant_coding
+%type <variant_coding>      variant_coding_data
+%type <var_forbidden_comb>  var_forbidden_comb
 %type <Virtual>             Virtual
 %type <Virtual>             Virtual_data
 %type <group>               group
@@ -974,6 +994,10 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     $$.frames.Add($2.Name, $2);
                 }
+                | module_data variant_coding {
+                    $$ = $1;
+                    $$.variant_coding = $2;
+                }
                 ;
 
 if_data         : BEGIN IF_DATA {
@@ -1636,6 +1660,99 @@ frame_data
     | frame_data if_data {
         $$ = $1;
         $$.if_data.Add($2);
+    }
+    ;
+
+variant_coding
+    : BEGIN VARIANT_CODING variant_coding_data END VARIANT_CODING {
+        $$ = $3;
+    }
+    ;
+
+variant_coding_data
+    : /* empty */ {
+        $$ = new VARIANT_CODING();
+    }
+    | variant_coding_data BEGIN VAR_CHARACTERISTIC var_characteristic END VAR_CHARACTERISTIC {
+        $$ = $1;
+        $$.var_characteristic.Add($4);
+    }
+    | variant_coding_data BEGIN VAR_CRITERION var_criterion END VAR_CRITERION {
+        $$ = $1;
+        $$.var_criterion.Add($4);
+    }
+    | variant_coding_data BEGIN VAR_FORBIDDEN_COMB var_forbidden_comb END VAR_FORBIDDEN_COMB {
+        $$ = $1;
+        $$.forbidden_combinations.Add($4);
+    }
+    | variant_coding_data VAR_SEPERATOR QUOTED_STRING {
+        $$ = $1;
+        $$.var_seperator = $3;
+    }
+    | variant_coding_data VAR_NAMING IDENTIFIER {
+        VARIANT_CODING.VAR_NAMING valOut;
+        try
+        {
+            valOut = (VARIANT_CODING.VAR_NAMING) Enum.Parse(typeof(VARIANT_CODING.VAR_NAMING), $3);
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception("Unknown VARIANT_CODING.VAR_NAMING: " + $3);
+        }
+        $$ = $1;
+        $$.var_naming = valOut;
+    }
+    ;
+
+var_forbidden_comb
+    : /* empty */ {
+        $$ = new VAR_FORBIDDEN_COMB();
+    }
+    | var_forbidden_comb IDENTIFIER IDENTIFIER {
+        $$ = $1;
+        $$.combinations.Add(new VAR_FORBIDDEN_COMB.Combo($2, $3));
+    }
+    ;
+
+var_criterion
+    : IDENTIFIER QUOTED_STRING {
+        $$ = new VAR_CRITERION($1, $2);
+    }
+    |  var_criterion IDENTIFIER {
+        $$ = $1;
+        $$.Idents.Add($2);
+    }
+    | var_criterion VAR_MEASUREMENT IDENTIFIER {
+        $$ = $1;
+        $$.var_measurement = new VAR_MEASUREMENT($3);
+    }
+    | var_criterion VAR_SELECTION_CHARACTERISTIC IDENTIFIER {
+        $$ = $1;
+        $$.var_selection_characteristic = new VAR_SELECTION_CHARACTERISTIC($3);
+    }
+    ;
+
+var_characteristic
+    : IDENTIFIER {
+        $$ = new VAR_CHARACTERISTIC($1);
+    }
+    |  var_characteristic IDENTIFIER {
+        $$ = $1;
+        $$.CriterionNames.Add($2);
+    }
+    | var_characteristic BEGIN VAR_ADDRESS var_address END VAR_ADDRESS {
+        $$ = $1;
+        $$.var_address = $4;
+    }
+    ;
+
+var_address
+    : /* Start of VAR_ADDRESS */ {
+        $$ = new VAR_ADDRESS();
+    }
+    |  var_address NUMBER {
+        $$ = $1;
+        $$.Addresses.Add((UInt64)$2);
     }
     ;
 %%

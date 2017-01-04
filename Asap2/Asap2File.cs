@@ -241,6 +241,9 @@ namespace Asap2
 
         [Element(19, IsDictionary = true, Comment = " FRAMEs for the module ")]
         public Dictionary<string, FRAME> frames = new Dictionary<string, FRAME>();
+
+        [Element(20, IsList = true, Comment = " VARIANT_CODING for the module ")]
+        public VARIANT_CODING variant_coding;
     }
 
     [Base(IsSimple = true)]

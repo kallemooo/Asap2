@@ -64,6 +64,10 @@
     <Compile Include="Export\UNIT.cs" />
     <Compile Include="Export\UNIT_CONVERSION.cs" />
     <Compile Include="Export\USER_RIGHTS.cs" />
+    <Compile Include="Export\VARIANT_CODING.cs" />
+    <Compile Include="Export\VAR_CHARACTERISTIC.cs" />
+    <Compile Include="Export\VAR_CRITERION.cs" />
+    <Compile Include="Export\VAR_FORBIDDEN_COMB.cs" />
     <Compile Include="GplexBuffers.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

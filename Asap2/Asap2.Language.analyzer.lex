@@ -157,6 +157,15 @@ USER_RIGHTS                     { return Make(Token.USER_RIGHTS); }
 REF_GROUP                       { return Make(Token.REF_GROUP); }
 UNIT_CONVERSION                 { return Make(Token.UNIT_CONVERSION); }
 SI_EXPONENTS                    { return Make(Token.SI_EXPONENTS); }
+VAR_ADDRESS                     { return Make(Token.VAR_ADDRESS); }
+VAR_CHARACTERISTIC              { return Make(Token.VAR_CHARACTERISTIC); }
+VAR_CRITERION                   { return Make(Token.VAR_CRITERION); }
+VAR_MEASUREMENT                 { return Make(Token.VAR_MEASUREMENT); }
+VAR_SELECTION_CHARACTERISTIC    { return Make(Token.VAR_SELECTION_CHARACTERISTIC); }
+VARIANT_CODING                  { return Make(Token.VARIANT_CODING); }
+VAR_FORBIDDEN_COMB              { return Make(Token.VAR_FORBIDDEN_COMB); }
+VAR_SEPERATOR                   { return Make(Token.VAR_SEPERATOR); }
+VAR_NAMING                      { return Make(Token.VAR_NAMING); }
 IF_DATA                         { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }
 A2ML                            { yy_push_state (STATE_A2ML); yylval.sb = new StringBuilder(); }
 
