@@ -31,6 +31,44 @@ namespace Asap2
             // instance of Asap2Base is created.
             return ++orderId;
         }
+
+        public Location location { get; set; }
+
+    }
+
+    public class Location
+    {
+        private int startLine;   // start line
+        private int startColumn; // start column
+        private string fileName; // current filename.
+
+        /// <summary>
+        /// The line at which the text span starts.
+        /// </summary>
+        public int StartLine { get { return startLine; } }
+
+        /// <summary>
+        /// The column at which the text span starts.
+        /// </summary>
+        public int StartColumn { get { return startColumn; } }
+
+        /// <summary>
+        /// The column at which the text span starts.
+        /// </summary>
+        public string FileName { get { return fileName; } }
+
+        /// <summary>
+        /// Default no-arg constructor.
+        /// </summary>
+        public Location() { startLine = 0; startColumn = 0; fileName = ""; }
+
+        /// <summary>
+        /// Constructor for text-span with given start and end.
+        /// </summary>
+        /// <param name="sl">start line</param>
+        /// <param name="sc">start column</param>
+        /// <param name="fn">file name</param>
+        public Location(int sl, int sc, string fn) { startLine = sl; startColumn = sc; fileName = fn; }
     }
 
     /// <summary>
@@ -94,19 +132,142 @@ namespace Asap2
         TAB_VERB,
     }
 
-    public class Asap2File : Asap2Base
+    [Serializable()]
+    public class ValidationErrorException : System.Exception
     {
-        [Element(0, IsComment = true, IsPreComment = true)]
-        public string fileComment = " Start of A2L file ";
+        public ValidationErrorException() : base() { }
+        public ValidationErrorException(string message) : base(message) { }
+        public ValidationErrorException(string message, System.Exception inner) : base(message, inner) { }
+        public ValidationErrorException(string message, Location location) : base(message) { this.location = location; }
 
-        [Element(1)]
-        public ASAP2_VERSION asap2_version;
+        public Location location { get; protected set; }
 
-        [Element(2)]
-        public A2ML_VERSION a2ml_version;
+        public override string ToString()
+        {
+            if (location != null)
+            {
+                return string.Format("{0} : Line: {1} : Row: {2} : ValidationError : {3}", location.FileName, location.StartLine, location.StartColumn, base.Message);
+            }
+            else
+            {
+                return string.Format("{0} : Line: {1} : Row: {2} : ValidationError : {3}", "", 0, 0, base.Message);
+            }
+        }
 
-        [Element(3)]
-        public PROJECT project;
+        // A constructor is needed for serialization when an
+        // exception propagates from a remoting server to the client. 
+        protected ValidationErrorException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context)
+        { }
+    }
+
+    interface IValidator
+    {
+        /// <summary>
+        /// Validates the class contents according to the requirement rules.
+        /// </summary>
+        /// <exception cref="ValidationErrorException">Validation failed.</exception>
+        void Validate();
+    }
+
+    public class Asap2File : IValidator
+    {
+        public List<Asap2Base> elements = new List<Asap2Base>();
+
+        public void Validate()
+        {
+            var projects = elements.FindAll(x => x.GetType() == typeof(PROJECT));
+
+            if (projects == null || projects.Count == 0)
+            {
+                throw new ValidationErrorException("No PROJECT found, must be one");
+            }
+            else if (projects.Count > 1)
+            {
+                throw new ValidationErrorException("Second PROJECT found, shall only be one", projects[projects.Count - 1].location);
+            }
+
+            var asap2_versions = elements.FindAll(x => x.GetType() == typeof(ASAP2_VERSION));
+            if (asap2_versions != null)
+            {
+                if (asap2_versions.Count > 1)
+                {
+                    throw new ValidationErrorException("Second ASAP2_VERSION found, shall only be one", asap2_versions[asap2_versions.Count - 1].location);
+                }
+                if (asap2_versions[0].OrderID >= projects[0].OrderID)
+                {
+                    throw new ValidationErrorException("ASAP2_VERSION shall be placed before PROJECT", asap2_versions[asap2_versions.Count - 1].location);
+                }
+            }
+
+            var a2ml_versions = elements.FindAll(x => x.GetType() == typeof(A2ML_VERSION));
+            if (a2ml_versions != null)
+            {
+                if (a2ml_versions.Count > 1)
+                {
+                    throw new ValidationErrorException("Second A2ML_VERSION found, shall only be one", a2ml_versions[a2ml_versions.Count - 1].location);
+                }
+                if (a2ml_versions[0].OrderID >= projects[0].OrderID)
+                {
+                    throw new ValidationErrorException("A2ML_VERSION shall be placed before PROJECT", asap2_versions[asap2_versions.Count - 1].location);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Class for holding multi line comments. Use <see cref="Environment.NewLine"/> when adding a new line to the comment.
+    /// Start ('/* ') and end (' */') of the comment block is added by the class. 
+    /// </summary>
+    public class FileComment : Asap2Base
+    {
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="comment">First comment line.</param>
+        /// <param name="startWithStart">Indicates if each comment line shall start with a *.</param>
+        public FileComment(string comment = null, bool startNewLineWithStar = false)
+        {
+            if (comment != null)
+            {
+                this.comment = new StringBuilder();
+                this.comment.Append(comment);
+                this.startNewLineWithStar = startNewLineWithStar;
+            }
+        }
+
+        private StringBuilder comment;
+        public StringBuilder Comment
+        {
+            get { return comment; }
+            set { comment = value; }
+        }
+
+        private bool startNewLineWithStar;
+        public bool StartNewLineWithStar
+        {
+            get { return startNewLineWithStar; }
+        }
+
+        public void Append(object value)
+        {
+            Comment.Append(value);
+        }
+
+        public override string ToString()
+        {
+            comment.Insert(0, "/* ");
+            if (StartNewLineWithStar)
+            {
+                comment.Replace(Environment.NewLine, Environment.NewLine + " * ");
+                comment[comment.Length - 1] = '/';
+            }
+            else
+            {
+                comment.Append(" */");
+            }
+            return comment.ToString();
+        }
     }
 
     [Base(IsSimple = true)]

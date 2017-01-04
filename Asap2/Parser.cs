@@ -78,35 +78,24 @@ namespace Asap2
         public bool Serialise(Asap2File tree, MemoryStream outStream)
         {
             List<SerialisedData> resultTree = new List<SerialisedData>();
+
+            tree.elements.Sort((x, y) => x.OrderID.CompareTo(y.OrderID));
+            foreach (var item in tree.elements)
             {
-                IComparer myComparer = new compareFieldInfo();
-                FieldInfo[] fI = tree.GetType().GetFields();
-                Array.Sort(fI, myComparer);
-                for (int i = 0; i < fI.Length; i++)
+                if (item.GetType() == typeof(FileComment))
                 {
-                    ElementAttribute elemAtt = (ElementAttribute)Attribute.GetCustomAttribute(fI[i], typeof(ElementAttribute));
-                    if (elemAtt != null)
-                    {
-                        if (elemAtt.IsComment && elemAtt.IsPreComment)
-                        {
-                            if (fI[i].GetValue(tree) != null)
-                            {
-                                SerialisedData resultData = new SerialisedData();
-
-                                resultData.sortOrder = elemAtt.SortOrder;
-                                resultData.comment = fI[i].GetValue(tree).ToString();
-                                resultTree.Add(resultData);
-                                fI = fI.Where((source, index) => index != i).ToArray();
-                            }
-                        }
-                    }
+                    SerialisedData data = new SerialisedData();
+                    data.name = item.ToString();
+                    data.isNode = true;
+                    data.isSimple = true;
+                    resultTree.Add(data);
                 }
-
+                else
                 {
-                    List<SerialisedData> resultData = SerialiseElement(tree, fI, 0);
-                    if (resultData != null)
+                    SerialisedData data = SerialiseNode(item, 0);
+                    if (data != null)
                     {
-                        resultTree.AddRange(resultData);
+                        resultTree.Add(data);
                     }
                 }
             }

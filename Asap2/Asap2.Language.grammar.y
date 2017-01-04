@@ -64,7 +64,7 @@
             public VAR_ADDRESS var_address;
 }
 
-%start main
+%start Asap2File
 
 %token <d> NUMBER
 %token <s> QUOTED_STRING
@@ -298,10 +298,23 @@
 
 %%
 
-main    : project
-        | asap2_version project
-        | asap2_version a2ml_version project
-        ;
+Asap2File
+    : /* Start of the file */
+    | Asap2File project {
+        $2.location = new Location(@2.StartLine, @2.StartColumn, "");
+        Asap2File.elements.Add($2);
+    }
+    | Asap2File ASAP2_VERSION NUMBER NUMBER {
+        var tmp = new ASAP2_VERSION((uint)$3, (uint)$4);
+        tmp.location = new Location(@2.StartLine, @2.StartColumn, "");
+        Asap2File.elements.Add(tmp);
+    }
+    | Asap2File A2ML_VERSION NUMBER NUMBER {
+        var tmp = new A2ML_VERSION((uint)$3, (uint)$4);
+        tmp.location = new Location(@2.StartLine, @2.StartColumn, "");
+        Asap2File.elements.Add(tmp);
+    }
+    ;
 
 IDENTIFIER_list
     : /* generic IDENTIFIER list handler */ {
@@ -315,16 +328,6 @@ IDENTIFIER_list
 
 a2ml                        : BEGIN A2ML {
                                 $$ = new A2ML($2);
-                            }
-                            ;
-
-a2ml_version                : A2ML_VERSION NUMBER NUMBER {
-                                Asap2File.a2ml_version = new A2ML_VERSION((uint)$2, (uint)$3);
-                            }
-                            ;
-
-asap2_version               : ASAP2_VERSION NUMBER NUMBER {
-                                Asap2File.asap2_version = new ASAP2_VERSION((uint)$2, (uint)$3);
                             }
                             ;
 
@@ -876,7 +879,6 @@ default_value_numeric       : DEFAULT_VALUE_NUMERIC NUMBER {
                             ;
 project                     : BEGIN PROJECT project_data END PROJECT {
                                 $$ = $3;
-                                Asap2File.project = $3;
                             }
                             ;
 

@@ -12,15 +12,25 @@ namespace Asap2Test
         static void Main(string[] args)
         {
             var parser = new Asap2.Parser("../../../testFile.a2l");
+            Asap2.FileComment comment = new Asap2.FileComment(Environment.NewLine + "A2l file for testing ASAP2 parser." + Environment.NewLine, true);
             Asap2.Asap2File tree = parser.DoParse();
             if (tree != null)
             {
-                var ms = new MemoryStream();
-                parser.Serialise(tree, ms);
-                ms.Position = 0;
-                var sr = new StreamReader(ms);
-                var myStr = sr.ReadToEnd();
-                Console.WriteLine(myStr);
+                try
+                {
+                    tree.Validate();
+                    tree.elements.Insert(0, comment);
+                    var ms = new MemoryStream();
+                    parser.Serialise(tree, ms);
+                    ms.Position = 0;
+                    var sr = new StreamReader(ms);
+                    var myStr = sr.ReadToEnd();
+                    Console.WriteLine(myStr);
+                }
+                catch (Asap2.ValidationErrorException e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
             }
             Console.WriteLine("Press enter to close...");
             Console.ReadLine();
