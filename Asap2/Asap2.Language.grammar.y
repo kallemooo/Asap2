@@ -381,16 +381,7 @@ array_size                  : ARRAY_SIZE NUMBER {
 
 axis_descr
     : IDENTIFIER IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER{
-        AXIS_DESCR.Attribute attribute;  
-        try
-        {
-            attribute = (AXIS_DESCR.Attribute) Enum.Parse(typeof(AXIS_DESCR.Attribute), $1);        
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown AXIS_DESCR Attribute: " + $1);
-        }
-        $$ = new AXIS_DESCR(@$, attribute: attribute, InputQuantity: $2, Conversion: $3, MaxAxisPoints: (UInt64)$4, LowerLimit: $5, UpperLimit: $6);
+        $$ = new AXIS_DESCR(@$, attribute: (AXIS_DESCR.Attribute)EnumToStringOrAbort(typeof(DataSize), $1), InputQuantity: $2, Conversion: $3, MaxAxisPoints: (UInt64)$4, LowerLimit: $5, UpperLimit: $6);
     }
     |  axis_descr annotation {
         $$ = $1;
@@ -568,16 +559,7 @@ bit_operation_data          : /* empty */ {
 
 
 calibration_access          : CALIBRATION_ACCESS IDENTIFIER {
-                                CALIBRATION_ACCESS.CALIBRATION_ACCESS_type access;  
-                                try
-                                {
-                                    access = (CALIBRATION_ACCESS.CALIBRATION_ACCESS_type) Enum.Parse(typeof(CALIBRATION_ACCESS.CALIBRATION_ACCESS_type), $2);        
-                                }
-                                catch (ArgumentException)
-                                {
-                                    throw new Exception("Unknown CALIBRATION_ACCESS type: " + $2);
-                                }
-                                $$ = new CALIBRATION_ACCESS(@1, access);
+                                $$ = new CALIBRATION_ACCESS(@1, (CALIBRATION_ACCESS.CALIBRATION_ACCESS_type)EnumToStringOrAbort(typeof(CALIBRATION_ACCESS.CALIBRATION_ACCESS_type), $2));
                             }
                             ;
 
@@ -668,16 +650,7 @@ characteristic
 
 characteristic_data
     : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER IDENTIFIER NUMBER IDENTIFIER NUMBER NUMBER {
-        CHARACTERISTIC.Type type;
-        try
-        {
-            type = (CHARACTERISTIC.Type) Enum.Parse(typeof(CHARACTERISTIC.Type), $3);
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown CHARACTERISTIC Type: " + $3);
-        }                    
-
+        CHARACTERISTIC.Type type = (CHARACTERISTIC.Type)EnumToStringOrAbort(typeof(CHARACTERISTIC.Type), $3);
         $$ = new CHARACTERISTIC(location: @$, Name: $1, LongIdentifier: $2, type: type, Address: (UInt64)$4, Deposit: $5, MaxDiff: $6, Conversion: $7, LowerLimit: $8, UpperLimit: $9);
     }
     |  characteristic_data annotation {
@@ -791,15 +764,7 @@ compu_tab                   : BEGIN COMPU_TAB compu_tab_data END COMPU_TAB {
                             ;
 
 compu_tab_data              : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
-                                ConversionType conversionType;  
-                                try
-                                {
-                                    conversionType = (ConversionType) Enum.Parse(typeof(ConversionType), $3);
-                                }
-                                catch (ArgumentException)
-                                {
-                                    throw new Exception("Unknown ConversionType: " + $3);
-                                }
+                                ConversionType conversionType = (ConversionType)EnumToStringOrAbort(typeof(ConversionType), $3);
                                 $$ = new COMPU_TAB(location: @$, Name: $1, LongIdentifier: $2, conversionType: conversionType, NumberValuePairs: (uint)$4);
                             }
                             | compu_tab_data NUMBER NUMBER {
@@ -1163,14 +1128,7 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 }
                 |  measurement_data LAYOUT IDENTIFIER {
                     $$ = $1;
-                    try
-                    {
-                        $$.layout = (MEASUREMENT.LAYOUT) Enum.Parse(typeof(MEASUREMENT.LAYOUT), $3);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown MEASUREMENT LAYOUT IndexMode: " + $3);
-                    }                    
+                    $$.layout = (MEASUREMENT.LAYOUT)EnumToStringOrAbort(typeof(MEASUREMENT.LAYOUT), $3);
                 }
                 |  measurement_data matrix_dim {
                     $$ = $1;
@@ -1213,16 +1171,7 @@ max_refresh     : MAX_REFRESH NUMBER NUMBER {
 
 monotony
     : MONOTONY IDENTIFIER {
-        MONOTONY.MONOTONY_type type;  
-        try
-        {
-            type = (MONOTONY.MONOTONY_type) Enum.Parse(typeof(MONOTONY.MONOTONY_type), $2);        
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown MONOTONY type: " + $2);
-        }
-        $$ = new MONOTONY(@$, type);
+        $$ = new MONOTONY(@$, (MONOTONY.MONOTONY_type)EnumToStringOrAbort(typeof(MONOTONY.MONOTONY_type), $2));
     }
     ;
 
@@ -1318,36 +1267,9 @@ memory_segment  : BEGIN MEMORY_SEGMENT memory_segment_data END MEMORY_SEGMENT {
                 ;
 
 memory_segment_data : IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
-                    MEMORY_SEGMENT.PrgType PrgType;  
-                    try
-                    {
-                        PrgType = (MEMORY_SEGMENT.PrgType) Enum.Parse(typeof(MEMORY_SEGMENT.PrgType), $3);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown MEMORY_SEGMENT PrgType: " + $3);
-                    }                    
-
-                    MEMORY_SEGMENT.MemoryType MemoryType;  
-                    try
-                    {
-                        MemoryType = (MEMORY_SEGMENT.MemoryType) Enum.Parse(typeof(MEMORY_SEGMENT.MemoryType), $4);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown MEMORY_SEGMENT MemoryType: " + $4);
-                    }                    
-
-                    MEMORY_SEGMENT.Attribute Attribute;  
-                    try
-                    {
-                        Attribute = (MEMORY_SEGMENT.Attribute) Enum.Parse(typeof(MEMORY_SEGMENT.Attribute), $5);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown MEMORY_SEGMENT Attribute: " + $5);
-                    }                    
-
+                    MEMORY_SEGMENT.PrgType PrgType = (MEMORY_SEGMENT.PrgType)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.PrgType), $3);
+                    MEMORY_SEGMENT.MemoryType MemoryType = (MEMORY_SEGMENT.MemoryType)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.MemoryType), $4);
+                    MEMORY_SEGMENT.Attribute Attribute = (MEMORY_SEGMENT.Attribute)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.Attribute), $5);
                     $$ = new MEMORY_SEGMENT(@$, $1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
                 }
                 |  memory_segment_data if_data {
@@ -1362,15 +1284,7 @@ memory_layout       : BEGIN MEMORY_LAYOUT memory_layout_data END MEMORY_LAYOUT {
                     ;
 
 memory_layout_data  : IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
-                    MEMORY_LAYOUT.PrgType PrgType;  
-                    try
-                    {
-                        PrgType = (MEMORY_LAYOUT.PrgType) Enum.Parse(typeof(MEMORY_LAYOUT.PrgType), $1);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown MEMORY_LAYOUT PrgType: " + $1);
-                    }
+                    MEMORY_LAYOUT.PrgType PrgType = (MEMORY_LAYOUT.PrgType)EnumToStringOrAbort(typeof(MEMORY_LAYOUT.PrgType), $1);
                     $$ = new MEMORY_LAYOUT(@$, PrgType, (UInt64)$2, (UInt64)$3, (Int64)$4, (Int64)$5, (Int64)$6, (Int64)$7, (Int64)$8);
                 }
                 |  memory_layout_data if_data {
@@ -1380,29 +1294,13 @@ memory_layout_data  : IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBE
                 ;
 
 deposit         : DEPOSIT IDENTIFIER {
-                    DEPOSIT.DEPOSIT_type type;
-                    try
-                    {
-                        type = (DEPOSIT.DEPOSIT_type) Enum.Parse(typeof(DEPOSIT.DEPOSIT_type), $2);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown DEPOSIT type: " + $2);
-                    }
+                    DEPOSIT.DEPOSIT_type type = (DEPOSIT.DEPOSIT_type)EnumToStringOrAbort(typeof(DEPOSIT.DEPOSIT_type), $2);
                     $$ = new DEPOSIT(@$, type);
                 }
                 ;
 
 byte_order      : BYTE_ORDER IDENTIFIER {
-                    BYTE_ORDER.BYTE_ORDER_type order;   
-                    try
-                    {
-                        order = (BYTE_ORDER.BYTE_ORDER_type) Enum.Parse(typeof(BYTE_ORDER.BYTE_ORDER_type), $2);        
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new Exception("Unknown BYTE_ORDER type: " + $2);
-                    }
+                    BYTE_ORDER.BYTE_ORDER_type order = (BYTE_ORDER.BYTE_ORDER_type)EnumToStringOrAbort(typeof(BYTE_ORDER.BYTE_ORDER_type), $2);
                     $$ = new BYTE_ORDER(@$, order);
                 }
                 ;
@@ -1513,18 +1411,8 @@ record_layout_data
         $$.fix_no_axis_pts_xyz45.Add($2, new FIX_NO_AXIS_PTS_XYZ45(location: @$, Name: $2, NumberOfAxisPoints: (UInt64)$3));
     }
     | record_layout_data FNC_VALUES NUMBER IDENTIFIER IDENTIFIER IDENTIFIER{
-        FNC_VALUES.IndexMode indexMode;
-        try
-        {
-            indexMode = (FNC_VALUES.IndexMode) Enum.Parse(typeof(FNC_VALUES.IndexMode), $5);
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown FNC_VALUES IndexMode: " + $5);
-        }
-
         $$ = $1;
-        $$.fnc_values = new FNC_VALUES(location: @$, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), indexMode: indexMode, addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $6));
+        $$.fnc_values = new FNC_VALUES(location: @$, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), indexMode: (FNC_VALUES.IndexMode)EnumToStringOrAbort(typeof(FNC_VALUES.IndexMode), $5), addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $6));
     }
     | record_layout_data IDENTIFICATION NUMBER IDENTIFIER {
         $$ = $1;
