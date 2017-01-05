@@ -70,6 +70,7 @@
     <Compile Include="Export\VAR_CRITERION.cs" />
     <Compile Include="Export\VAR_FORBIDDEN_COMB.cs" />
     <Compile Include="GplexBuffers.cs" />
+    <Compile Include="IErrorReporter.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

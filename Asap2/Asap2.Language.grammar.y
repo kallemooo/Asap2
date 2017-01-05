@@ -622,14 +622,7 @@ compu_method                : BEGIN COMPU_METHOD compu_method_data END COMPU_MET
 
 compu_method_data           : IDENTIFIER QUOTED_STRING IDENTIFIER QUOTED_STRING QUOTED_STRING {
                                 ConversionType conversionType;  
-                                try
-                                {
-                                    conversionType = (ConversionType) Enum.Parse(typeof(ConversionType), $3);        
-                                }
-                                catch (ArgumentException)
-                                {
-                                    throw new Exception("Unknown ConversionType: " + $3);
-                                }
+                                conversionType = (ConversionType)EnumToStringOrAbort(typeof(ConversionType), $3);
                                 $$ = new COMPU_METHOD(location: @$, Name: $1, LongIdentifier: $2, conversionType: conversionType, Format: $4, Unit: $5);
                             }
                             | compu_method_data COEFFS NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
@@ -1118,7 +1111,7 @@ measurement     : BEGIN MEASUREMENT measurement_data END MEASUREMENT {
                 ;
 
 measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
-                    $$ = new MEASUREMENT(@$, $1, $2, GetDataType($3), $4, (uint)$5, $6, $7, $8);
+                    $$ = new MEASUREMENT(@$, $1, $2, (DataType)EnumToStringOrAbort(typeof(DataType), $3), $4, (uint)$5, $6, $7, $8);
                 }
                 |  measurement_data annotation {
                     $$ = $1;
@@ -1505,15 +1498,15 @@ record_layout_data
     }
     | record_layout_data AXIS_PTS_XYZ45 NUMBER IDENTIFIER IDENTIFIER IDENTIFIER {
         $$ = $1;
-        $$.axis_pts_xyz45.Add($2, new AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), indexIncr: GetIndexOrder($5), addrType: GetAddrType($6)));
+        $$.axis_pts_xyz45.Add($2, new AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), indexIncr: (IndexOrder)EnumToStringOrAbort(typeof(IndexOrder), $5), addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $6)));
     }
     | record_layout_data AXIS_RESCALE_XYZ45 NUMBER IDENTIFIER NUMBER IDENTIFIER IDENTIFIER {
         $$ = $1;
-        $$.axis_rescale_xyz45.Add($2, new AXIS_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), MaxNoOfRescalePairs: (UInt64)$5, indexIncr: GetIndexOrder($6), addrType: GetAddrType($7)));
+        $$.axis_rescale_xyz45.Add($2, new AXIS_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), MaxNoOfRescalePairs: (UInt64)$5, indexIncr: (IndexOrder)EnumToStringOrAbort(typeof(IndexOrder), $6), addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $7)));
     }
     | record_layout_data DIST_OP_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.dist_op_xyz45.Add($2, new DIST_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.dist_op_xyz45.Add($2, new DIST_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
     }
     | record_layout_data FIX_NO_AXIS_PTS_XYZ45 NUMBER {
         $$ = $1;
@@ -1531,39 +1524,39 @@ record_layout_data
         }
 
         $$ = $1;
-        $$.fnc_values = new FNC_VALUES(location: @$, Position: (UInt64)$3, dataType: GetDataType($4), indexMode: indexMode, addrType: GetAddrType($6));
+        $$.fnc_values = new FNC_VALUES(location: @$, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), indexMode: indexMode, addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $6));
     }
     | record_layout_data IDENTIFICATION NUMBER IDENTIFIER {
         $$ = $1;
-        $$.identification = new IDENTIFICATION(location: @$, Position: (UInt64)$3, dataType: GetDataType($4));
+        $$.identification = new IDENTIFICATION(location: @$, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4));
     }
     | record_layout_data NO_AXIS_PTS_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.no_axis_pts_xyz45.Add($2, new NO_AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.no_axis_pts_xyz45.Add($2, new NO_AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
     }
     | record_layout_data NO_RESCALE_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.no_rescale_xyz45.Add($2, new NO_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.no_rescale_xyz45.Add($2, new NO_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
     }
     | record_layout_data OFFSET_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.offset_xyz45.Add($2, new OFFSET_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.offset_xyz45.Add($2, new OFFSET_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
     }
     | record_layout_data RESERVED NUMBER IDENTIFIER {
         $$ = $1;
-        $$.reserved = new RESERVED(location: @$, Position: (UInt64)$3, dataSize: GetDataSize($4));
+        $$.reserved = new RESERVED(location: @$, Position: (UInt64)$3, dataSize: (DataSize)EnumToStringOrAbort(typeof(DataSize), $4));
     }
     | record_layout_data RIP_ADDR_WXYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.rip_addr_wxyz45.Add($2, new RIP_ADDR_WXYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.rip_addr_wxyz45.Add($2, new RIP_ADDR_WXYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
     }
     | record_layout_data SHIFT_OP_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.shift_op_xyz45.Add($2, new SHIFT_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.shift_op_xyz45.Add($2, new SHIFT_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
     }
     | record_layout_data SRC_ADDR_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.src_addr_xyz45.Add($2, new SRC_ADDR_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.src_addr_xyz45.Add($2, new SRC_ADDR_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
     }
     | record_layout_data STATIC_RECORD_LAYOUT {
         $$ = $1;
@@ -1593,17 +1586,7 @@ unit
 
 unit_data
     : IDENTIFIER QUOTED_STRING QUOTED_STRING IDENTIFIER {
-        UNIT.Type type;  
-        try
-        {
-            type = (UNIT.Type) Enum.Parse(typeof(UNIT.Type), $4);
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown MEMORY_SEGMENT PrgType: " + $4);
-        }                    
-
-        $$ = new UNIT(location: @$, Name: $1, LongIdentifier: $2, Display: $3, type: type);
+        $$ = new UNIT(location: @$, Name: $1, LongIdentifier: $2, Display: $3, type: (UNIT.Type)EnumToStringOrAbort(typeof(UNIT.Type), $4));
     }
     |  unit_data REF_UNIT IDENTIFIER {
         $$ = $1;
@@ -1688,17 +1671,8 @@ variant_coding_data
         $$.var_seperator = $3;
     }
     | variant_coding_data VAR_NAMING IDENTIFIER {
-        VARIANT_CODING.VAR_NAMING valOut;
-        try
-        {
-            valOut = (VARIANT_CODING.VAR_NAMING) Enum.Parse(typeof(VARIANT_CODING.VAR_NAMING), $3);
-        }
-        catch (ArgumentException)
-        {
-            throw new Exception("Unknown VARIANT_CODING.VAR_NAMING: " + $3);
-        }
         $$ = $1;
-        $$.var_naming = valOut;
+        $$.var_naming = (VARIANT_CODING.VAR_NAMING)EnumToStringOrAbort(typeof(VARIANT_CODING.VAR_NAMING), $3);
     }
     ;
 
@@ -1755,58 +1729,31 @@ var_address
     ;
 %%
 
-private AddrType GetAddrType(string strIn)
+private object EnumToStringOrAbort(Type type, string strIn)
 {
-    AddrType valOut;
     try
     {
-        valOut = (AddrType) Enum.Parse(typeof(AddrType), strIn);
+       return Enum.Parse(type, strIn);
     }
-    catch (ArgumentException)
+    catch (ArgumentException e)
     {
-        throw new Exception("Unknown AddrType: " + strIn);
+        StringBuilder values = new StringBuilder();
+        string[] myArray = Enum.GetNames(type);
+        foreach(var item in myArray)
+        {
+            if (values.Length > 0)
+            {
+                values.Append(", ");
+            }
+            values.Append(item);
+        }
+        ReportErrorAndAbort(String.Format("Unknown {0}: {1} expecting one of {2}", type.ToString(), strIn, values.ToString()));
+        throw e;
     }
-    return valOut;
 }
 
-private DataType GetDataType(string strIn)
+private void ReportErrorAndAbort(string errorMsg)
 {
-    DataType valOut;
-    try
-    {
-        valOut = (DataType) Enum.Parse(typeof(DataType), strIn);
-    }
-    catch (ArgumentException)
-    {
-        throw new Exception("Unknown DataType: " + strIn);
-    }
-    return valOut;
-}
-
-private DataSize GetDataSize(string strIn)
-{
-    DataSize valOut;
-    try
-    {
-        valOut = (DataSize) Enum.Parse(typeof(DataSize), strIn);
-    }
-    catch (ArgumentException)
-    {
-        throw new Exception("Unknown DataSize: " + strIn);
-    }
-    return valOut;
-}
-
-private IndexOrder GetIndexOrder(string strIn)
-{
-    IndexOrder valOut;
-    try
-    {
-        valOut = (IndexOrder) Enum.Parse(typeof(IndexOrder), strIn);
-    }
-    catch (ArgumentException)
-    {
-        throw new Exception("Unknown IndexOrder: " + strIn);
-    }
-    return valOut;
+    Scanner.yyerror(String.Format( "Syntax error: {0}", errorMsg ));
+    YYAbort();
 }

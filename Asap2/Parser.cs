@@ -13,9 +13,11 @@ namespace Asap2
 {
     public class Parser
     {
-        public Parser(string fileName)
+        private IErrorReporter errorHandler;
+        public Parser(string fileName, IErrorReporter errorHandler)
         {
             this.fileName = fileName;
+            this.errorHandler = errorHandler;
         }
 
         public string fileName { get; private set; }
@@ -27,8 +29,7 @@ namespace Asap2
             Asap2Parser parser;
             using (var stream = new FileStream(fileName, FileMode.Open))
             {
-                scanner = new Asap2Scanner(stream);
-                scanner.filenames.Push(fileName);
+                scanner = new Asap2Scanner(stream, this.errorHandler, this.fileName);
                 parser = new Asap2Parser(scanner);
                 status = parser.Parse();
             }
