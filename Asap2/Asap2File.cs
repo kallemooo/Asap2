@@ -20,8 +20,9 @@ namespace Asap2
             orderId = 0;
         }
 
-        public Asap2Base()
+        public Asap2Base(Location location)
         {
+            this.location = location;
             this.OrderID = GetOrderID();
         }
 
@@ -35,42 +36,7 @@ namespace Asap2
         public Location location { get; set; }
 
     }
-
-    public class Location
-    {
-        private int startLine;   // start line
-        private int startColumn; // start column
-        private string fileName; // current filename.
-
-        /// <summary>
-        /// The line at which the text span starts.
-        /// </summary>
-        public int StartLine { get { return startLine; } }
-
-        /// <summary>
-        /// The column at which the text span starts.
-        /// </summary>
-        public int StartColumn { get { return startColumn; } }
-
-        /// <summary>
-        /// The column at which the text span starts.
-        /// </summary>
-        public string FileName { get { return fileName; } }
-
-        /// <summary>
-        /// Default no-arg constructor.
-        /// </summary>
-        public Location() { startLine = 0; startColumn = 0; fileName = ""; }
-
-        /// <summary>
-        /// Constructor for text-span with given start and end.
-        /// </summary>
-        /// <param name="sl">start line</param>
-        /// <param name="sc">start column</param>
-        /// <param name="fn">file name</param>
-        public Location(int sl, int sc, string fn) { startLine = sl; startColumn = sc; fileName = fn; }
-    }
-
+    
     /// <summary>
     /// Data types defined by the standard.
     /// </summary>
@@ -226,7 +192,22 @@ namespace Asap2
         /// </summary>
         /// <param name="comment">First comment line.</param>
         /// <param name="startWithStart">Indicates if each comment line shall start with a *.</param>
-        public FileComment(string comment = null, bool startNewLineWithStar = false)
+        public FileComment(string comment = null, bool startNewLineWithStar = false) : base(new Location())
+        {
+            if (comment != null)
+            {
+                this.comment = new StringBuilder();
+                this.comment.Append(comment);
+                this.startNewLineWithStar = startNewLineWithStar;
+            }
+        }
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="comment">First comment line.</param>
+        /// <param name="startWithStart">Indicates if each comment line shall start with a *.</param>
+        public FileComment(Location location, string comment = null, bool startNewLineWithStar = false) : base(location)
         {
             if (comment != null)
             {
@@ -273,7 +254,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ASAP2_VERSION : Asap2Base
     {
-        public ASAP2_VERSION(UInt32 VersionNo, UInt32 UpgradeNo)
+        public ASAP2_VERSION(Location location, UInt32 VersionNo, UInt32 UpgradeNo) : base(location)
         {
             this.VersionNo = VersionNo;
             this.UpgradeNo = UpgradeNo;
@@ -289,7 +270,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class A2ML_VERSION : Asap2Base
     {
-        public A2ML_VERSION(UInt32 VersionNo, UInt32 UpgradeNo)
+        public A2ML_VERSION(Location location, UInt32 VersionNo, UInt32 UpgradeNo) : base(location)
         {
             this.VersionNo = VersionNo;
             this.UpgradeNo = UpgradeNo;
@@ -305,7 +286,7 @@ namespace Asap2
     [Base()]
     public class PROJECT : Asap2Base
     {
-        public PROJECT()
+        public PROJECT(Location location) : base(location)
         {
             modules = new Dictionary<string, MODULE>();
         }
@@ -329,6 +310,8 @@ namespace Asap2
     [Base()]
     public class HEADER : Asap2Base
     {
+        public HEADER(Location location) : base(location) { }
+
         [Element(0, IsString = true)]
         public string longIdentifier;
 
@@ -351,7 +334,7 @@ namespace Asap2
             ALIGNMENT_FLOAT32_IEEE,
             ALIGNMENT_FLOAT64_IEEE
         }
-        public ALIGNMENT(ALIGNMENT_type type, uint value)
+        public ALIGNMENT(Location location, ALIGNMENT_type type, uint value) : base(location)
         {
             this.type = type;
             this.value = value;
@@ -395,7 +378,7 @@ namespace Asap2
             STD_AXIS,
         }
 
-        public AXIS_DESCR(Attribute attribute, string InputQuantity, string Conversion, UInt64 MaxAxisPoints, decimal LowerLimit, decimal UpperLimit)
+        public AXIS_DESCR(Location location, Attribute attribute, string InputQuantity, string Conversion, UInt64 MaxAxisPoints, decimal LowerLimit, decimal UpperLimit) : base(location)
         {
             this.attribute = attribute;
             this.InputQuantity = InputQuantity;
@@ -475,7 +458,7 @@ namespace Asap2
     [Base()]
     public class AXIS_PTS : Asap2Base
     {
-        public AXIS_PTS(string Name, string LongIdentifier, UInt64 Address, string InputQuantity, string Deposit, decimal MaxDiff, string Conversion, UInt64 MaxAxisPoints, decimal LowerLimit, decimal UpperLimit)
+        public AXIS_PTS(Location location, string Name, string LongIdentifier, UInt64 Address, string InputQuantity, string Deposit, decimal MaxDiff, string Conversion, UInt64 MaxAxisPoints, decimal LowerLimit, decimal UpperLimit) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
@@ -573,7 +556,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class AXIS_PTS_XYZ45 : Asap2Base
     {
-        public AXIS_PTS_XYZ45(string Name, UInt64 Position, DataType dataType, IndexOrder indexIncr, AddrType addrType)
+        public AXIS_PTS_XYZ45(Location location, string Name, UInt64 Position, DataType dataType, IndexOrder indexIncr, AddrType addrType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -600,7 +583,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class AXIS_RESCALE_XYZ45 : Asap2Base
     {
-        public AXIS_RESCALE_XYZ45(string Name, UInt64 Position, DataType dataType, UInt64 MaxNoOfRescalePairs, IndexOrder indexIncr, AddrType addrType)
+        public AXIS_RESCALE_XYZ45(Location location, string Name, UInt64 Position, DataType dataType, UInt64 MaxNoOfRescalePairs, IndexOrder indexIncr, AddrType addrType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -631,7 +614,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class DIST_OP_XYZ45 : Asap2Base
     {
-        public DIST_OP_XYZ45(string Name, UInt64 Position, DataType dataType)
+        public DIST_OP_XYZ45(Location location, string Name, UInt64 Position, DataType dataType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -652,7 +635,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class FIX_NO_AXIS_PTS_XYZ45 : Asap2Base
     {
-        public FIX_NO_AXIS_PTS_XYZ45(string Name, UInt64 NumberOfAxisPoints)
+        public FIX_NO_AXIS_PTS_XYZ45(Location location, string Name, UInt64 NumberOfAxisPoints) : base(location)
         {
             this.Name = Name;
             this.NumberOfAxisPoints = NumberOfAxisPoints;
@@ -670,7 +653,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class IDENTIFICATION : Asap2Base
     {
-        public IDENTIFICATION(UInt64 Position, DataType dataType)
+        public IDENTIFICATION(Location location, UInt64 Position, DataType dataType) : base(location)
         {
             this.Position = Position;
             this.dataType = dataType;
@@ -688,7 +671,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class NO_AXIS_PTS_XYZ45 : Asap2Base
     {
-        public NO_AXIS_PTS_XYZ45(string Name, UInt64 Position, DataType dataType)
+        public NO_AXIS_PTS_XYZ45(Location location, string Name, UInt64 Position, DataType dataType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -709,7 +692,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class NO_RESCALE_XYZ45 : Asap2Base
     {
-        public NO_RESCALE_XYZ45(string Name, UInt64 Position, DataType dataType)
+        public NO_RESCALE_XYZ45(Location location, string Name, UInt64 Position, DataType dataType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -731,7 +714,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class OFFSET_XYZ45 : Asap2Base
     {
-        public OFFSET_XYZ45(string Name, UInt64 Position, DataType dataType)
+        public OFFSET_XYZ45(Location location, string Name, UInt64 Position, DataType dataType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -752,7 +735,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class RESERVED : Asap2Base
     {
-        public RESERVED(UInt64 Position, DataSize dataSize)
+        public RESERVED(Location location, UInt64 Position, DataSize dataSize) : base(location)
         {
             this.Position = Position;
             this.dataSize = dataSize;
@@ -770,7 +753,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class RIP_ADDR_WXYZ45 : Asap2Base
     {
-        public RIP_ADDR_WXYZ45(string Name, UInt64 Position, DataType dataType)
+        public RIP_ADDR_WXYZ45(Location location, string Name, UInt64 Position, DataType dataType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -792,7 +775,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class SHIFT_OP_XYZ45 : Asap2Base
     {
-        public SHIFT_OP_XYZ45(string Name, UInt64 Position, DataType dataType)
+        public SHIFT_OP_XYZ45(Location location, string Name, UInt64 Position, DataType dataType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -813,7 +796,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class SRC_ADDR_XYZ45 : Asap2Base
     {
-        public SRC_ADDR_XYZ45(string Name, UInt64 Position, DataType dataType)
+        public SRC_ADDR_XYZ45(Location location, string Name, UInt64 Position, DataType dataType) : base(location)
         {
             this.Name = Name;
             this.Position = Position;
@@ -831,6 +814,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class STATIC_RECORD_LAYOUT : Asap2Base
     {
+        public STATIC_RECORD_LAYOUT(Location location) : base(location) { }
     }
 
     [Base(IsSimple = true)]
@@ -841,7 +825,7 @@ namespace Asap2
             ABSOLUTE,
             DIFFERENCE,
         }
-        public DEPOSIT(DEPOSIT_type value)
+        public DEPOSIT(Location location, DEPOSIT_type value) : base(location)
         {
             this.value = value;
         }
@@ -887,7 +871,7 @@ namespace Asap2
             /// </summary>
             NOT_MON,
         }
-        public MONOTONY(MONOTONY_type value)
+        public MONOTONY(Location location, MONOTONY_type value) : base(location)
         {
             this.value = value;
         }
@@ -904,7 +888,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class FIX_AXIS_PAR : Asap2Base
     {
-        public FIX_AXIS_PAR(Int64 Offset, Int64 Shift, UInt64 NumberAPo)
+        public FIX_AXIS_PAR(Location location, Int64 Offset, Int64 Shift, UInt64 NumberAPo) : base(location)
         {
             this.Offset = Offset;
             this.Shift = Shift;
@@ -929,7 +913,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class FIX_AXIS_PAR_DIST : Asap2Base
     {
-        public FIX_AXIS_PAR_DIST(Int64 Offset, Int64 Distance, UInt64 NumberAPo)
+        public FIX_AXIS_PAR_DIST(Location location, Int64 Offset, Int64 Distance, UInt64 NumberAPo) : base(location)
         {
             this.Offset = Offset;
             this.Distance = Distance;
@@ -953,6 +937,7 @@ namespace Asap2
     [Base()]
     public class FIX_AXIS_PAR_LIST : Asap2Base
     {
+        public FIX_AXIS_PAR_LIST(Location location) : base(location) { }
         [Element(0, IsArgument = true, IsList = true, Comment = " Sample point values ")]
         public List<decimal> AxisPts_Values = new List<decimal>();
     }
@@ -971,7 +956,7 @@ namespace Asap2
             COLUMN_DIR,
             ROW_DIR,
         }
-        public FNC_VALUES(UInt64 Position, DataType dataType, IndexMode indexMode, AddrType addrType)
+        public FNC_VALUES(Location location, UInt64 Position, DataType dataType, IndexMode indexMode, AddrType addrType) : base(location)
         {
             this.Position = Position;
             this.dataType = dataType;
@@ -999,7 +984,7 @@ namespace Asap2
             MSB_FIRST,
             MSB_LAST,
         }
-        public BYTE_ORDER(BYTE_ORDER_type value)
+        public BYTE_ORDER(Location location, BYTE_ORDER_type value) : base(location)
         {
             this.value = value;
         }
@@ -1011,7 +996,7 @@ namespace Asap2
     [Base()]
     public class MOD_COMMON : Asap2Base
     {
-        public MOD_COMMON(string Comment)
+        public MOD_COMMON(Location location, string Comment) : base(location)
         {
             alignments = new Dictionary<string, ALIGNMENT>();
             this.Comment = Comment;
@@ -1043,7 +1028,7 @@ namespace Asap2
     [Base()]
     public class RECORD_LAYOUT : Asap2Base
     {
-        public RECORD_LAYOUT(string Name)
+        public RECORD_LAYOUT(Location location, string Name) : base(location)
         {
             this.Name = Name;
         }
@@ -1103,7 +1088,7 @@ namespace Asap2
     [Base()]
     public class IF_DATA : Asap2Base
     {
-        public IF_DATA(string data)
+        public IF_DATA(Location location, string data) : base(location)
         {
             this.data = data;
             char[] delimiterChars = { ' ', '\t' };
@@ -1118,7 +1103,7 @@ namespace Asap2
     [Base()]
     public class A2ML : Asap2Base
     {
-        public A2ML(string data)
+        public A2ML(Location location, string data) : base(location)
         {
             this.data = data;
         }
@@ -1129,7 +1114,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class EXTENDED_LIMITS : Asap2Base
     {
-        public EXTENDED_LIMITS(decimal LowerLimit, decimal UpperLimit)
+        public EXTENDED_LIMITS(Location location, decimal LowerLimit, decimal UpperLimit) : base(location)
         {
             this.LowerLimit = LowerLimit;
             this.UpperLimit = UpperLimit;
@@ -1158,7 +1143,7 @@ namespace Asap2
             VALUE,
         }
 
-        public CHARACTERISTIC(string Name, string LongIdentifier, Type type, UInt64 Address, string Deposit, decimal MaxDiff, string Conversion, decimal LowerLimit, decimal UpperLimit)
+        public CHARACTERISTIC(Location location, string Name, string LongIdentifier, Type type, UInt64 Address, string Deposit, decimal MaxDiff, string Conversion, decimal LowerLimit, decimal UpperLimit) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
@@ -1269,7 +1254,7 @@ namespace Asap2
             COLUMN_DIR,
         }
 
-        public MEASUREMENT(string name, string LongIdentifier, DataType Datatype, string Conversion, uint Resolution, decimal Accuracy, decimal LowerLimit, decimal UpperLimit)
+        public MEASUREMENT(Location location, string name, string LongIdentifier, DataType Datatype, string Conversion, uint Resolution, decimal Accuracy, decimal LowerLimit, decimal UpperLimit) : base(location)
         {
             this.name = name;
             this.LongIdentifier = LongIdentifier;
@@ -1346,6 +1331,8 @@ namespace Asap2
     [Base(IsObsolete = "Obsolete keyword. Please use FUNCTION instead.")]
     public class FUNCTION_LIST : Asap2Base
     {
+        public FUNCTION_LIST(Location location) : base(location) { }
+
         [Element(0, IsArgument = true, IsList = true, Comment = " List of functions. ")]
         public List<string> functions = new List<string>();
     }
@@ -1353,6 +1340,8 @@ namespace Asap2
     [Base()]
     public class VIRTUAL : Asap2Base
     {
+        public VIRTUAL(Location location) : base(location) { }
+
         [Element(0, IsArgument = true, IsList = true, Comment = " MeasuringChannels ")]
         public List<string> MeasuringChannel = new List<string>();
     }
@@ -1361,7 +1350,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class SYMBOL_LINK : Asap2Base
     {
-        public SYMBOL_LINK(string SymbolName, UInt64 Offset)
+        public SYMBOL_LINK(Location location, string SymbolName, UInt64 Offset) : base(location)
         {
             this.SymbolName = SymbolName;
             this.Offset = Offset;
@@ -1376,7 +1365,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class MAX_REFRESH : Asap2Base
     {
-        public MAX_REFRESH(UInt64 ScalingUnit, UInt64 Rate)
+        public MAX_REFRESH(Location location, UInt64 ScalingUnit, UInt64 Rate) : base(location)
         {
             this.ScalingUnit = ScalingUnit;
             this.Rate = Rate;
@@ -1391,7 +1380,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ECU_ADDRESS_EXTENSION : Asap2Base
     {
-        public ECU_ADDRESS_EXTENSION(UInt64 value)
+        public ECU_ADDRESS_EXTENSION(Location location, UInt64 value) : base(location)
         {
             this.value = value;
         }
@@ -1403,7 +1392,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ECU_ADDRESS : Asap2Base
     {
-        public ECU_ADDRESS(UInt64 value)
+        public ECU_ADDRESS(Location location, UInt64 value) : base(location)
         {
             this.value = value;
         }
@@ -1415,7 +1404,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ADDR_EPK : Asap2Base
     {
-        public ADDR_EPK(UInt64 Address)
+        public ADDR_EPK(Location location, UInt64 Address) : base(location)
         {
             this.Address = Address;
         }
@@ -1427,6 +1416,8 @@ namespace Asap2
     [Base()]
     public class ANNOTATION : Asap2Base
     {
+        public ANNOTATION(Location location) : base(location) { }
+
         [Element(0)]
         public ANNOTATION_LABEL annotation_label;
         [Element(1)]
@@ -1438,7 +1429,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ANNOTATION_LABEL : Asap2Base
     {
-        public ANNOTATION_LABEL(string value)
+        public ANNOTATION_LABEL(Location location, string value) : base(location)
         {
             this.value = value;
         }
@@ -1450,7 +1441,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ANNOTATION_ORIGIN : Asap2Base
     {
-        public ANNOTATION_ORIGIN(string value)
+        public ANNOTATION_ORIGIN(Location location, string value) : base(location)
         {
             this.value = value;
         }
@@ -1462,6 +1453,8 @@ namespace Asap2
     [Base()]
     public class ANNOTATION_TEXT : Asap2Base
     {
+        public ANNOTATION_TEXT(Location location) : base(location) { }
+
         [Element(0, IsString = true, IsList = true)]
         public List<string> data = new List<string>();
     }
@@ -1469,7 +1462,7 @@ namespace Asap2
     [Base(IsSimple = true, IsObsolete = "Obsolete keyword. Please use MATRIX_DIM instead.")]
     public class ARRAY_SIZE : Asap2Base
     {
-        public ARRAY_SIZE(ulong value)
+        public ARRAY_SIZE(Location location, ulong value) : base(location)
         {
             this.value = value;
         }
@@ -1481,6 +1474,8 @@ namespace Asap2
     [Base()]
     public class BIT_OPERATION : Asap2Base
     {
+        public BIT_OPERATION(Location location) : base(location) { }
+
         [Element(0)]
         public RIGHT_SHIFT right_shift;
         [Element(2)]
@@ -1492,7 +1487,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class RIGHT_SHIFT : Asap2Base
     {
-        public RIGHT_SHIFT(ulong value)
+        public RIGHT_SHIFT(Location location, ulong value) : base(location)
         {
             this.value = value;
         }
@@ -1504,7 +1499,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class LEFT_SHIFT : Asap2Base
     {
-        public LEFT_SHIFT(ulong value)
+        public LEFT_SHIFT(Location location, ulong value) : base(location)
         {
             this.value = value;
         }
@@ -1516,6 +1511,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class SIGN_EXTEND : Asap2Base
     {
+        public SIGN_EXTEND(Location location) : base(location) { }
     }
 
     [Base(IsSimple = true)]
@@ -1528,7 +1524,7 @@ namespace Asap2
             NOT_IN_MCD_SYSTEM,
             OFFLINE_CALIBRATION,
         }
-        public CALIBRATION_ACCESS(CALIBRATION_ACCESS_type value)
+        public CALIBRATION_ACCESS(Location location, CALIBRATION_ACCESS_type value) : base(location)
         {
             this.value = value;
         }
@@ -1540,7 +1536,7 @@ namespace Asap2
     [Base()]
     public class COMPU_METHOD : Asap2Base
     {
-        public COMPU_METHOD(string Name, string LongIdentifier, ConversionType conversionType, string Format, string Unit)
+        public COMPU_METHOD(Location location, string Name, string LongIdentifier, ConversionType conversionType, string Format, string Unit) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
@@ -1589,7 +1585,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class COEFFS : Asap2Base
     {
-        public COEFFS(decimal a, decimal b, decimal c, decimal d, decimal e, decimal f)
+        public COEFFS(Location location, decimal a, decimal b, decimal c, decimal d, decimal e, decimal f) : base(location)
         {
             this.a = a;
             this.b = b;
@@ -1620,7 +1616,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class COEFFS_LINEAR : Asap2Base
     {
-        public COEFFS_LINEAR(decimal a, decimal b)
+        public COEFFS_LINEAR(Location location, decimal a, decimal b) : base(location)
         {
             this.a = a;
             this.b = b;
@@ -1635,7 +1631,7 @@ namespace Asap2
     [Base()]
     public class FORMULA : Asap2Base
     {
-        public FORMULA(string formula)
+        public FORMULA(Location location, string formula) : base(location)
         {
             this.formula = formula;
         }
@@ -1660,7 +1656,7 @@ namespace Asap2
     [Base()]
     public class COMPU_TAB : Asap2Base
     {
-        public COMPU_TAB(string Name, string LongIdentifier, ConversionType conversionType, uint NumberValuePairs)
+        public COMPU_TAB(Location location, string Name, string LongIdentifier, ConversionType conversionType, uint NumberValuePairs) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
@@ -1688,7 +1684,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class COMPU_TAB_DATA : Asap2Base
     {
-        public COMPU_TAB_DATA(decimal InVal, decimal OutVal)
+        public COMPU_TAB_DATA(Location location, decimal InVal, decimal OutVal) : base(location)
         {
             this.InVal = InVal;
             this.OutVal = OutVal;
@@ -1707,7 +1703,7 @@ namespace Asap2
     [Base()]
     public class COMPU_VTAB : Asap2Base
     {
-        public COMPU_VTAB(string Name, string LongIdentifier, uint NumberValuePairs)
+        public COMPU_VTAB(Location location, string Name, string LongIdentifier, uint NumberValuePairs) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
@@ -1732,7 +1728,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class COMPU_VTAB_DATA : Asap2Base
     {
-        public COMPU_VTAB_DATA(decimal InVal, string OutVal)
+        public COMPU_VTAB_DATA(Location location, decimal InVal, string OutVal) : base(location)
         {
             this.InVal = InVal;
             this.OutVal = OutVal;
@@ -1751,7 +1747,7 @@ namespace Asap2
     [Base()]
     public class COMPU_VTAB_RANGE : Asap2Base
     {
-        public COMPU_VTAB_RANGE(string Name, string LongIdentifier, uint NumberValueTriples)
+        public COMPU_VTAB_RANGE(Location location, string Name, string LongIdentifier, uint NumberValueTriples) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
@@ -1774,7 +1770,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class COMPU_VTAB_RANGE_DATA : Asap2Base
     {
-        public COMPU_VTAB_RANGE_DATA(decimal InValMin, decimal InValMax, string value)
+        public COMPU_VTAB_RANGE_DATA(Location location, decimal InValMin, decimal InValMax, string value) : base(location)
         {
             this.InValMin = InValMin;
             this.InValMax = InValMax;
@@ -1797,7 +1793,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class MATRIX_DIM : Asap2Base
     {
-        public MATRIX_DIM(uint xDim, uint yDim, uint zDim)
+        public MATRIX_DIM(Location location, uint xDim, uint yDim, uint zDim) : base(location)
         {
             this.xDim = xDim;
             this.yDim = yDim;
@@ -1843,8 +1839,8 @@ namespace Asap2
             EXTERN,
         }
 
-        public MEMORY_SEGMENT(string name, string longIdentifier, PrgType prgType, MemoryType memoryType, Attribute attribute, UInt64 address, UInt64 size,
-            long offset0, long offset1, long offset2, long offset3, long offset4)
+        public MEMORY_SEGMENT(Location location, string name, string longIdentifier, PrgType prgType, MemoryType memoryType, Attribute attribute, UInt64 address, UInt64 size,
+            long offset0, long offset1, long offset2, long offset3, long offset4) : base(location)
         {
             this.name = name;
             this.longIdentifier = longIdentifier;
@@ -1910,8 +1906,8 @@ namespace Asap2
             PRG_RESERVED,
         }
 
-        public MEMORY_LAYOUT(PrgType prgType, UInt64 Address, UInt64 Size,
-            long offset0, long offset1, long offset2, long offset3, long offset4)
+        public MEMORY_LAYOUT(Location location, PrgType prgType, UInt64 Address, UInt64 Size,
+            long offset0, long offset1, long offset2, long offset3, long offset4) : base(location)
         {
             this.prgType = prgType;
             this.Address = Address;
@@ -1954,7 +1950,7 @@ namespace Asap2
     [Base()]
     public class CALIBRATION_METHOD : Asap2Base
     {
-        public CALIBRATION_METHOD(string Method, ulong Version)
+        public CALIBRATION_METHOD(Location location, string Method, ulong Version) : base(location)
         {
             this.Method = Method;
             this.Version = Version;
@@ -1973,7 +1969,7 @@ namespace Asap2
     [Base()]
     public class CALIBRATION_HANDLE : Asap2Base
     {
-        public CALIBRATION_HANDLE()
+        public CALIBRATION_HANDLE(Location location) : base(location)
         {
         }
 
@@ -1987,7 +1983,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class SYSTEM_CONSTANT : Asap2Base
     {
-        public SYSTEM_CONSTANT(string name, string value)
+        public SYSTEM_CONSTANT(Location location, string name, string value) : base(location)
         {
             this.name = name;
             this.value = value;
@@ -2003,7 +1999,7 @@ namespace Asap2
     [Base()]
     public class MOD_PAR : Asap2Base
     {
-        public MOD_PAR(string comment)
+        public MOD_PAR(Location location, string comment) : base(location)
         {
             this.comment = comment;
         }
@@ -2063,28 +2059,31 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class DISCRETE : Asap2Base
     {
+        public DISCRETE(Location location) : base(location) { }
     }
 
     [Base(IsSimple = true)]
     public class READ_ONLY : Asap2Base
     {
+        public READ_ONLY(Location location) : base(location) { }
     }
 
     [Base(IsSimple = true)]
     public class READ_WRITE : Asap2Base
     {
+        public READ_WRITE(Location location) : base(location) { }
     }
 
     [Base(IsSimple = true)]
     public class GUARD_RAILS : Asap2Base
     {
+        public GUARD_RAILS(Location location) : base(location) { }
     }
 
     [Base()]
     public class GROUP : Asap2Base
     {
-
-        public GROUP(string GroupName, string GroupLongIdentifier)
+        public GROUP(Location location, string GroupName, string GroupLongIdentifier) : base(location)
         {
             this.GroupName = GroupName;
             this.GroupLongIdentifier = GroupLongIdentifier;
@@ -2112,6 +2111,8 @@ namespace Asap2
     [Base()]
     public class REF_MEASUREMENT : Asap2Base
     {
+        public REF_MEASUREMENT(Location location) : base(location) { }
+
         [Element(0, IsArgument = true, IsList = true, Comment = " Measurement references ")]
         public List<string> reference = new List<string>();
     }
@@ -2119,6 +2120,8 @@ namespace Asap2
     [Base()]
     public class SUB_GROUP : Asap2Base
     {
+        public SUB_GROUP(Location location) : base(location) { }
+
         [Element(0, IsArgument = true, IsList = true, Comment = " Sub groups ")]
         public List<string> groups = new List<string>();
     }
@@ -2126,6 +2129,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class ROOT : Asap2Base
     {
+        public ROOT(Location location) : base(location) { }
     }
 
     /// <summary>
@@ -2134,7 +2138,7 @@ namespace Asap2
     [Base()]
     public class MAP_LIST : Asap2Base
     {
-        public MAP_LIST()
+        public MAP_LIST(Location location) : base(location)
         {
         }
         [Element(1, IsArgument = true, IsList = true)]
@@ -2148,7 +2152,7 @@ namespace Asap2
     [Base()]
     public class VIRTUAL_CHARACTERISTIC : Asap2Base
     {
-        public VIRTUAL_CHARACTERISTIC(string Formula)
+        public VIRTUAL_CHARACTERISTIC(Location location, string Formula) : base(location)
         {
             this.Formula = Formula;
         }
@@ -2166,7 +2170,7 @@ namespace Asap2
     [Base()]
     public class DEPENDENT_CHARACTERISTIC : Asap2Base
     {
-        public DEPENDENT_CHARACTERISTIC(string Formula)
+        public DEPENDENT_CHARACTERISTIC(Location location, string Formula) : base(location)
         {
             this.Formula = Formula;
         }

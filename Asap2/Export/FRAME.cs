@@ -12,7 +12,7 @@ namespace Asap2
     [Base()]
     public class FRAME : Asap2Base
     {
-        public FRAME(string Name, string LongIdentifier, UInt64 ScalingUnit, UInt64 Rate)
+        public FRAME(Location location, string Name, string LongIdentifier, UInt64 ScalingUnit, UInt64 Rate) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;

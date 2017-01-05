@@ -224,7 +224,7 @@ public int MakeNumber()
 {
     yylval.s = yytext;
     decimal.TryParse(yytext, NumberStyles.Float, CultureInfo.InvariantCulture, out yylval.d);
-    yylloc = new QUT.Gppg.LexLocation(yyline,yycol,yyline,yycol + yyleng);
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
     return (int)Token.NUMBER;
 }
 
@@ -237,7 +237,7 @@ public int MakeHexNumber()
         tmp = tmp.Substring(2);
     }
     yylval.d = long.Parse(tmp, NumberStyles.HexNumber);
-    yylloc = new QUT.Gppg.LexLocation(yyline,yycol,yyline,yycol + yyleng);
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
     return (int)Token.NUMBER;
 }
 
@@ -252,20 +252,20 @@ public int MakeAlignment()
     {
         throw new Exception("Unknown ALIGNMENT type: " + yytext);
     }
-    yylloc = new QUT.Gppg.LexLocation(yyline,yycol,yyline,yycol + yyleng);
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
     return (int)Token.ALIGNMENT;
 }
 
 public int MakeStringBuilder(Token token)
 {
     yylval.s = yylval.sb.ToString();
-    yylloc = new QUT.Gppg.LexLocation(yyline,yycol,yyline,yycol + yyleng);
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
     return (int)token;
 }
 
 public int Make(Token token)
 {
     yylval.s = yytext;
-    yylloc = new QUT.Gppg.LexLocation(yyline,yycol,yyline,yycol + yyleng);
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
     return (int)token;
 }

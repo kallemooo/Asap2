@@ -1,7 +1,8 @@
 ﻿/*
  * A2l file for testing ASAP2 parser.
  */
-
+ 
+ASAP2_VERSION 1 60
 ASAP2_VERSION 1 60
 A2ML_VERSION 1 1
 /begin PROJECT project_name "project description"

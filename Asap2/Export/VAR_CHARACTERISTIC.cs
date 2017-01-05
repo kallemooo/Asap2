@@ -12,7 +12,7 @@ namespace Asap2
     [Base()]
     public class VAR_CHARACTERISTIC : Asap2Base
     {
-        public VAR_CHARACTERISTIC(string Name)
+        public VAR_CHARACTERISTIC(Location location, string Name) : base(location)
         {
             this.Name = Name;
         }
@@ -32,6 +32,7 @@ namespace Asap2
     [Base()]
     public class VAR_ADDRESS : Asap2Base
     {
+        public VAR_ADDRESS(Location location) : base(location) { }
         [Element(0, IsArgument = true, IsList = true, CodeAsHex = true)]
         public List<UInt64> Addresses = new List<UInt64>();
     }

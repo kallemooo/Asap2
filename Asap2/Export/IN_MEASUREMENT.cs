@@ -8,6 +8,7 @@ namespace Asap2
     [Base()]
     public class IN_MEASUREMENT : Asap2Base
     {
+        public IN_MEASUREMENT(Location location) : base(location) { }
         [Element(0, IsList = true, IsArgument = true)]
         public List<string> measurements = new List<string>();
     }

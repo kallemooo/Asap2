@@ -8,7 +8,7 @@ namespace Asap2
     [Base()]
     public class USER_RIGHTS : Asap2Base
     {
-        public USER_RIGHTS(string Name)
+        public USER_RIGHTS(Location location, string Name) : base(location)
         {
             this.Name = Name;
         }
@@ -29,6 +29,7 @@ namespace Asap2
     [Base()]
     public class REF_GROUP : Asap2Base
     {
+        public REF_GROUP(Location location) : base(location) { }
         [Element(0, IsArgument = true, IsList = true, Comment = " Group references ")]
         public List<string> reference = new List<string>();
     }

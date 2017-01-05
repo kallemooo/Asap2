@@ -25,9 +25,10 @@ namespace Asap2
             bool status = false;
             Asap2Scanner scanner;
             Asap2Parser parser;
-            using (var file = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open))
             {
-                scanner = new Asap2Scanner(file);
+                scanner = new Asap2Scanner(stream);
+                scanner.filenames.Push(fileName);
                 parser = new Asap2Parser(scanner);
                 status = parser.Parse();
             }
@@ -44,8 +45,6 @@ namespace Asap2
         
         private class compareFieldInfo : IComparer
         {
-
-            // Calls CaseInsensitiveComparer.Compare with the parameters reversed.
             int IComparer.Compare(Object x, Object y)
             {
                 FieldInfo fiX = x as FieldInfo;

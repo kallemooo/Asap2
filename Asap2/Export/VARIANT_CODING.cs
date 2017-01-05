@@ -13,6 +13,8 @@ namespace Asap2
     [Base()]
     public class VARIANT_CODING : Asap2Base
     {
+        public VARIANT_CODING(Location location) : base(location) { }
+
         /// <summary>   
         /// Indexing method to distinguish different variants, e.g. "NUMERIC" or "ALPHA".
         /// </summary>

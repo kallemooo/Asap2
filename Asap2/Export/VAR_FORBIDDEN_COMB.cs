@@ -12,6 +12,8 @@ namespace Asap2
     [Base()]
     public class VAR_FORBIDDEN_COMB : Asap2Base
     {
+        public VAR_FORBIDDEN_COMB(Location location) : base(location) { }
+
         [Element(0, IsArgument = true, IsList = true)]
         public List<Combo> combinations = new List<Combo>();
 

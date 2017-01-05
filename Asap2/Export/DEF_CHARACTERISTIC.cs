@@ -8,6 +8,7 @@ namespace Asap2
     [Base()]
     public class DEF_CHARACTERISTIC : Asap2Base
     {
+        public DEF_CHARACTERISTIC(Location location) : base(location) { }
         [Element(0, IsList = true, IsArgument = true)]
         public List<string> def_characteristics = new List<string>();
     }

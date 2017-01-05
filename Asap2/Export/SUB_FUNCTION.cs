@@ -9,6 +9,7 @@ namespace Asap2
     [Base()]
     public class SUB_FUNCTION : Asap2Base
     {
+        public SUB_FUNCTION(Location location) : base(location) { }
         [Element(0, IsList = true, IsArgument = true)]
         public List<string> sub_functions = new List<string>();
     }

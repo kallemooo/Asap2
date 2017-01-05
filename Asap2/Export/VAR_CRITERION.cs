@@ -10,7 +10,7 @@ namespace Asap2
     [Base()]
     public class VAR_CRITERION : Asap2Base
     {
-        public VAR_CRITERION(string Name, string LongIdentifier)
+        public VAR_CRITERION(Location location, string Name, string LongIdentifier) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
@@ -36,7 +36,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class VAR_SELECTION_CHARACTERISTIC : Asap2Base
     {
-        public VAR_SELECTION_CHARACTERISTIC(string Name)
+        public VAR_SELECTION_CHARACTERISTIC(Location location, string Name) : base(location)
         {
             this.Name = Name;
         }
@@ -52,7 +52,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class VAR_MEASUREMENT : Asap2Base
     {
-        public VAR_MEASUREMENT(string Name)
+        public VAR_MEASUREMENT(Location location, string Name) : base(location)
         {
             this.Name = Name;
         }

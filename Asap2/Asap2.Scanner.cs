@@ -15,5 +15,15 @@ namespace Asap2
             Console.WriteLine(errorMsg);
             Console.WriteLine();
         }
+
+        public Stack<string> filenames = new Stack<string>();
+        public string GetCurrentFilename()
+        {
+            if (filenames.Count > 0)
+            {
+                return filenames.Peek();
+            }
+            return "";
+        }
     }
 }

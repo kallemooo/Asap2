@@ -9,7 +9,7 @@ namespace Asap2
     [Base()]
     public class MODULE : Asap2Base
     {
-        public MODULE()
+        public MODULE(Location location) : base(location)
         {
         }
 

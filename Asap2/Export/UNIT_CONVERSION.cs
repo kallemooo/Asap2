@@ -6,7 +6,7 @@
     [Base(IsSimple = true)]
     public class UNIT_CONVERSION : Asap2Base
     {
-        public UNIT_CONVERSION(decimal Gradient, decimal Offset)
+        public UNIT_CONVERSION(Location location, decimal Gradient, decimal Offset) : base(location)
         {
             this.Gradient = Gradient;
             this.Offset = Offset;

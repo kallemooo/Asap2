@@ -17,7 +17,7 @@ namespace Asap2
             DERIVED,
             SI_CONVERSION,
         }
-        public UNIT(string Name, string LongIdentifier, string Display, Type type)
+        public UNIT(Location location, string Name, string LongIdentifier, string Display, Type type) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;

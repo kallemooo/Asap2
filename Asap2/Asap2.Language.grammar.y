@@ -3,6 +3,7 @@
 %parsertype Asap2Parser
 %visibility internal
 %tokentype Token
+%YYLTYPE Location
 
 %union { 
             public decimal d;
@@ -301,18 +302,13 @@
 Asap2File
     : /* Start of the file */
     | Asap2File project {
-        $2.location = new Location(@2.StartLine, @2.StartColumn, "");
         Asap2File.elements.Add($2);
     }
     | Asap2File ASAP2_VERSION NUMBER NUMBER {
-        var tmp = new ASAP2_VERSION((uint)$3, (uint)$4);
-        tmp.location = new Location(@2.StartLine, @2.StartColumn, "");
-        Asap2File.elements.Add(tmp);
+        Asap2File.elements.Add(new ASAP2_VERSION(@2, (uint)$3, (uint)$4));
     }
     | Asap2File A2ML_VERSION NUMBER NUMBER {
-        var tmp = new A2ML_VERSION((uint)$3, (uint)$4);
-        tmp.location = new Location(@2.StartLine, @2.StartColumn, "");
-        Asap2File.elements.Add(tmp);
+        Asap2File.elements.Add(new A2ML_VERSION(@2, (uint)$3, (uint)$4));
     }
     ;
 
@@ -327,17 +323,17 @@ IDENTIFIER_list
     ;
 
 a2ml                        : BEGIN A2ML {
-                                $$ = new A2ML($2);
+                                $$ = new A2ML(@$, $2);
                             }
                             ;
 
 addr_epk                    : ADDR_EPK NUMBER {
-                                $$ = new ADDR_EPK((UInt64)$2);
+                                $$ = new ADDR_EPK(@$, (UInt64)$2);
                             }
                             ;
 
 alignment                   : ALIGNMENT NUMBER {
-                                $$ = new ALIGNMENT($1, (uint)$2);
+                                $$ = new ALIGNMENT(@$, $1, (uint)$2);
                             }
                             ;
 
@@ -347,15 +343,15 @@ annotation                  : BEGIN ANNOTATION annotation_data END ANNOTATION {
                             ;
 
 annotation_data             : /* empty */ {
-                                $$ = new ANNOTATION();
+                                $$ = new ANNOTATION(@$);
                             }
                             | annotation_data ANNOTATION_LABEL QUOTED_STRING {
                                 $$ = $1;
-                                $$.annotation_label = new ANNOTATION_LABEL($3);
+                                $$.annotation_label = new ANNOTATION_LABEL(@2, $3);
                             }
                             | annotation_data ANNOTATION_ORIGIN QUOTED_STRING {
                                 $$ = $1;
-                                $$.annotation_origin = new ANNOTATION_ORIGIN($3);
+                                $$.annotation_origin = new ANNOTATION_ORIGIN(@2, $3);
                             }
                             | annotation_data annotation_text {
                                 $$ = $1;
@@ -369,7 +365,7 @@ annotation_text             : BEGIN ANNOTATION_TEXT annotation_text_data END ANN
                             ;
 
 annotation_text_data        : /* empty */ {
-                                $$ = new ANNOTATION_TEXT();
+                                $$ = new ANNOTATION_TEXT(@$);
                             }
                             | annotation_text_data QUOTED_STRING {
                                 $$ = $1;
@@ -379,7 +375,7 @@ annotation_text_data        : /* empty */ {
 
 
 array_size                  : ARRAY_SIZE NUMBER {
-                                $$ = new ARRAY_SIZE((ulong)$2);
+                                $$ = new ARRAY_SIZE(@1, (ulong)$2);
                             }
                             ;
 
@@ -394,7 +390,7 @@ axis_descr
         {
             throw new Exception("Unknown AXIS_DESCR Attribute: " + $1);
         }
-        $$ = new AXIS_DESCR(attribute: attribute, InputQuantity: $2, Conversion: $3, MaxAxisPoints: (UInt64)$4, LowerLimit: $5, UpperLimit: $6);
+        $$ = new AXIS_DESCR(@$, attribute: attribute, InputQuantity: $2, Conversion: $3, MaxAxisPoints: (UInt64)$4, LowerLimit: $5, UpperLimit: $6);
     }
     |  axis_descr annotation {
         $$ = $1;
@@ -418,15 +414,15 @@ axis_descr
     }
     |  axis_descr EXTENDED_LIMITS NUMBER NUMBER {
         $$ = $1;
-        $$.extended_limits = new EXTENDED_LIMITS($3, $4);
+        $$.extended_limits = new EXTENDED_LIMITS(@2, $3, $4);
     }
     |  axis_descr FIX_AXIS_PAR NUMBER NUMBER NUMBER {
         $$ = $1;
-        $$.fix_axis_par = new FIX_AXIS_PAR((Int64)$3, (Int64)$4, (UInt64)$5);
+        $$.fix_axis_par = new FIX_AXIS_PAR(@2, (Int64)$3, (Int64)$4, (UInt64)$5);
     }
     |  axis_descr FIX_AXIS_PAR_DIST NUMBER NUMBER NUMBER {
         $$ = $1;
-        $$.fix_axis_par_dist = new FIX_AXIS_PAR_DIST((Int64)$3, (Int64)$4, (UInt64)$5);
+        $$.fix_axis_par_dist = new FIX_AXIS_PAR_DIST(@2, (Int64)$3, (Int64)$4, (UInt64)$5);
     }
     |  axis_descr BEGIN FIX_AXIS_PAR_LIST fix_axis_par_list END FIX_AXIS_PAR_LIST {
         $$ = $1;
@@ -450,7 +446,7 @@ axis_descr
     }
     |  axis_descr READ_ONLY {
         $$ = $1;
-        $$.read_only = new READ_ONLY();
+        $$.read_only = new READ_ONLY(@2);
     }
     |  axis_descr STEP_SIZE NUMBER {
         $$ = $1;
@@ -466,7 +462,7 @@ axis_pts
 
 axis_pts_data
     : IDENTIFIER QUOTED_STRING NUMBER IDENTIFIER IDENTIFIER NUMBER IDENTIFIER NUMBER NUMBER NUMBER {
-        $$ = new AXIS_PTS(Name: $1, LongIdentifier: $2, Address: (UInt64)$3, InputQuantity: $4, Deposit: $5, MaxDiff: $6, Conversion: $7, MaxAxisPoints: (UInt64)$8, LowerLimit: $9, UpperLimit: $10);
+        $$ = new AXIS_PTS(location: @$, Name: $1, LongIdentifier: $2, Address: (UInt64)$3, InputQuantity: $4, Deposit: $5, MaxDiff: $6, Conversion: $7, MaxAxisPoints: (UInt64)$8, LowerLimit: $9, UpperLimit: $10);
     }
     | axis_pts_data annotation {
         $$ = $1;
@@ -494,7 +490,7 @@ axis_pts_data
     }
     | axis_pts_data EXTENDED_LIMITS NUMBER NUMBER {
         $$ = $1;
-        $$.extended_limits = new EXTENDED_LIMITS($3, $4);
+        $$.extended_limits = new EXTENDED_LIMITS(@2, $3, $4);
     }
     | axis_pts_data FORMAT QUOTED_STRING {
         $$ = $1;
@@ -506,7 +502,7 @@ axis_pts_data
     }
     | axis_pts_data GUARD_RAILS {
         $$ = $1;
-        $$.guard_rails = new GUARD_RAILS();
+        $$.guard_rails = new GUARD_RAILS(@2);
     }
     | axis_pts if_data {
         $$ = $1;
@@ -522,7 +518,7 @@ axis_pts_data
     }
     | axis_pts_data READ_ONLY {
         $$ = $1;
-        $$.read_only = new READ_ONLY();
+        $$.read_only = new READ_ONLY(@2);
     }
     | axis_pts_data REF_MEMORY_SEGMENT IDENTIFIER {
         $$ = $1;
@@ -540,7 +536,7 @@ axis_pts_data
 
 fix_axis_par_list
     : /* empty */ {
-        $$ = new FIX_AXIS_PAR_LIST();
+        $$ = new FIX_AXIS_PAR_LIST(@$);
     }
     | fix_axis_par_list NUMBER {
         $$ = $1;
@@ -554,19 +550,19 @@ bit_operation               : BEGIN BIT_OPERATION bit_operation_data END BIT_OPE
                             ;
 
 bit_operation_data          : /* empty */ {
-                                $$ = new BIT_OPERATION();
+                                $$ = new BIT_OPERATION(@$);
                             }
                             | bit_operation_data RIGHT_SHIFT NUMBER {
                                 $$ = $1;
-                                $$.right_shift = new RIGHT_SHIFT((ulong)$3);
+                                $$.right_shift = new RIGHT_SHIFT(@2, (ulong)$3);
                             }
                             | bit_operation_data LEFT_SHIFT NUMBER  {
                                 $$ = $1;
-                                $$.left_shift = new LEFT_SHIFT((ulong)$3);
+                                $$.left_shift = new LEFT_SHIFT(@2, (ulong)$3);
                             }
                             | bit_operation_data SIGN_EXTEND  {
                                 $$ = $1;
-                                $$.sign_extend = new SIGN_EXTEND();
+                                $$.sign_extend = new SIGN_EXTEND(@2);
                             }
                             ;
 
@@ -581,7 +577,7 @@ calibration_access          : CALIBRATION_ACCESS IDENTIFIER {
                                 {
                                     throw new Exception("Unknown CALIBRATION_ACCESS type: " + $2);
                                 }
-                                $$ = new CALIBRATION_ACCESS(access);
+                                $$ = new CALIBRATION_ACCESS(@1, access);
                             }
                             ;
 
@@ -592,7 +588,7 @@ calibration_method          : BEGIN CALIBRATION_METHOD calibration_method_data E
                             ;
 
 calibration_method_data     : QUOTED_STRING NUMBER {
-                                $$ = new CALIBRATION_METHOD($1, (ulong)$2);
+                                $$ = new CALIBRATION_METHOD(@$, $1, (ulong)$2);
                             }
                             | calibration_method_data calibration_handle {
                                 $$ = $1;
@@ -606,7 +602,7 @@ calibration_handle          : BEGIN CALIBRATION_HANDLE calibration_handle_data E
                             ;
 
 calibration_handle_data     : NUMBER {
-                                $$ = new CALIBRATION_HANDLE();
+                                $$ = new CALIBRATION_HANDLE(@$);
                                 $$.Handles.Add((Int64)$1);
                             }
                             | calibration_handle_data NUMBER {
@@ -634,15 +630,15 @@ compu_method_data           : IDENTIFIER QUOTED_STRING IDENTIFIER QUOTED_STRING 
                                 {
                                     throw new Exception("Unknown ConversionType: " + $3);
                                 }
-                                $$ = new COMPU_METHOD(Name: $1, LongIdentifier: $2, conversionType: conversionType, Format: $4, Unit: $5);
+                                $$ = new COMPU_METHOD(location: @$, Name: $1, LongIdentifier: $2, conversionType: conversionType, Format: $4, Unit: $5);
                             }
                             | compu_method_data COEFFS NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
                                 $$ = $1;
-                                $$.coeffs = new COEFFS(a: $3, b: $4, c: $5, d: $6, e: $7, f: $8);
+                                $$.coeffs = new COEFFS(location: @2, a: $3, b: $4, c: $5, d: $6, e: $7, f: $8);
                             }
                             | compu_method_data COEFFS_LINEAR NUMBER NUMBER {
                                 $$ = $1;
-                                $$.coeffs_linear = new COEFFS_LINEAR(a: $3, b: $4);
+                                $$.coeffs_linear = new COEFFS_LINEAR(location: @2, a: $3, b: $4);
                             }
                             | compu_method_data COMPU_TAB_REF IDENTIFIER {
                                 $$ = $1;
@@ -663,10 +659,10 @@ compu_method_data           : IDENTIFIER QUOTED_STRING IDENTIFIER QUOTED_STRING 
                             ;
 
 formula                     : BEGIN FORMULA QUOTED_STRING END FORMULA {
-                                $$ = new FORMULA($3);
+                                $$ = new FORMULA(@$, $3);
                             }
                             | BEGIN FORMULA QUOTED_STRING FORMULA_INV QUOTED_STRING END FORMULA {
-                                $$ = new FORMULA($3);
+                                $$ = new FORMULA(@$, $3);
                                 $$.formula_inv = $5;
                             }
                             ;
@@ -689,7 +685,7 @@ characteristic_data
             throw new Exception("Unknown CHARACTERISTIC Type: " + $3);
         }                    
 
-        $$ = new CHARACTERISTIC(Name: $1, LongIdentifier: $2, type: type, Address: (UInt64)$4, Deposit: $5, MaxDiff: $6, Conversion: $7, LowerLimit: $8, UpperLimit: $9);
+        $$ = new CHARACTERISTIC(location: @$, Name: $1, LongIdentifier: $2, type: type, Address: (UInt64)$4, Deposit: $5, MaxDiff: $6, Conversion: $7, LowerLimit: $8, UpperLimit: $9);
     }
     |  characteristic_data annotation {
         $$ = $1;
@@ -717,12 +713,12 @@ characteristic_data
     }
     |  characteristic_data BEGIN DEPENDENT_CHARACTERISTIC QUOTED_STRING IDENTIFIER_list END DEPENDENT_CHARACTERISTIC {
         $$ = $1;
-        $$.dependent_characteristic = new DEPENDENT_CHARACTERISTIC($4);
+        $$.dependent_characteristic = new DEPENDENT_CHARACTERISTIC(@2, $4);
         $$.dependent_characteristic.Characteristic = $5;
     }
     |  characteristic_data DISCRETE {
         $$ = $1;
-        $$.discrete = new DISCRETE();
+        $$.discrete = new DISCRETE(@2);
     }
     |  characteristic_data DISPLAY_IDENTIFIER IDENTIFIER {
         $$ = $1;
@@ -738,7 +734,7 @@ characteristic_data
     }
     |  characteristic_data EXTENDED_LIMITS NUMBER NUMBER {
         $$ = $1;
-        $$.extended_limits = new EXTENDED_LIMITS($3, $4);
+        $$.extended_limits = new EXTENDED_LIMITS(@2, $3, $4);
     }
     |  characteristic_data function_list {
         $$ = $1;
@@ -746,7 +742,7 @@ characteristic_data
     }
     |  characteristic_data GUARD_RAILS {
         $$ = $1;
-        $$.guard_rails = new GUARD_RAILS();
+        $$.guard_rails = new GUARD_RAILS(@2);
     }
     | characteristic_data if_data {
         $$ = $1;
@@ -754,7 +750,7 @@ characteristic_data
     }
     |  characteristic_data BEGIN MAP_LIST IDENTIFIER_list END MAP_LIST {
         $$ = $1;
-        $$.map_list = new MAP_LIST();
+        $$.map_list = new MAP_LIST(@2);
         $$.map_list.MapList = $4;
     }
     |  characteristic_data matrix_dim {
@@ -775,7 +771,7 @@ characteristic_data
     }
     |  characteristic_data READ_ONLY {
         $$ = $1;
-        $$.read_only = new READ_ONLY();
+        $$.read_only = new READ_ONLY(@2);
     }
     |  characteristic_data REF_MEMORY_SEGMENT IDENTIFIER {
         $$ = $1;
@@ -791,7 +787,7 @@ characteristic_data
     }
     |  characteristic_data BEGIN VIRTUAL_CHARACTERISTIC QUOTED_STRING IDENTIFIER_list END VIRTUAL_CHARACTERISTIC {
         $$ = $1;
-        $$.virtual_characteristic = new VIRTUAL_CHARACTERISTIC($4);
+        $$.virtual_characteristic = new VIRTUAL_CHARACTERISTIC(@2, $4);
         $$.virtual_characteristic.Characteristic = $5;
     }
     ;
@@ -811,11 +807,11 @@ compu_tab_data              : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
                                 {
                                     throw new Exception("Unknown ConversionType: " + $3);
                                 }
-                                $$ = new COMPU_TAB(Name: $1, LongIdentifier: $2, conversionType: conversionType, NumberValuePairs: (uint)$4);
+                                $$ = new COMPU_TAB(location: @$, Name: $1, LongIdentifier: $2, conversionType: conversionType, NumberValuePairs: (uint)$4);
                             }
                             | compu_tab_data NUMBER NUMBER {
                                 $$ = $1;
-                                $$.data.Add(new COMPU_TAB_DATA($2, $3));
+                                $$.data.Add(new COMPU_TAB_DATA(@2, $2, $3));
                             }
                             | compu_tab_data default_value {
                                 $$ = $1;
@@ -834,7 +830,7 @@ compu_vtab                  : BEGIN COMPU_VTAB compu_vtab_data END COMPU_VTAB {
                             ;
 
 compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
-                                $$ = new COMPU_VTAB(Name: $1, LongIdentifier: $2, NumberValuePairs: (uint)$4);
+                                $$ = new COMPU_VTAB(@$, Name: $1, LongIdentifier: $2, NumberValuePairs: (uint)$4);
                                 if ($3 != $$.ConversionType)
                                 {
                                     throw new Exception("Unknown COMPU_VTAB ConversionType: " + $3);
@@ -842,7 +838,7 @@ compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
                             }
                             | compu_vtab_data NUMBER QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_DATA($2, $3));
+                                $$.data.Add(new COMPU_VTAB_DATA(@2, $2, $3));
                             }
                             | compu_vtab_data default_value {
                                 $$ = $1;
@@ -856,11 +852,11 @@ compu_vtab_range            : BEGIN COMPU_VTAB_RANGE compu_vtab_range_data END C
                             ;
 
 compu_vtab_range_data       : IDENTIFIER QUOTED_STRING NUMBER {
-                                $$ = new COMPU_VTAB_RANGE(Name: $1, LongIdentifier: $2, NumberValueTriples: (uint)$3);
+                                $$ = new COMPU_VTAB_RANGE(location: @$, Name: $1, LongIdentifier: $2, NumberValueTriples: (uint)$3);
                             }
                             | compu_vtab_range_data NUMBER NUMBER QUOTED_STRING {
                                 $$ = $1;
-                                $$.data.Add(new COMPU_VTAB_RANGE_DATA($2, $3, $4));
+                                $$.data.Add(new COMPU_VTAB_RANGE_DATA(@2, $2, $3, $4));
                             }
                             | compu_vtab_range_data default_value {
                                 $$ = $1;
@@ -885,7 +881,7 @@ project                     : BEGIN PROJECT project_data END PROJECT {
 
 
 project_data    :   IDENTIFIER QUOTED_STRING {
-                    $$ = new PROJECT();
+                    $$ = new PROJECT(@$);
                     $$.name           = $1;
                     $$.LongIdentifier = $2;
                 }
@@ -905,7 +901,7 @@ header          :   BEGIN HEADER header_data END HEADER {
                 ;
                 
 header_data     : QUOTED_STRING {
-                    $$ = new HEADER();
+                    $$ = new HEADER(@$);
                     $$.longIdentifier = $1;
                 }
                 | header_data VERSION QUOTED_STRING {
@@ -924,7 +920,7 @@ module          :   BEGIN MODULE module_data END MODULE {
                 ;
 
 module_data :   IDENTIFIER QUOTED_STRING {
-                    $$ = new MODULE();
+                    $$ = new MODULE(@$);
                     $$.name = $1;
                     $$.LongIdentifier = $2;
                 }
@@ -1003,7 +999,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 ;
 
 if_data         : BEGIN IF_DATA {
-                    $$ = new IF_DATA($2);
+                    $$ = new IF_DATA(@$, $2);
                 }
                 ;
 
@@ -1013,7 +1009,7 @@ mod_common      : BEGIN MOD_COMMON mod_common_data END MOD_COMMON {
                 ;
 
 mod_common_data :  QUOTED_STRING {
-                    $$ = new MOD_COMMON($1);
+                    $$ = new MOD_COMMON(@1, $1);
                 }
                 |  mod_common_data deposit {
                     $$ = $1;
@@ -1043,7 +1039,7 @@ mod_par         : BEGIN MOD_PAR mod_par_data END MOD_PAR {
                 ;
 
 mod_par_data :  QUOTED_STRING {
-                    $$ = new MOD_PAR($1);
+                    $$ = new MOD_PAR(@$, $1);
                 }
                 |  mod_par_data addr_epk {
                     $$ = $1;
@@ -1099,7 +1095,7 @@ mod_par_data :  QUOTED_STRING {
                 }
                 |  mod_par_data SYSTEM_CONSTANT QUOTED_STRING QUOTED_STRING {
                     $$ = $1;
-                    $$.system_constants.Add($3, new SYSTEM_CONSTANT($3, $4));
+                    $$.system_constants.Add($3, new SYSTEM_CONSTANT(@2, $3, $4));
                 }
                 |  mod_par_data USER QUOTED_STRING {
                     $$ = $1;
@@ -1112,7 +1108,7 @@ mod_par_data :  QUOTED_STRING {
                 ;
 
 matrix_dim      : MATRIX_DIM NUMBER NUMBER NUMBER {
-                    $$ = new MATRIX_DIM((uint)$2, (uint)$3, (uint)$4);
+                    $$ = new MATRIX_DIM(@$, (uint)$2, (uint)$3, (uint)$4);
                 }
                 ;
 
@@ -1122,7 +1118,7 @@ measurement     : BEGIN MEASUREMENT measurement_data END MEASUREMENT {
                 ;
 
 measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER {
-                    $$ = new MEASUREMENT($1, $2, GetDataType($3), $4, (uint)$5, $6, $7, $8);
+                    $$ = new MEASUREMENT(@$, $1, $2, GetDataType($3), $4, (uint)$5, $6, $7, $8);
                 }
                 |  measurement_data annotation {
                     $$ = $1;
@@ -1146,7 +1142,7 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 }
                 |  measurement_data DISCRETE {
                     $$ = $1;
-                    $$.discrete = new DISCRETE();
+                    $$.discrete = new DISCRETE(@2);
                 }
                 |  measurement_data DISPLAY_IDENTIFIER IDENTIFIER {
                     $$ = $1;
@@ -1197,7 +1193,7 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 }
                 |  measurement_data READ_WRITE {
                     $$ = $1;
-                    $$.read_write = new READ_WRITE();
+                    $$.read_write = new READ_WRITE(@2);
                 }
                 |  measurement_data REF_MEMORY_SEGMENT IDENTIFIER {
                     $$ = $1;
@@ -1218,7 +1214,7 @@ measurement_data :  IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER NUMBER NUMBER
                 ;
 
 max_refresh     : MAX_REFRESH NUMBER NUMBER {
-                    $$ = new MAX_REFRESH((UInt64)$2, (UInt64)$3);
+                    $$ = new MAX_REFRESH(@$, (UInt64)$2, (UInt64)$3);
                 }
                 ;
 
@@ -1233,12 +1229,12 @@ monotony
         {
             throw new Exception("Unknown MONOTONY type: " + $2);
         }
-        $$ = new MONOTONY(type);
+        $$ = new MONOTONY(@$, type);
     }
     ;
 
 symbol_link     : SYMBOL_LINK QUOTED_STRING NUMBER {
-                    $$ = new SYMBOL_LINK($2, (UInt64)$3);
+                    $$ = new SYMBOL_LINK(@$, $2, (UInt64)$3);
                 }
                 ;
 
@@ -1250,7 +1246,7 @@ function
 
 function_data
     : IDENTIFIER QUOTED_STRING {
-        $$ = new FUNCTION($1, $2);
+        $$ = new FUNCTION(@$, $1, $2);
     }
     |  function_data annotation {
         $$ = $1;
@@ -1262,7 +1258,7 @@ function_data
     }
     | function_data BEGIN DEF_CHARACTERISTIC IDENTIFIER_list END DEF_CHARACTERISTIC {
         $$ = $1;
-        $$.def_characteristic = new DEF_CHARACTERISTIC();
+        $$.def_characteristic = new DEF_CHARACTERISTIC(@$);
         $$.def_characteristic.def_characteristics = $4;
     }
     | function_data if_data {
@@ -1271,17 +1267,17 @@ function_data
     }
     | function_data BEGIN IN_MEASUREMENT IDENTIFIER_list END IN_MEASUREMENT {
         $$ = $1;
-        $$.in_measurement = new IN_MEASUREMENT();
+        $$.in_measurement = new IN_MEASUREMENT(@$);
         $$.in_measurement.measurements = $4;
     }
     | function_data BEGIN LOC_MEASUREMENT IDENTIFIER_list END LOC_MEASUREMENT {
         $$ = $1;
-        $$.loc_measurement = new LOC_MEASUREMENT();
+        $$.loc_measurement = new LOC_MEASUREMENT(@$);
         $$.loc_measurement.measurements = $4;
     }
     | function_data BEGIN OUT_MEASUREMENT IDENTIFIER_list END OUT_MEASUREMENT {
         $$ = $1;
-        $$.out_measurement = new OUT_MEASUREMENT();
+        $$.out_measurement = new OUT_MEASUREMENT(@$);
         $$.out_measurement.measurements = $4;
     }
     | function_data ref_characteristic {
@@ -1290,7 +1286,7 @@ function_data
     }
     | function_data BEGIN SUB_FUNCTION IDENTIFIER_list END SUB_FUNCTION {
         $$ = $1;
-        $$.sub_function = new SUB_FUNCTION();
+        $$.sub_function = new SUB_FUNCTION(@$);
         $$.sub_function.sub_functions = $4;
     }
     ;
@@ -1301,7 +1297,7 @@ function_list  : BEGIN FUNCTION_LIST function_list_data END FUNCTION_LIST {
                 ;
 
 function_list_data  : /* start */ {
-                    $$ = new FUNCTION_LIST();
+                    $$ = new FUNCTION_LIST(@$);
                 }
                 |  function_list_data IDENTIFIER {
                     $$ = $1;
@@ -1315,7 +1311,7 @@ Virtual         : BEGIN VIRTUAL Virtual_data END VIRTUAL {
                 ;
 
 Virtual_data   : /* start */  {
-                    $$ = new VIRTUAL();
+                    $$ = new VIRTUAL(@$);
                 }
                 |  Virtual_data IDENTIFIER {
                     $$ = $1;
@@ -1359,7 +1355,7 @@ memory_segment_data : IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER IDENTIFIER 
                         throw new Exception("Unknown MEMORY_SEGMENT Attribute: " + $5);
                     }                    
 
-                    $$ = new MEMORY_SEGMENT($1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
+                    $$ = new MEMORY_SEGMENT(@$, $1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
                 }
                 |  memory_segment_data if_data {
                     $$ = $1;
@@ -1382,7 +1378,7 @@ memory_layout_data  : IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBE
                     {
                         throw new Exception("Unknown MEMORY_LAYOUT PrgType: " + $1);
                     }
-                    $$ = new MEMORY_LAYOUT(PrgType, (UInt64)$2, (UInt64)$3, (Int64)$4, (Int64)$5, (Int64)$6, (Int64)$7, (Int64)$8);
+                    $$ = new MEMORY_LAYOUT(@$, PrgType, (UInt64)$2, (UInt64)$3, (Int64)$4, (Int64)$5, (Int64)$6, (Int64)$7, (Int64)$8);
                 }
                 |  memory_layout_data if_data {
                     $$ = $1;
@@ -1400,7 +1396,7 @@ deposit         : DEPOSIT IDENTIFIER {
                     {
                         throw new Exception("Unknown DEPOSIT type: " + $2);
                     }
-                    $$ = new DEPOSIT(type);
+                    $$ = new DEPOSIT(@$, type);
                 }
                 ;
 
@@ -1414,17 +1410,17 @@ byte_order      : BYTE_ORDER IDENTIFIER {
                     {
                         throw new Exception("Unknown BYTE_ORDER type: " + $2);
                     }
-                    $$ = new BYTE_ORDER(order);
+                    $$ = new BYTE_ORDER(@$, order);
                 }
                 ;
 
 ecu_address                 : ECU_ADDRESS NUMBER {
-                                $$ = new ECU_ADDRESS((UInt64)$2);
+                                $$ = new ECU_ADDRESS(@$, (UInt64)$2);
                             }
                             ;
 
 ecu_address_extension       : ECU_ADDRESS_EXTENSION NUMBER {
-                                $$ = new ECU_ADDRESS_EXTENSION((UInt64)$2);
+                                $$ = new ECU_ADDRESS_EXTENSION(@$, (UInt64)$2);
                             }
                             ;
 
@@ -1434,7 +1430,7 @@ group                       : BEGIN GROUP group_data END GROUP {
                             ;
 
 group_data                  : IDENTIFIER QUOTED_STRING {
-                                $$ = new GROUP($1, $2);
+                                $$ = new GROUP(@$, $1, $2);
                             }
                             |  group_data annotation {
                                 $$ = $1;
@@ -1458,7 +1454,7 @@ group_data                  : IDENTIFIER QUOTED_STRING {
                             }
                             |  group_data ROOT {
                                 $$ = $1;
-                                $$.root = new ROOT();
+                                $$.root = new ROOT(@2);
                             }
                             |  group_data sub_group {
                                 $$ = $1;
@@ -1472,7 +1468,7 @@ ref_characteristic          : BEGIN REF_CHARACTERISTIC ref_characteristic_data E
                             ;
 
 ref_characteristic_data     : /* start */  {
-                                $$ = new REF_CHARACTERISTIC();
+                                $$ = new REF_CHARACTERISTIC(@$);
                             }
                             |  ref_characteristic_data IDENTIFIER {
                                 $$ = $1;
@@ -1486,7 +1482,7 @@ ref_measurement             : BEGIN REF_MEASUREMENT ref_measurement_data END REF
                             ;
 
 ref_measurement_data        : /* start */  {
-                                $$ = new REF_MEASUREMENT();
+                                $$ = new REF_MEASUREMENT(@$);
                             }
                             |  ref_measurement_data IDENTIFIER {
                                 $$ = $1;
@@ -1501,7 +1497,7 @@ record_layout
 
 record_layout_data
     : IDENTIFIER {
-        $$ = new RECORD_LAYOUT($1);
+        $$ = new RECORD_LAYOUT(@$, $1);
     }
     | record_layout_data alignment {
         $$ = $1;
@@ -1509,19 +1505,19 @@ record_layout_data
     }
     | record_layout_data AXIS_PTS_XYZ45 NUMBER IDENTIFIER IDENTIFIER IDENTIFIER {
         $$ = $1;
-        $$.axis_pts_xyz45.Add($2, new AXIS_PTS_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), indexIncr: GetIndexOrder($5), addrType: GetAddrType($6)));
+        $$.axis_pts_xyz45.Add($2, new AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), indexIncr: GetIndexOrder($5), addrType: GetAddrType($6)));
     }
     | record_layout_data AXIS_RESCALE_XYZ45 NUMBER IDENTIFIER NUMBER IDENTIFIER IDENTIFIER {
         $$ = $1;
-        $$.axis_rescale_xyz45.Add($2, new AXIS_RESCALE_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), MaxNoOfRescalePairs: (UInt64)$5, indexIncr: GetIndexOrder($6), addrType: GetAddrType($7)));
+        $$.axis_rescale_xyz45.Add($2, new AXIS_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4), MaxNoOfRescalePairs: (UInt64)$5, indexIncr: GetIndexOrder($6), addrType: GetAddrType($7)));
     }
     | record_layout_data DIST_OP_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.dist_op_xyz45.Add($2, new DIST_OP_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.dist_op_xyz45.Add($2, new DIST_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data FIX_NO_AXIS_PTS_XYZ45 NUMBER {
         $$ = $1;
-        $$.fix_no_axis_pts_xyz45.Add($2, new FIX_NO_AXIS_PTS_XYZ45(Name: $2, NumberOfAxisPoints: (UInt64)$3));
+        $$.fix_no_axis_pts_xyz45.Add($2, new FIX_NO_AXIS_PTS_XYZ45(location: @$, Name: $2, NumberOfAxisPoints: (UInt64)$3));
     }
     | record_layout_data FNC_VALUES NUMBER IDENTIFIER IDENTIFIER IDENTIFIER{
         FNC_VALUES.IndexMode indexMode;
@@ -1535,43 +1531,43 @@ record_layout_data
         }
 
         $$ = $1;
-        $$.fnc_values = new FNC_VALUES(Position: (UInt64)$3, dataType: GetDataType($4), indexMode: indexMode, addrType: GetAddrType($6));
+        $$.fnc_values = new FNC_VALUES(location: @$, Position: (UInt64)$3, dataType: GetDataType($4), indexMode: indexMode, addrType: GetAddrType($6));
     }
     | record_layout_data IDENTIFICATION NUMBER IDENTIFIER {
         $$ = $1;
-        $$.identification = new IDENTIFICATION(Position: (UInt64)$3, dataType: GetDataType($4));
+        $$.identification = new IDENTIFICATION(location: @$, Position: (UInt64)$3, dataType: GetDataType($4));
     }
     | record_layout_data NO_AXIS_PTS_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.no_axis_pts_xyz45.Add($2, new NO_AXIS_PTS_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.no_axis_pts_xyz45.Add($2, new NO_AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data NO_RESCALE_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.no_rescale_xyz45.Add($2, new NO_RESCALE_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.no_rescale_xyz45.Add($2, new NO_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data OFFSET_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.offset_xyz45.Add($2, new OFFSET_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.offset_xyz45.Add($2, new OFFSET_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data RESERVED NUMBER IDENTIFIER {
         $$ = $1;
-        $$.reserved = new RESERVED(Position: (UInt64)$3, dataSize: GetDataSize($4));
+        $$.reserved = new RESERVED(location: @$, Position: (UInt64)$3, dataSize: GetDataSize($4));
     }
     | record_layout_data RIP_ADDR_WXYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.rip_addr_wxyz45.Add($2, new RIP_ADDR_WXYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.rip_addr_wxyz45.Add($2, new RIP_ADDR_WXYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data SHIFT_OP_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.shift_op_xyz45.Add($2, new SHIFT_OP_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.shift_op_xyz45.Add($2, new SHIFT_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data SRC_ADDR_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.src_addr_xyz45.Add($2, new SRC_ADDR_XYZ45(Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
+        $$.src_addr_xyz45.Add($2, new SRC_ADDR_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: GetDataType($4)));
     }
     | record_layout_data STATIC_RECORD_LAYOUT {
         $$ = $1;
-        $$.static_record_layout = new STATIC_RECORD_LAYOUT();
+        $$.static_record_layout = new STATIC_RECORD_LAYOUT(@$);
     }
     ;
 
@@ -1581,7 +1577,7 @@ sub_group                   : BEGIN SUB_GROUP sub_group_data END SUB_GROUP {
                             ;
 
 sub_group_data              : /* start */  {
-                                $$ = new SUB_GROUP();
+                                $$ = new SUB_GROUP(@$);
                             }
                             |  sub_group_data IDENTIFIER {
                                 $$ = $1;
@@ -1607,7 +1603,7 @@ unit_data
             throw new Exception("Unknown MEMORY_SEGMENT PrgType: " + $4);
         }                    
 
-        $$ = new UNIT(Name: $1, LongIdentifier: $2, Display: $3, type: type);
+        $$ = new UNIT(location: @$, Name: $1, LongIdentifier: $2, Display: $3, type: type);
     }
     |  unit_data REF_UNIT IDENTIFIER {
         $$ = $1;
@@ -1615,11 +1611,11 @@ unit_data
     }
     |  unit_data SI_EXPONENTS NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
         $$ = $1;
-        $$.si_exponents = new SI_EXPONENTS((Int64)$3, (Int64)$4, (Int64)$5, (Int64)$6, (Int64)$7, (Int64)$8, (Int64)$9);
+        $$.si_exponents = new SI_EXPONENTS(@$, (Int64)$3, (Int64)$4, (Int64)$5, (Int64)$6, (Int64)$7, (Int64)$8, (Int64)$9);
     }
     |  unit_data UNIT_CONVERSION NUMBER NUMBER {
         $$ = $1;
-        $$.unit_conversion = new UNIT_CONVERSION($3, $4);
+        $$.unit_conversion = new UNIT_CONVERSION(@$, $3, $4);
     }
     ;
 
@@ -1631,17 +1627,17 @@ user_rights
 
 user_rights_data
     : IDENTIFIER {
-        $$ = new USER_RIGHTS($1);
+        $$ = new USER_RIGHTS(@$, $1);
     }
     |  user_rights_data BEGIN REF_GROUP IDENTIFIER_list END REF_GROUP {
-        var ref_group = new REF_GROUP();
+        var ref_group = new REF_GROUP(@$);
         ref_group.reference = $4;
         $$ = $1;
         $$.ref_group.Add(ref_group);
     }
     |  user_rights_data READ_ONLY {
         $$ = $1;
-        $$.read_only = new READ_ONLY();
+        $$.read_only = new READ_ONLY(@$);
     }
     ;
 
@@ -1653,7 +1649,7 @@ frame
 
 frame_data
     : IDENTIFIER QUOTED_STRING NUMBER NUMBER {
-        $$ = new FRAME($1, $2, (UInt64)$3, (UInt64)$4);
+        $$ = new FRAME(@$, $1, $2, (UInt64)$3, (UInt64)$4);
     }
     |  frame_data FRAME_MEASUREMENT IDENTIFIER_list {
         $$ = $1;
@@ -1673,7 +1669,7 @@ variant_coding
 
 variant_coding_data
     : /* empty */ {
-        $$ = new VARIANT_CODING();
+        $$ = new VARIANT_CODING(@$);
     }
     | variant_coding_data BEGIN VAR_CHARACTERISTIC var_characteristic END VAR_CHARACTERISTIC {
         $$ = $1;
@@ -1708,7 +1704,7 @@ variant_coding_data
 
 var_forbidden_comb
     : /* empty */ {
-        $$ = new VAR_FORBIDDEN_COMB();
+        $$ = new VAR_FORBIDDEN_COMB(@$);
     }
     | var_forbidden_comb IDENTIFIER IDENTIFIER {
         $$ = $1;
@@ -1718,7 +1714,7 @@ var_forbidden_comb
 
 var_criterion
     : IDENTIFIER QUOTED_STRING {
-        $$ = new VAR_CRITERION($1, $2);
+        $$ = new VAR_CRITERION(@$, $1, $2);
     }
     |  var_criterion IDENTIFIER {
         $$ = $1;
@@ -1726,17 +1722,17 @@ var_criterion
     }
     | var_criterion VAR_MEASUREMENT IDENTIFIER {
         $$ = $1;
-        $$.var_measurement = new VAR_MEASUREMENT($3);
+        $$.var_measurement = new VAR_MEASUREMENT(@$, $3);
     }
     | var_criterion VAR_SELECTION_CHARACTERISTIC IDENTIFIER {
         $$ = $1;
-        $$.var_selection_characteristic = new VAR_SELECTION_CHARACTERISTIC($3);
+        $$.var_selection_characteristic = new VAR_SELECTION_CHARACTERISTIC(@$, $3);
     }
     ;
 
 var_characteristic
     : IDENTIFIER {
-        $$ = new VAR_CHARACTERISTIC($1);
+        $$ = new VAR_CHARACTERISTIC(@$, $1);
     }
     |  var_characteristic IDENTIFIER {
         $$ = $1;
@@ -1750,7 +1746,7 @@ var_characteristic
 
 var_address
     : /* Start of VAR_ADDRESS */ {
-        $$ = new VAR_ADDRESS();
+        $$ = new VAR_ADDRESS(@$);
     }
     |  var_address NUMBER {
         $$ = $1;

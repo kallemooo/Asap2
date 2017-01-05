@@ -8,6 +8,7 @@ namespace Asap2
     [Base()]
     public class REF_CHARACTERISTIC : Asap2Base
     {
+        public REF_CHARACTERISTIC(Location location) : base(location) { }
         [Element(0, IsList = true, IsArgument = true)]
         public List<string> reference = new List<string>();
     }

@@ -9,7 +9,7 @@ namespace Asap2
     [Base()]
     public class FUNCTION : Asap2Base
     {
-        public FUNCTION(string Name, string LongIdentifier)
+        public FUNCTION(Location location, string Name, string LongIdentifier) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;

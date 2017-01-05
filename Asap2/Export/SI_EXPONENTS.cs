@@ -8,7 +8,7 @@ namespace Asap2
     [Base(IsSimple = true)]
     public class SI_EXPONENTS : Asap2Base
     {
-        public SI_EXPONENTS(Int64 Length, Int64 Mass, Int64 Time, Int64 ElectricCurrent, Int64 Temperature, Int64 AmountOfSubstance, Int64 LuminousIntensity)
+        public SI_EXPONENTS(Location location, Int64 Length, Int64 Mass, Int64 Time, Int64 ElectricCurrent, Int64 Temperature, Int64 AmountOfSubstance, Int64 LuminousIntensity) : base(location)
         {
             this.Length = Length;
             this.Mass = Mass;
