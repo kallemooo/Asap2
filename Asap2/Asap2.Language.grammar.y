@@ -791,7 +791,7 @@ compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
                                 $$ = new COMPU_VTAB(@$, Name: $1, LongIdentifier: $2, NumberValuePairs: (uint)$4);
                                 if ($3 != $$.ConversionType)
                                 {
-                                    throw new Exception("Unknown COMPU_VTAB ConversionType: " + $3);
+                                    Scanner.yyerror("Parser warning: Unknown COMPU_VTAB ConversionType: " + $3 + " expecting: " + $$.ConversionType);
                                 }
                             }
                             | compu_vtab_data NUMBER QUOTED_STRING {
@@ -1635,13 +1635,8 @@ private object EnumToStringOrAbort(Type type, string strIn)
             }
             values.Append(item);
         }
-        ReportErrorAndAbort(String.Format("Unknown {0}: {1} expecting one of {2}", type.ToString(), strIn, values.ToString()));
+        Scanner.yyerror(String.Format("Syntax error: Unknown '{0}' enum value '{1}' expecting one of '{2}'", type.ToString(), strIn, values.ToString()));
+        YYAbort();
         throw e;
     }
-}
-
-private void ReportErrorAndAbort(string errorMsg)
-{
-    Scanner.yyerror(String.Format( "Syntax error: {0}", errorMsg ));
-    YYAbort();
 }
