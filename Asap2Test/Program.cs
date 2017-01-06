@@ -19,7 +19,7 @@ namespace Asap2Test
             {
                 try
                 {
-                    tree.Validate();
+                    tree.Validate(errorHandler);
                     tree.elements.Insert(0, comment);
                     var ms = new MemoryStream();
                     parser.Serialise(tree, ms);

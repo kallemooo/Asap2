@@ -849,7 +849,15 @@ project_data    :   IDENTIFIER QUOTED_STRING {
                 }
                 | project_data module {
                     $$ = $1;
-                    $$.modules.Add($2.name, $2);
+                    try
+                    {
+                        $$.modules.Add($2.name, $2);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Scanner.yyerror(String.Format("Syntax error: Duplicate MODULE with name '{0}' found", $2.name));
+                        YYAbort();
+                    }
                 }
                 ;
 
@@ -884,75 +892,75 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
                 | module_data mod_common {
                     $$ = $1;
-                    $$.mod_common = $2;
+                    $$.elements.Add($2);
                 }
                 | module_data measurement {
                     $$ = $1;
-                    $$.measurements.Add($2.name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data if_data {
                     $$ = $1;
-                    $$.IF_DATAs.Add($2.name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data a2ml {
                     $$ = $1;
-                    $$.A2ML = $2;
+                    $$.elements.Add($2);
                 }
                 | module_data compu_method {
                     $$ = $1;
-                    $$.compu_methods.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data compu_tab {
                     $$ = $1;
-                    $$.COMPU_TABs.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data compu_vtab {
                     $$ = $1;
-                    $$.COMPU_VTABs.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data compu_vtab_range {
                     $$ = $1;
-                    $$.COMPU_VTAB_RANGEs.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data group {
                     $$ = $1;
-                    $$.groups.Add($2.GroupName, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data mod_par {
                     $$ = $1;
-                    $$.mod_par = $2;
+                    $$.elements.Add($2);
                 }
                 | module_data characteristic {
                     $$ = $1;
-                    $$.characteristics.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data axis_pts {
                     $$ = $1;
-                    $$.axis_pts.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data record_layout {
                     $$ = $1;
-                    $$.record_layout.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data function {
                     $$ = $1;
-                    $$.functions.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data unit {
                     $$ = $1;
-                    $$.units.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data user_rights {
                     $$ = $1;
-                    $$.user_rights.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data frame {
                     $$ = $1;
-                    $$.frames.Add($2.Name, $2);
+                    $$.elements.Add($2);
                 }
                 | module_data variant_coding {
                     $$ = $1;
-                    $$.variant_coding = $2;
+                    $$.elements.Add($2);
                 }
                 ;
 
@@ -987,7 +995,14 @@ mod_common_data :  QUOTED_STRING {
                 }
                 |  mod_common_data alignment {
                     $$ = $1;
-                    $$.alignments.Add($2.name, $2);
+                    try
+                    {
+                        $$.alignments.Add($2.name, $2);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2.name));
+                    }
                 }
                 ;
 
@@ -1053,7 +1068,14 @@ mod_par_data :  QUOTED_STRING {
                 }
                 |  mod_par_data SYSTEM_CONSTANT QUOTED_STRING QUOTED_STRING {
                     $$ = $1;
-                    $$.system_constants.Add($3, new SYSTEM_CONSTANT(@2, $3, $4));
+                    try
+                    {
+                        $$.system_constants.Add($3, new SYSTEM_CONSTANT(@2, $3, $4));
+                    }
+                    catch (ArgumentException)
+                    {
+                        Scanner.yyerror(String.Format("Warning: Duplicate SYSTEM_CONSTANT with name '{0}' found, ignoring", $3));
+                    }
                 }
                 |  mod_par_data USER QUOTED_STRING {
                     $$ = $1;
@@ -1392,23 +1414,58 @@ record_layout_data
     }
     | record_layout_data alignment {
         $$ = $1;
-        $$.alignments.Add($2.name, $2);
+        try
+        {
+            $$.alignments.Add($2.name, $2);
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2.name));
+        }
     }
     | record_layout_data AXIS_PTS_XYZ45 NUMBER IDENTIFIER IDENTIFIER IDENTIFIER {
         $$ = $1;
-        $$.axis_pts_xyz45.Add($2, new AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), indexIncr: (IndexOrder)EnumToStringOrAbort(typeof(IndexOrder), $5), addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $6)));
+        try
+        {
+            $$.axis_pts_xyz45.Add($2, new AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), indexIncr: (IndexOrder)EnumToStringOrAbort(typeof(IndexOrder), $5), addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $6)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data AXIS_RESCALE_XYZ45 NUMBER IDENTIFIER NUMBER IDENTIFIER IDENTIFIER {
         $$ = $1;
-        $$.axis_rescale_xyz45.Add($2, new AXIS_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), MaxNoOfRescalePairs: (UInt64)$5, indexIncr: (IndexOrder)EnumToStringOrAbort(typeof(IndexOrder), $6), addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $7)));
+        try
+        {
+            $$.axis_rescale_xyz45.Add($2, new AXIS_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4), MaxNoOfRescalePairs: (UInt64)$5, indexIncr: (IndexOrder)EnumToStringOrAbort(typeof(IndexOrder), $6), addrType: (AddrType)EnumToStringOrAbort(typeof(AddrType), $7)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data DIST_OP_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.dist_op_xyz45.Add($2, new DIST_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        try
+        {
+            $$.dist_op_xyz45.Add($2, new DIST_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data FIX_NO_AXIS_PTS_XYZ45 NUMBER {
         $$ = $1;
-        $$.fix_no_axis_pts_xyz45.Add($2, new FIX_NO_AXIS_PTS_XYZ45(location: @$, Name: $2, NumberOfAxisPoints: (UInt64)$3));
+        try
+        {
+            $$.fix_no_axis_pts_xyz45.Add($2, new FIX_NO_AXIS_PTS_XYZ45(location: @$, Name: $2, NumberOfAxisPoints: (UInt64)$3));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data FNC_VALUES NUMBER IDENTIFIER IDENTIFIER IDENTIFIER{
         $$ = $1;
@@ -1420,15 +1477,36 @@ record_layout_data
     }
     | record_layout_data NO_AXIS_PTS_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.no_axis_pts_xyz45.Add($2, new NO_AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        try
+        {
+            $$.no_axis_pts_xyz45.Add($2, new NO_AXIS_PTS_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data NO_RESCALE_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.no_rescale_xyz45.Add($2, new NO_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        try
+        {
+            $$.no_rescale_xyz45.Add($2, new NO_RESCALE_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data OFFSET_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.offset_xyz45.Add($2, new OFFSET_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        try
+        {
+            $$.offset_xyz45.Add($2, new OFFSET_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data RESERVED NUMBER IDENTIFIER {
         $$ = $1;
@@ -1436,15 +1514,36 @@ record_layout_data
     }
     | record_layout_data RIP_ADDR_WXYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.rip_addr_wxyz45.Add($2, new RIP_ADDR_WXYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        try
+        {
+            $$.rip_addr_wxyz45.Add($2, new RIP_ADDR_WXYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data SHIFT_OP_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.shift_op_xyz45.Add($2, new SHIFT_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        try
+        {
+            $$.shift_op_xyz45.Add($2, new SHIFT_OP_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data SRC_ADDR_XYZ45 NUMBER IDENTIFIER {
         $$ = $1;
-        $$.src_addr_xyz45.Add($2, new SRC_ADDR_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        try
+        {
+            $$.src_addr_xyz45.Add($2, new SRC_ADDR_XYZ45(location: @$, Name: $2, Position: (UInt64)$3, dataType: (DataType)EnumToStringOrAbort(typeof(DataType), $4)));
+        }
+        catch (ArgumentException)
+        {
+            Scanner.yyerror(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
     }
     | record_layout_data STATIC_RECORD_LAYOUT {
         $$ = $1;

@@ -3,7 +3,6 @@
  */
  
 ASAP2_VERSION 1 60
-ASAP2_VERSION 1 60
 A2ML_VERSION 1 1
 /begin PROJECT project_name "project description"
   /begin HEADER
@@ -679,7 +678,7 @@ A2ML_VERSION 1 1
 
     /begin COMPU_METHOD CM.TAB_NOINTP.DEFAULT_VALUE
       "" 
-      TAB_INTPAR "%8.4" "U/  min  " 
+      TAB_INTP "%8.4" "U/  min  " 
       COMPU_TAB_REF CM.TAB_NOINTP.DEFAULT_VALUE.REF
     /end COMPU_METHOD 
     

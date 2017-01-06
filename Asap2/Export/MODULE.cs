@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Asap2
 {
     [Base()]
-    public class MODULE : Asap2Base
+    public class MODULE : Asap2Base , IValidator
     {
         public MODULE(Location location) : base(location)
         {
@@ -19,18 +19,44 @@ namespace Asap2
         [Element(2, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;
 
-        [Element(3)]
-        public A2ML A2ML;
+        [Element(3, IsList = true)]
+        public List<Asap2Base> elements = new List<Asap2Base>();
 
-        [Element(4, IsDictionary = true)]
-        public Dictionary<string, IF_DATA> IF_DATAs = new Dictionary<string, IF_DATA>();
+        public void Validate(IErrorReporter errorReporter)
+        {
+            {
+                var list = elements.FindAll(x => x.GetType() == typeof(A2ML));
+                if (list != null)
+                {
+                    if (list.Count > 1)
+                    {
+                        list[list.Count - 1].reportErrorOrWarning("Second ASAP2_VERSION found, shall only be one", false, errorReporter);
+                    }
+                }
+            }
+            {
+                var list = elements.FindAll(x => x.GetType() == typeof(MOD_COMMON));
+                if (list != null)
+                {
+                    if (list.Count > 1)
+                    {
+                        list[list.Count - 1].reportErrorOrWarning("Second MOD_COMMON found, shall only be one", false, errorReporter);
+                    }
+                }
+            }
+            {
+                var list = elements.FindAll(x => x.GetType() == typeof(MOD_PAR));
+                if (list != null)
+                {
+                    if (list.Count > 1)
+                    {
+                        list[list.Count - 1].reportErrorOrWarning("Second MOD_PAR found, shall only be one", false, errorReporter);
+                    }
+                }
+            }
+        }
 
-        [Element(5)]
-        public MOD_COMMON mod_common;
-
-        [Element(6)]
-        public MOD_PAR mod_par;
-
+        /*
         [Element(7, IsDictionary = true, Comment = " Measurment data for the module ")]
         public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
 
@@ -72,5 +98,6 @@ namespace Asap2
 
         [Element(20, IsList = true, Comment = " VARIANT_CODING for the module ")]
         public VARIANT_CODING variant_coding;
+        */
     }
 }

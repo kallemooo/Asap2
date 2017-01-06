@@ -35,6 +35,21 @@ namespace Asap2
 
         public Location location { get; set; }
 
+        public void reportErrorOrWarning(string message, bool isError, IErrorReporter errorReporter)
+        {
+            if (isError)
+            {
+                string msg = string.Format("{0} : Line: {1} : Row: {2} : ValidationError : {3}", location.FileName, location.StartLine, location.StartColumn, message);
+                errorReporter.reportError(msg);
+                throw new ValidationErrorException(msg);
+            }
+            else
+            {
+                errorReporter.reportError(string.Format("{0} : Line: {1} : Row: {2} : ValidationWarning : {3}", location.FileName, location.StartLine, location.StartColumn, message));
+            }
+
+        }
+
     }
     
     /// <summary>
@@ -104,20 +119,10 @@ namespace Asap2
         public ValidationErrorException() : base() { }
         public ValidationErrorException(string message) : base(message) { }
         public ValidationErrorException(string message, System.Exception inner) : base(message, inner) { }
-        public ValidationErrorException(string message, Location location) : base(message) { this.location = location; }
-
-        public Location location { get; protected set; }
 
         public override string ToString()
         {
-            if (location != null)
-            {
-                return string.Format("{0} : Line: {1} : Row: {2} : ValidationError : {3}", location.FileName, location.StartLine, location.StartColumn, base.Message);
-            }
-            else
-            {
-                return string.Format("{0} : Line: {1} : Row: {2} : ValidationError : {3}", "", 0, 0, base.Message);
-            }
+            return base.Message;
         }
 
         // A constructor is needed for serialization when an
@@ -132,25 +137,26 @@ namespace Asap2
         /// <summary>
         /// Validates the class contents according to the requirement rules.
         /// </summary>
-        /// <exception cref="ValidationErrorException">Validation failed.</exception>
-        void Validate();
+        /// <exception cref="ValidationErrorException">Fatal validation error.</exception>
+        void Validate(IErrorReporter errorReporter);
     }
 
     public class Asap2File : IValidator
     {
         public List<Asap2Base> elements = new List<Asap2Base>();
 
-        public void Validate()
+        public void Validate(IErrorReporter errorReporter)
         {
             var projects = elements.FindAll(x => x.GetType() == typeof(PROJECT));
 
             if (projects == null || projects.Count == 0)
             {
+                errorReporter.reportError("No PROJECT found, must be one");
                 throw new ValidationErrorException("No PROJECT found, must be one");
             }
             else if (projects.Count > 1)
             {
-                throw new ValidationErrorException("Second PROJECT found, shall only be one", projects[projects.Count - 1].location);
+                projects[projects.Count - 1].reportErrorOrWarning("Second PROJECT found, shall only be one", false, errorReporter);
             }
 
             var asap2_versions = elements.FindAll(x => x.GetType() == typeof(ASAP2_VERSION));
@@ -158,11 +164,11 @@ namespace Asap2
             {
                 if (asap2_versions.Count > 1)
                 {
-                    throw new ValidationErrorException("Second ASAP2_VERSION found, shall only be one", asap2_versions[asap2_versions.Count - 1].location);
+                    asap2_versions[asap2_versions.Count - 1].reportErrorOrWarning("Second ASAP2_VERSION found, shall only be one", false, errorReporter);
                 }
                 if (asap2_versions[0].OrderID >= projects[0].OrderID)
                 {
-                    throw new ValidationErrorException("ASAP2_VERSION shall be placed before PROJECT", asap2_versions[asap2_versions.Count - 1].location);
+                    asap2_versions[0].reportErrorOrWarning("ASAP2_VERSION shall be placed before PROJECT", false, errorReporter);
                 }
             }
 
@@ -171,11 +177,11 @@ namespace Asap2
             {
                 if (a2ml_versions.Count > 1)
                 {
-                    throw new ValidationErrorException("Second A2ML_VERSION found, shall only be one", a2ml_versions[a2ml_versions.Count - 1].location);
+                    a2ml_versions[a2ml_versions.Count - 1].reportErrorOrWarning("Second A2ML_VERSION found, shall only be one", false, errorReporter);
                 }
                 if (a2ml_versions[0].OrderID >= projects[0].OrderID)
                 {
-                    throw new ValidationErrorException("A2ML_VERSION shall be placed before PROJECT", asap2_versions[asap2_versions.Count - 1].location);
+                    asap2_versions[0].reportErrorOrWarning("A2ML_VERSION shall be placed before PROJECT", false, errorReporter);
                 }
             }
         }
@@ -284,7 +290,7 @@ namespace Asap2
     }
 
     [Base()]
-    public class PROJECT : Asap2Base
+    public class PROJECT : Asap2Base, IValidator
     {
         public PROJECT(Location location) : base(location)
         {
@@ -305,6 +311,21 @@ namespace Asap2
         /// </summary>
         [Element(3, IsDictionary = true)]
         public Dictionary<string, MODULE> modules;
+
+        public void Validate(IErrorReporter errorReporter)
+        {
+            if (modules.Count == 0)
+            {
+                base.reportErrorOrWarning("No MODULE found, must be atleast one", true, errorReporter);
+                throw new ValidationErrorException("No MODULE found, must be atleast one");
+            }
+
+            foreach ( MODULE mod in modules.Values)
+            {
+                mod.Validate(errorReporter);
+            }
+        }
+
     }
 
     [Base()]
