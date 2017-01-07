@@ -160,7 +160,7 @@ namespace Asap2
             }
 
             var asap2_versions = elements.FindAll(x => x.GetType() == typeof(ASAP2_VERSION));
-            if (asap2_versions != null)
+            if (asap2_versions != null && asap2_versions.Count > 1)
             {
                 if (asap2_versions.Count > 1)
                 {
@@ -173,7 +173,7 @@ namespace Asap2
             }
 
             var a2ml_versions = elements.FindAll(x => x.GetType() == typeof(A2ML_VERSION));
-            if (a2ml_versions != null)
+            if (a2ml_versions != null && a2ml_versions.Count > 1)
             {
                 if (a2ml_versions.Count > 1)
                 {
