@@ -381,7 +381,7 @@ array_size                  : ARRAY_SIZE NUMBER {
 
 axis_descr
     : IDENTIFIER IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER{
-        $$ = new AXIS_DESCR(@$, attribute: (AXIS_DESCR.Attribute)EnumToStringOrAbort(typeof(DataSize), $1), InputQuantity: $2, Conversion: $3, MaxAxisPoints: (UInt64)$4, LowerLimit: $5, UpperLimit: $6);
+        $$ = new AXIS_DESCR(@$, attribute: (AXIS_DESCR.Attribute)EnumToStringOrAbort(typeof(AXIS_DESCR.Attribute), $1), InputQuantity: $2, Conversion: $3, MaxAxisPoints: (UInt64)$4, LowerLimit: $5, UpperLimit: $6);
     }
     |  axis_descr annotation {
         $$ = $1;
