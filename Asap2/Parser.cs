@@ -112,14 +112,14 @@ namespace Asap2
             {
                 if (node.ForceNewLine)
                 {
-                    stream.WriteAsync(newLine);
+                    stream.WriteAsync(Environment.NewLine);
                 }
 
                 if (node.comment != "")
                 {
                     if (!node.ForceNewLine)
                     {
-                        stream.WriteAsync(newLine);
+                        stream.WriteAsync(Environment.NewLine);
                     }
                     Indent(stream, node.indentLevel, indentType);
                     stream.WriteAsync("/*");
@@ -127,7 +127,7 @@ namespace Asap2
                     stream.WriteAsync("*/");
                     if (node.data != "" && node.name != "")
                     {
-                        stream.WriteAsync(newLine);
+                        stream.WriteAsync(Environment.NewLine);
                     }
                     else
                     {
@@ -139,7 +139,7 @@ namespace Asap2
                 {
                     if (!node.ForceNewLine)
                     {
-                        stream.WriteAsync(newLine);
+                        stream.WriteAsync(Environment.NewLine);
                     }
                     Indent(stream, node.indentLevel, indentType);
                     if (node.isSimple)
@@ -172,7 +172,7 @@ namespace Asap2
 
                 if (!node.isSimple && node.name != "" && node.isNode)
                 {
-                    stream.WriteAsync(newLine);
+                    stream.WriteAsync(Environment.NewLine);
                     Indent(stream, node.indentLevel, indentType);
                     stream.WriteAsync("/end " + node.name);
                 }
@@ -212,7 +212,6 @@ namespace Asap2
             }
         }
 
-        private string newLine = "\r\n";
         private SerialisedData SerialiseNode(Object tree, ulong indentLevel)
         {
             SerialisedData resultTree = null;
