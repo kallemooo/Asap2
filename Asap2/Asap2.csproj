@@ -38,7 +38,7 @@
     <GppgTool>"$(YltTools)gppg.exe"</GppgTool>
   </PropertyGroup>
   <PropertyGroup Label="GenerateAsap2Properties">
-    <Asap2Parser>$(ProjectDir)Asap2</Asap2Parser>
+    <Asap2Parser>$(ProjectDir)Parser\Asap2</Asap2Parser>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,23 +52,23 @@
   <ItemGroup>
     <Compile Include="Asap2File.cs" />
     <Compile Include="Attributes.cs" />
-    <Compile Include="Export\DEF_CHARACTERISTIC.cs" />
-    <Compile Include="Export\FRAME.cs" />
-    <Compile Include="Export\FUNCTION.cs" />
-    <Compile Include="Export\IN_MEASUREMENT.cs" />
-    <Compile Include="Export\LOC_MEASUREMENT.cs" />
-    <Compile Include="Export\MODULE.cs" />
-    <Compile Include="Export\OUT_MEASUREMENT.cs" />
-    <Compile Include="Export\REF_CHARACTERISTIC.cs" />
-    <Compile Include="Export\SI_EXPONENTS.cs" />
-    <Compile Include="Export\SUB_FUNCTION.cs" />
-    <Compile Include="Export\UNIT.cs" />
-    <Compile Include="Export\UNIT_CONVERSION.cs" />
-    <Compile Include="Export\USER_RIGHTS.cs" />
-    <Compile Include="Export\VARIANT_CODING.cs" />
-    <Compile Include="Export\VAR_CHARACTERISTIC.cs" />
-    <Compile Include="Export\VAR_CRITERION.cs" />
-    <Compile Include="Export\VAR_FORBIDDEN_COMB.cs" />
+    <Compile Include="Parser\DEF_CHARACTERISTIC.cs" />
+    <Compile Include="Parser\FRAME.cs" />
+    <Compile Include="Parser\FUNCTION.cs" />
+    <Compile Include="Parser\IN_MEASUREMENT.cs" />
+    <Compile Include="Parser\LOC_MEASUREMENT.cs" />
+    <Compile Include="Parser\MODULE.cs" />
+    <Compile Include="Parser\OUT_MEASUREMENT.cs" />
+    <Compile Include="Parser\REF_CHARACTERISTIC.cs" />
+    <Compile Include="Parser\SI_EXPONENTS.cs" />
+    <Compile Include="Parser\SUB_FUNCTION.cs" />
+    <Compile Include="Parser\UNIT.cs" />
+    <Compile Include="Parser\UNIT_CONVERSION.cs" />
+    <Compile Include="Parser\USER_RIGHTS.cs" />
+    <Compile Include="Parser\VARIANT_CODING.cs" />
+    <Compile Include="Parser\VAR_CHARACTERISTIC.cs" />
+    <Compile Include="Parser\VAR_CRITERION.cs" />
+    <Compile Include="Parser\VAR_FORBIDDEN_COMB.cs" />
     <Compile Include="GplexBuffers.cs" />
     <Compile Include="IErrorReporter.cs" />
     <Compile Include="Location.cs" />
@@ -80,29 +80,29 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup Label="Asap2Files">
-    <Compile Include="Asap2.Parser.cs">
-      <DependentUpon>Asap2.parser</DependentUpon>
+    <Compile Include="Parser\Asap2.Parser.cs">
+      <DependentUpon>Parser\Asap2.parser</DependentUpon>
     </Compile>
-    <Compile Include="Asap2.Parser.Generated.cs">
+    <Compile Include="Parser\Asap2.Parser.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Asap2.Language.grammar.y</DependentUpon>
+      <DependentUpon>Parser\Asap2.Language.grammar.y</DependentUpon>
     </Compile>
-    <Compile Include="Asap2.Scanner.cs">
-      <DependentUpon>Asap2.parser</DependentUpon>
+    <Compile Include="Parser\Asap2.Scanner.cs">
+      <DependentUpon>Parser\Asap2.parser</DependentUpon>
     </Compile>
-    <Compile Include="Asap2.Scanner.Generated.cs">
+    <Compile Include="Parser\Asap2.Scanner.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Asap2.Language.analyzer.lex</DependentUpon>
+      <DependentUpon>Parser\Asap2.Language.analyzer.lex</DependentUpon>
     </Compile>
-    <None Include="Asap2.Language.analyzer.lex">
-      <DependentUpon>Asap2.parser</DependentUpon>
+    <None Include="Parser\Asap2.Language.analyzer.lex">
+      <DependentUpon>Parser\Asap2.parser</DependentUpon>
     </None>
-    <None Include="Asap2.Language.grammar.y">
-      <DependentUpon>Asap2.parser</DependentUpon>
+    <None Include="Parser\Asap2.Language.grammar.y">
+      <DependentUpon>Parser\Asap2.parser</DependentUpon>
     </None>
-    <None Include="Asap2.parser" />
+    <None Include="Parser\Asap2.parser" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" DependsOnTargets="YltBuildGen" />
