@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Asap2File.cs" />
+    <Compile Include="Asap2Tree\Asap2File.cs" />
     <Compile Include="Attributes.cs" />
     <Compile Include="Asap2Tree\DEF_CHARACTERISTIC.cs" />
     <Compile Include="Asap2Tree\FRAME.cs" />
