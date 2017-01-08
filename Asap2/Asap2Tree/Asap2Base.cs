@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Asap2
@@ -53,6 +54,56 @@ namespace Asap2
 
         }
 
+#region ValidateIdentifier
+
+        static string IdentifierPattern = @"[A-Za-z_][A-Za-z0-9_]*(\[[A-Za-z0-9_]*\])*";
+        static Regex IdentifierRgx = new Regex(IdentifierPattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Validates the provided identifier according to the rules.
+        /// </summary>
+        /// <param name="Identifier">Identifier to validate.</param>
+        /// <param name="errorReporter">Error reporter to use.</param>
+        protected void ValidateIdentifier(string Identifier, IErrorReporter errorReporter)
+        {
+            var splitted = Identifier.Split('.');
+
+            if (splitted.Length < 1)
+            {
+                var tmp = string.Format("Identifier '{0}' is not a valid identifier", Identifier);
+                errorReporter.reportError(tmp);
+                throw new ValidationErrorException(tmp);
+            }
+            else if ((splitted.Length == 1) && (splitted[0].Length > 128))
+            {
+                var tmp = string.Format("Identifier '{0}' is not a valid identifier, is longer than 128  (MAX_PARTIAL_IDENT).", Identifier);
+                errorReporter.reportWarning(tmp);
+            }
+            else if ((splitted.Length > 1) && (Identifier.Length > 1024))
+            {
+                var tmp = string.Format("Identifier '{0}' is not a valid identifier, is longer than 1024 (MAX_IDENT).", Identifier);
+                errorReporter.reportWarning(tmp);
+            }
+
+            foreach (var line in splitted)
+            {
+                if (line.Length > 128)
+                {
+                    var tmp = string.Format("Part '{0}' of Identifier '{1}' is not a valid identifier, the part is longer than 128 (MAX_PARTIAL_IDENT)", line, Identifier);
+                    errorReporter.reportWarning(tmp);
+                }
+
+                MatchCollection matches = IdentifierRgx.Matches(line);
+
+                if (matches.Count == 0)
+                {
+                    var tmp = string.Format("Part '{0}' of Identifier '{1}' is not a valid identifier", line, Identifier);
+                    errorReporter.reportError(tmp);
+                    throw new ValidationErrorException(tmp);
+                }
+            }
+        }
+#endregion
     }
 
     /// <summary>
