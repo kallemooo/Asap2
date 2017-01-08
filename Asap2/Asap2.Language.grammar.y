@@ -892,11 +892,18 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
                 | module_data mod_common {
                     $$ = $1;
-                    $$.elements.Add($2);
+                        $$.elements.Add($2);
                 }
                 | module_data measurement {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data if_data {
                     $$ = $1;
@@ -904,27 +911,62 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
                 | module_data a2ml {
                     $$ = $1;
-                    $$.elements.Add($2);
+                        $$.elements.Add($2);
                 }
                 | module_data compu_method {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data compu_tab {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data compu_vtab {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data compu_vtab_range {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data group {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data mod_par {
                     $$ = $1;
@@ -932,31 +974,80 @@ module_data :   IDENTIFIER QUOTED_STRING {
                 }
                 | module_data characteristic {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data axis_pts {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data record_layout {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data function {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data unit {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data user_rights {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data frame {
                     $$ = $1;
-                    $$.elements.Add($2);
+                    try
+                    {
+                        $$.AddElement($2);
+                    }
+                    catch (ValidationErrorException e)
+                    {
+                        Scanner.yyerror(e.ToString());
+                    }
                 }
                 | module_data variant_coding {
                     $$ = $1;

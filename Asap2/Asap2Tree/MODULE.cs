@@ -22,6 +22,295 @@ namespace Asap2
         [Element(3, IsList = true)]
         public List<Asap2Base> elements = new List<Asap2Base>();
 
+#region AXIS_PTS_MEASUREMENT_CHARACTERISTIC
+        /// <summary>
+        /// References to the <see cref="AXIS_PTS"/>s, <see cref="MEASUREMENT"/>s or <see cref="CHARACTERISTIC"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, Asap2Base> AxisPtsCharacteristicMeasurement = new Dictionary<string, Asap2Base>();
+
+        /// <summary>
+        /// Add <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> to the lists.
+        /// </summary>
+        /// <param name="Name">Name of object</param>
+        /// <param name="Obj">The object</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated object is found.</exception>
+        private void AddAxisPtsCharacteristicOrMeasurement(string Name, Asap2Base obj)
+        {
+            try
+            {
+                AxisPtsCharacteristicMeasurement.Add(Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'AXIS_PTS's, 'MEASUREMENT's or 'CHARACTERISTIC's in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, Name));
+            }
+        }
+
+        /// <summary>
+        /// Add a <see cref="AXIS_PTS"/> to the lists.
+        /// </summary>
+        /// <param name="obj">AXIS_PTS object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> is found.</exception>
+        public void AddElement(AXIS_PTS obj)
+        {
+            AddAxisPtsCharacteristicOrMeasurement(obj.Name, obj);
+        }
+
+        /// <summary>
+        /// Add a <see cref="CHARACTERISTIC"/> to the lists.
+        /// </summary>
+        /// <param name="obj">CHARACTERISTIC object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> is found.</exception>
+        public void AddElement(CHARACTERISTIC obj)
+        {
+            AddAxisPtsCharacteristicOrMeasurement(obj.Name, obj);
+        }
+
+        /// <summary>
+        /// Add a <see cref="MEASUREMENT"/> to the lists.
+        /// </summary>
+        /// <param name="obj">MEASUREMENT object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> is found.</exception>
+        public void AddElement(MEASUREMENT Characteristic)
+        {
+            AddAxisPtsCharacteristicOrMeasurement(Characteristic.Name, Characteristic);
+        }
+
+        #endregion
+
+#region COMPU_TAB_COMPU_VTAB_COMPU_VTAB_RANGE
+        /// <summary>
+        /// References to the <see cref="COMPU_TAB"/>s, <see cref="COMPU_VTAB"/>s or <see cref="COMPU_VTAB_RANGE"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, Asap2Base> CompuTabCompuVtabCompuVtabRanges = new Dictionary<string, Asap2Base>();
+
+        /// <summary>
+        /// References to the <see cref="COMPU_TAB"/>s, <see cref="COMPU_VTAB"/>s or <see cref="COMPU_VTAB_RANGE"/>s based on the Name element.
+        /// </summary>
+        /// <param name="Name">Name of object</param>
+        /// <param name="Obj">The object</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated object is found.</exception>
+        private void AddCompuTabCompuVtabCompuVtabRanges(string Name, Asap2Base obj)
+        {
+            try
+            {
+                CompuTabCompuVtabCompuVtabRanges.Add(Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'COMPU_TABs', 'COMPU_VTAB's or'COMPU_VTAB_RANGE's in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, Name));
+            }
+        }
+
+        /// <summary>
+        /// Add a <see cref="COMPU_TAB"/> to the lists.
+        /// </summary>
+        /// <param name="obj">COMPU_TAB object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_TAB"/>, <see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/> is found.</exception>
+        public void AddElement(COMPU_TAB obj)
+        {
+            AddAxisPtsCharacteristicOrMeasurement(obj.Name, obj);
+        }
+
+        /// <summary>
+        /// Add a <see cref="COMPU_VTAB"/> to the lists.
+        /// </summary>
+        /// <param name="obj">COMPU_VTAB object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_TAB"/>, <see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/> is found.</exception>
+        public void AddElement(COMPU_VTAB obj)
+        {
+            AddAxisPtsCharacteristicOrMeasurement(obj.Name, obj);
+        }
+
+        /// <summary>
+        /// Add a <see cref="COMPU_VTAB_RANGE"/> to the lists.
+        /// </summary>
+        /// <param name="obj">COMPU_VTAB_RANGE object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_TAB"/>, <see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/> is found.</exception>
+        public void AddElement(COMPU_VTAB_RANGE Characteristic)
+        {
+            AddAxisPtsCharacteristicOrMeasurement(Characteristic.Name, Characteristic);
+        }
+
+        #endregion
+
+#region COMPU_METHOD
+        /// <summary>
+        /// References to the <see cref="COMPU_METHOD"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, COMPU_METHOD> CompuMethods = new Dictionary<string, COMPU_METHOD>();
+
+        /// <summary>
+        /// Add <see cref="COMPU_METHOD"/>s to the lists.
+        /// </summary>
+        /// <param name="obj">COMPU_METHOD object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_METHOD"/> is found.</exception>
+        public void AddElement(COMPU_METHOD obj)
+        {
+            try
+            {
+                CompuMethods.Add(obj.Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'COMPU_METHODs' in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, obj.Name));
+            }
+        }
+        #endregion
+
+#region FRAME
+        /// <summary>
+        /// References to the <see cref="FRAME"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, FRAME> Frames = new Dictionary<string, FRAME>();
+
+        /// <summary>
+        /// Add <see cref="FRAME"/>s to the lists.
+        /// </summary>
+        /// <param name="obj">FRAME object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="FRAME"/> is found.</exception>
+        public void AddElement(FRAME obj)
+        {
+            try
+            {
+                Frames.Add(obj.Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'FRAMEs' in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, obj.Name));
+            }
+        }
+        #endregion
+
+#region FUNCTION
+        /// <summary>
+        /// References to the <see cref="FUNCTION"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, FUNCTION> Functions = new Dictionary<string, FUNCTION>();
+
+        /// <summary>
+        /// Add <see cref="FUNCTION"/>s to the lists.
+        /// </summary>
+        /// <param name="obj">FUNCTION object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="FUNCTION"/> is found.</exception>
+        public void AddElement(FUNCTION obj)
+        {
+            try
+            {
+                Functions.Add(obj.Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'FUNCTIONs' in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, obj.Name));
+            }
+        }
+        #endregion
+
+#region GROUP
+        /// <summary>
+        /// References to the <see cref="GROUP"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, GROUP> Groups = new Dictionary<string, GROUP>();
+
+        /// <summary>
+        /// Add <see cref="GROUP"/>s to the lists.
+        /// </summary>
+        /// <param name="obj">GROUP object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="GROUP"/> is found.</exception>
+        public void AddElement(GROUP obj)
+        {
+            try
+            {
+                Groups.Add(obj.Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'GROUPs' in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, obj.Name));
+            }
+        }
+        #endregion
+
+#region RECORD_LAYOUT
+        /// <summary>
+        /// References to the <see cref="RECORD_LAYOUT"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, RECORD_LAYOUT> Record_layouts = new Dictionary<string, RECORD_LAYOUT>();
+
+        /// <summary>
+        /// Add <see cref="RECORD_LAYOUT"/>s to the lists.
+        /// </summary>
+        /// <param name="obj">RECORD_LAYOUT object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="RECORD_LAYOUT"/> is found.</exception>
+        public void AddElement(RECORD_LAYOUT obj)
+        {
+            try
+            {
+                Record_layouts.Add(obj.Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'RECORD_LAYOUTs' in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, obj.Name));
+            }
+        }
+        #endregion
+
+#region UNIT
+        /// <summary>
+        /// References to the <see cref="UNIT"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, UNIT> Units = new Dictionary<string, UNIT>();
+
+        /// <summary>
+        /// Add <see cref="UNIT"/>s to the lists.
+        /// </summary>
+        /// <param name="obj">UNIT object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="UNIT"/> is found.</exception>
+        public void AddElement(UNIT obj)
+        {
+            try
+            {
+                Units.Add(obj.Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'UNITs' in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, obj.Name));
+            }
+        }
+        #endregion
+
+#region USER_RIGHTS
+        /// <summary>
+        /// References to the <see cref="USER_RIGHTS"/>s based on the Name element.
+        /// </summary>
+        public Dictionary<string, USER_RIGHTS> User_rights = new Dictionary<string, USER_RIGHTS>();
+
+        /// <summary>
+        /// Add <see cref="USER_RIGHTS"/>s to the lists.
+        /// </summary>
+        /// <param name="obj">USER_RIGHTS object to add</param>
+        /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="USER_RIGHTS"/> is found.</exception>
+        public void AddElement(USER_RIGHTS obj)
+        {
+            try
+            {
+                User_rights.Add(obj.Name, obj);
+                elements.Add(obj);
+            }
+            catch (ArgumentException)
+            {
+                throw new ValidationErrorException(String.Format("Warning: Duplicate '{0}' (Must be unique of all 'USER_RIGHTSs' in the MODULE) with name '{1}' found, ignoring", obj.GetType().Name, obj.Name));
+            }
+        }
+#endregion
+
         public void Validate(IErrorReporter errorReporter)
         {
             {
@@ -30,7 +319,7 @@ namespace Asap2
                 {
                     if (list.Count > 1)
                     {
-                        list[list.Count - 1].reportErrorOrWarning("Second ASAP2_VERSION found, shall only be one", false, errorReporter);
+                        list[list.Count - 1].reportErrorOrWarning("Second A2ML found, shall only be one", false, errorReporter);
                     }
                 }
             }
@@ -54,50 +343,16 @@ namespace Asap2
                     }
                 }
             }
+            {
+                var list = elements.FindAll(x => x.GetType() == typeof(VARIANT_CODING));
+                if (list != null)
+                {
+                    if (list.Count > 1)
+                    {
+                        list[list.Count - 1].reportErrorOrWarning("Second VARIANT_CODING found, shall only be one", false, errorReporter);
+                    }
+                }
+            }
         }
-
-        /*
-        [Element(7, IsDictionary = true, Comment = " Measurment data for the module ")]
-        public Dictionary<string, MEASUREMENT> measurements = new Dictionary<string, MEASUREMENT>();
-
-        [Element(8, IsDictionary = true, Comment = " Module COMPU_METHODs ")]
-        public Dictionary<string, COMPU_METHOD> compu_methods = new Dictionary<string, COMPU_METHOD>();
-
-        [Element(9, IsDictionary = true, Comment = " Conversion tables for the module COMPU_METHODs ")]
-        public Dictionary<string, COMPU_TAB> COMPU_TABs = new Dictionary<string, COMPU_TAB>();
-
-        [Element(10, IsDictionary = true, Comment = " Verbal conversion tables for the module ")]
-        public Dictionary<string, COMPU_VTAB> COMPU_VTABs = new Dictionary<string, COMPU_VTAB>();
-
-        [Element(11, IsDictionary = true, Comment = " Verbal conversion tables with parameter ranges for the module ")]
-        public Dictionary<string, COMPU_VTAB_RANGE> COMPU_VTAB_RANGEs = new Dictionary<string, COMPU_VTAB_RANGE>();
-
-        [Element(12, IsDictionary = true, Comment = " Groups for the module ")]
-        public Dictionary<string, GROUP> groups = new Dictionary<string, GROUP>();
-
-        [Element(13, IsDictionary = true, Comment = " Characteristic data for the module ")]
-        public Dictionary<string, CHARACTERISTIC> characteristics = new Dictionary<string, CHARACTERISTIC>();
-
-        [Element(14, IsDictionary = true, Comment = " AXIS_PTS data for the module ")]
-        public Dictionary<string, AXIS_PTS> axis_pts = new Dictionary<string, AXIS_PTS>();
-
-        [Element(15, IsDictionary = true, Comment = " RECORD_LAYOUT data for the module ")]
-        public Dictionary<string, RECORD_LAYOUT> record_layout = new Dictionary<string, RECORD_LAYOUT>();
-
-        [Element(16, IsDictionary = true, Comment = " FUNCTIONs for the module ")]
-        public Dictionary<string, FUNCTION> functions = new Dictionary<string, FUNCTION>();
-
-        [Element(17, IsDictionary = true, Comment = " UNITs for the module ")]
-        public Dictionary<string, UNIT> units = new Dictionary<string, UNIT>();
-
-        [Element(18, IsDictionary = true, Comment = " USER_RIGHTS for the module ")]
-        public Dictionary<string, USER_RIGHTS> user_rights = new Dictionary<string, USER_RIGHTS>();
-
-        [Element(19, IsDictionary = true, Comment = " FRAMEs for the module ")]
-        public Dictionary<string, FRAME> frames = new Dictionary<string, FRAME>();
-
-        [Element(20, IsList = true, Comment = " VARIANT_CODING for the module ")]
-        public VARIANT_CODING variant_coding;
-        */
     }
 }
