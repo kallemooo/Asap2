@@ -355,15 +355,20 @@ namespace Asap2
             }
 
             {
-                foreach(var item in elements)
                 {
-                    MEASUREMENT valItem = item as MEASUREMENT;
-                    if (valItem != null)
+                    var measurements = elements.FindAll(x => x.GetType() == typeof(MEASUREMENT));
+                    foreach(var item in measurements)
                     {
-                        valItem.Validate(errorReporter, this);
+                        (item as MEASUREMENT).Validate(errorReporter, this);
                     }
                 }
-                
+                {
+                    var measurements = elements.FindAll(x => x.GetType() == typeof(CHARACTERISTIC));
+                    foreach (var item in measurements)
+                    {
+                        (item as CHARACTERISTIC).Validate(errorReporter, this);
+                    }
+                }
             }
         }
     }

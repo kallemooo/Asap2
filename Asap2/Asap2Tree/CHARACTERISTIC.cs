@@ -121,5 +121,50 @@ namespace Asap2
         public VIRTUAL_CHARACTERISTIC virtual_characteristic;
         [Element(34, IsList = true)]
         public List<IF_DATA> if_data = new List<IF_DATA>();
+
+        public void Validate(IErrorReporter errorReporter, MODULE module)
+        {
+            base.ValidateIdentifier(Name, errorReporter);
+
+            {
+                /* Validate that refered RECORD_LAYOUT exists */
+                if (!module.Record_layouts.ContainsKey(Deposit))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced RECORD_LAYOUT '{0}' not found", Conversion), false, errorReporter);
+                }
+            }
+
+            if (comparison_quantity != null && comparison_quantity != "")
+            {
+                /* Validate that refered measurement exists */
+                if (!module.AxisPtsCharacteristicMeasurement.ContainsKey(comparison_quantity))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced measurement '{0}' in COMPARISON_QUANTITY not found", Conversion), false, errorReporter);
+                }
+            }
+
+            if (Conversion != "NO_COMPU_METHOD")
+            {
+                /* Validate that refered conversion method exists */
+                if (!module.CompuMethods.ContainsKey(Conversion))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced conversion method '{0}' not found", Conversion), false, errorReporter);
+                }
+            }
+
+            if (ref_memory_segment != null && ref_memory_segment != "")
+            {
+                /* Validate that refered conversion method exists */
+
+                var mod_par = module.elements.FirstOrDefault(x => x.GetType() == typeof(MOD_PAR)) as MOD_PAR;
+                if (mod_par != null)
+                {
+                    if (!mod_par.memory_segment.ContainsKey(ref_memory_segment))
+                    {
+                        base.reportErrorOrWarning(string.Format("Referenced MEMORY_SEGMENT '{0}' not found", ref_memory_segment), false, errorReporter);
+                    }
+                }
+            }
+        }
     }
 }
