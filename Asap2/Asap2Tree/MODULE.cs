@@ -353,6 +353,18 @@ namespace Asap2
                     }
                 }
             }
+
+            {
+                foreach(var item in elements)
+                {
+                    MEASUREMENT valItem = item as MEASUREMENT;
+                    if (valItem != null)
+                    {
+                        valItem.Validate(errorReporter, this);
+                    }
+                }
+                
+            }
         }
     }
 }

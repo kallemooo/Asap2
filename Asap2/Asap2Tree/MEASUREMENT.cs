@@ -87,5 +87,33 @@ namespace Asap2
         public VIRTUAL Virtual;
         [Element(30, IsList = true)]
         public List<IF_DATA> if_data = new List<IF_DATA>();
+
+        public void Validate(IErrorReporter errorReporter, MODULE module)
+        {
+            base.ValidateIdentifier(Name, errorReporter);
+
+            if (Conversion != "NO_COMPU_METHOD")
+            {
+                /* Validate that refered conversion method exists */
+                if (!module.CompuMethods.ContainsKey(Conversion))
+                {
+                    base.reportErrorOrWarning(String.Format("Referenced conversion method '{0} not found", Conversion), false, errorReporter);
+                }
+            }
+
+            if (ref_memory_segment != null && ref_memory_segment != "")
+            {
+                /* Validate that refered conversion method exists */
+
+                var mod_par = module.elements.FirstOrDefault(x => x.GetType() == typeof(MOD_PAR)) as MOD_PAR;
+                if (mod_par != null)
+                {
+                    if (!mod_par.memory_segment.ContainsKey(ref_memory_segment))
+                    {
+                        base.reportErrorOrWarning(String.Format("Referenced MEMORY_SEGMENT '{0} not found", ref_memory_segment), false, errorReporter);
+                    }
+                }
+            }
+        }
     }
 }

@@ -49,6 +49,9 @@ namespace Asap2
                     asap2_versions[0].reportErrorOrWarning("A2ML_VERSION shall be placed before PROJECT", false, errorReporter);
                 }
             }
+
+            var project = projects[0] as PROJECT;
+            project.Validate(errorReporter);
         }
     }
 
@@ -1104,9 +1107,6 @@ namespace Asap2
         /// Specifies the number of elements (ASCII characters or values) in a 1D array.
         /// Obsolete keyword. Please use <see cref="MATRIX_DIM"/> instead.
         /// </summary>
-        /// <remarks>
-        /// Obsolete keyword. Please use <see cref="MATRIX_DIM"/> instead.
-        /// </remarks>
         [Element(27, IsArgument = true, Name = "NUMBER", IsObsolete = "Obsolete keyword. Please use MATRIX_DIM instead.")]
         public UInt64? number;
         /// <summary>
@@ -1131,6 +1131,9 @@ namespace Asap2
         public List<IF_DATA> if_data = new List<IF_DATA>();
     }
 
+    /// <summary>
+    /// Lists the FUNCTIONs in which this object is listed. Obsolete keyword. Please use <see cref="FUNCTION"/> instead.
+    /// </summary>
     [Base(IsObsolete = "Obsolete keyword. Please use FUNCTION instead.")]
     public class FUNCTION_LIST : Asap2Base
     {
@@ -1642,10 +1645,10 @@ namespace Asap2
             EXTERN,
         }
 
-        public MEMORY_SEGMENT(Location location, string name, string longIdentifier, PrgType prgType, MemoryType memoryType, Attribute attribute, UInt64 address, UInt64 size,
+        public MEMORY_SEGMENT(Location location, string Name, string longIdentifier, PrgType prgType, MemoryType memoryType, Attribute attribute, UInt64 address, UInt64 size,
             long offset0, long offset1, long offset2, long offset3, long offset4) : base(location)
         {
-            this.name = name;
+            this.Name = Name;
             this.longIdentifier = longIdentifier;
             this.prgType = prgType;
             this.memoryType = memoryType;
@@ -1660,7 +1663,7 @@ namespace Asap2
         }
 
         [Element(0, IsArgument = true)]
-        public string name;
+        public string Name;
 
         [Element(1, IsString = true)]
         public string longIdentifier;
@@ -1699,7 +1702,10 @@ namespace Asap2
         public List<IF_DATA> if_data = new List<IF_DATA>();
     }
 
-    [Base()]
+    /// <summary>
+    /// Description of the memory layout of an ECU. Obsolete keyword. Please use <see cref="MEMORY_SEGMENT"/> instead.
+    /// </summary>
+    [Base(IsObsolete = "Obsolete keyword. Please use MEMORY_SEGMENT instead.")]
     public class MEMORY_LAYOUT : Asap2Base
     {
         public enum PrgType
@@ -1837,8 +1843,8 @@ namespace Asap2
         [Element(10, IsList = true)]
         public List<MEMORY_LAYOUT> memory_layout = new List<MEMORY_LAYOUT>();
 
-        [Element(11, IsList = true)]
-        public List<MEMORY_SEGMENT> memory_segment = new List<MEMORY_SEGMENT>();
+        [Element(11, IsDictionary = true)]
+        public Dictionary<string, MEMORY_SEGMENT> memory_segment = new Dictionary<string, MEMORY_SEGMENT>();
 
         [Element(12, IsArgument = true, Name = "NO_OF_INTERFACES")]
         public UInt64? no_of_interfaces;
