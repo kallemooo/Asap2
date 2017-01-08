@@ -1143,7 +1143,14 @@ mod_par_data :  QUOTED_STRING {
                 }
                 |  mod_par_data memory_segment {
                     $$ = $1;
-                    $$.memory_segment.Add($2);
+                    try
+                    {
+                        $$.memory_segment.Add($2.Name, $2);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Scanner.yyerror(String.Format("Warning: Duplicate MEMORY_SEGMENT with name '{0}' found, ignoring", $2.Name));
+                    }
                 }
                 |  mod_par_data NO_OF_INTERFACES NUMBER {
                     $$ = $1;
