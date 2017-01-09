@@ -902,7 +902,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data if_data {
@@ -921,7 +921,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data compu_tab {
@@ -932,7 +932,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data compu_vtab {
@@ -943,7 +943,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data compu_vtab_range {
@@ -954,7 +954,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data group {
@@ -965,7 +965,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data mod_par {
@@ -980,7 +980,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data axis_pts {
@@ -991,7 +991,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data record_layout {
@@ -1002,7 +1002,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data function {
@@ -1013,7 +1013,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data unit {
@@ -1024,7 +1024,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data user_rights {
@@ -1035,7 +1035,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data frame {
@@ -1046,7 +1046,7 @@ module_data :   IDENTIFIER QUOTED_STRING {
                     }
                     catch (ValidationErrorException e)
                     {
-                        Scanner.yywarning(e.ToString());
+                        yywarning(e.ToString());
                     }
                 }
                 | module_data variant_coding {
@@ -1092,7 +1092,7 @@ mod_common_data :  QUOTED_STRING {
                     }
                     catch (ArgumentException)
                     {
-                        Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2.name));
+                        yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2.name));
                     }
                 }
                 ;
@@ -1149,7 +1149,7 @@ mod_par_data :  QUOTED_STRING {
                     }
                     catch (ArgumentException)
                     {
-                        Scanner.yywarning(String.Format("Warning: Duplicate MEMORY_SEGMENT with name '{0}' found, ignoring", $2.Name));
+                        yywarning(String.Format("Warning: Duplicate MEMORY_SEGMENT with name '{0}' found, ignoring", $2.Name));
                     }
                 }
                 |  mod_par_data NO_OF_INTERFACES NUMBER {
@@ -1172,7 +1172,7 @@ mod_par_data :  QUOTED_STRING {
                     }
                     catch (ArgumentException)
                     {
-                        Scanner.yywarning(String.Format("Warning: Duplicate SYSTEM_CONSTANT with name '{0}' found, ignoring", $3));
+                        yywarning(String.Format("Warning: Duplicate SYSTEM_CONSTANT with name '{0}' found, ignoring", $3));
                     }
                 }
                 |  mod_par_data USER QUOTED_STRING {
@@ -1518,7 +1518,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2.name));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2.name));
         }
     }
     | record_layout_data AXIS_PTS_XYZ45 NUMBER IDENTIFIER IDENTIFIER IDENTIFIER {
@@ -1529,7 +1529,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data AXIS_RESCALE_XYZ45 NUMBER IDENTIFIER NUMBER IDENTIFIER IDENTIFIER {
@@ -1540,7 +1540,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data DIST_OP_XYZ45 NUMBER IDENTIFIER {
@@ -1551,7 +1551,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data FIX_NO_AXIS_PTS_XYZ45 NUMBER {
@@ -1562,7 +1562,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data FNC_VALUES NUMBER IDENTIFIER IDENTIFIER IDENTIFIER{
@@ -1581,7 +1581,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data NO_RESCALE_XYZ45 NUMBER IDENTIFIER {
@@ -1592,7 +1592,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data OFFSET_XYZ45 NUMBER IDENTIFIER {
@@ -1603,7 +1603,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data RESERVED NUMBER IDENTIFIER {
@@ -1618,7 +1618,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data SHIFT_OP_XYZ45 NUMBER IDENTIFIER {
@@ -1629,7 +1629,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data SRC_ADDR_XYZ45 NUMBER IDENTIFIER {
@@ -1640,7 +1640,7 @@ record_layout_data
         }
         catch (ArgumentException)
         {
-            Scanner.yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+            yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
     | record_layout_data STATIC_RECORD_LAYOUT {

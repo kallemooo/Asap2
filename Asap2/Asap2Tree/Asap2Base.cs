@@ -49,7 +49,7 @@ namespace Asap2
             }
             else
             {
-                errorReporter.reportError(string.Format("{0} : Line: {1} : Row: {2} : ValidationWarning : {3}", location.FileName, location.StartLine, location.StartColumn, message));
+                errorReporter.reportWarning(string.Format("{0} : Line: {1} : Row: {2} : ValidationWarning : {3}", location.FileName, location.StartLine, location.StartColumn, message));
             }
 
         }
