@@ -43,36 +43,55 @@ namespace Asap2
                 return null;
             }
         }
-        
-        private class compareFieldInfo : IComparer
+
+        public static class SortedFieldsCache
         {
-            int IComparer.Compare(Object x, Object y)
+            private static Dictionary<Type, FieldInfo[]> Value;
+            static SortedFieldsCache()
             {
-                FieldInfo fiX = x as FieldInfo;
-                FieldInfo fiY = y as FieldInfo;
-                ElementAttribute elemAttX = (ElementAttribute)Attribute.GetCustomAttribute(fiX, typeof(ElementAttribute));
-                ElementAttribute elemAttY = (ElementAttribute)Attribute.GetCustomAttribute(fiX, typeof(ElementAttribute));
-                if (elemAttX == null)
-                {
-                    return -1;
-                }
-                else if (elemAttY == null)
-                {
-                    return 1;
-                }
-
-                if (elemAttX.SortOrder > elemAttY.SortOrder)
-                {
-                    return -1;
-                }
-                else if (elemAttX.SortOrder < elemAttY.SortOrder)
-                {
-                    return 1;
-                }
-
-                return 0;
+                Value = new Dictionary<Type, FieldInfo[]>();
             }
 
+            public static FieldInfo[] Get(Type x)
+            {
+
+                FieldInfo[] v;
+                if (Value.TryGetValue(x, out v))
+                    return v;
+
+                v = x.GetFields().OrderBy(f =>
+                {
+                    var data = AttributeCache<ElementAttribute, MemberInfo >.Get(f);
+                    if (data == null)
+                        return (uint)999999; /* sort it last */
+                    else
+                        return data.SortOrder;
+                }).ToArray();
+                Value.Add(x, v);
+                return v;
+            }
+        }
+
+        public static class AttributeCache<T, L>
+            where T : class
+            where L : MemberInfo
+        {
+            public static Dictionary<L, T> Value;
+            static AttributeCache()
+            {
+                Value = new Dictionary<L, T>();
+            }
+
+            public static T Get(L x)
+            {
+                T v;
+                if (Value.TryGetValue(x, out v))
+                    return v;
+
+                v = Attribute.GetCustomAttribute(x, typeof(T)) as T;
+                Value.Add(x, v);
+                return v;
+            }
         }
 
         public bool Serialise(Asap2File tree, MemoryStream outStream)
@@ -216,20 +235,18 @@ namespace Asap2
         {
             SerialisedData resultTree = null;
             string elementName = null;
-            BaseAttribute baseAtt = (BaseAttribute)Attribute.GetCustomAttribute(tree.GetType(), typeof(BaseAttribute));
+            BaseAttribute baseAtt = AttributeCache<BaseAttribute, MemberInfo>.Get(tree.GetType());
 
             if (baseAtt != null)
             {
-                FieldInfo[] fI = tree.GetType().GetFields();
-                IComparer myComparer = new compareFieldInfo();
-                Array.Sort(fI, myComparer);
+                var fI = SortedFieldsCache.Get(tree.GetType());
 
                 resultTree = new SerialisedData();
                 resultTree.isSimple = baseAtt.IsSimple;
                 resultTree.indentLevel = indentLevel;
                 for (int i = 0; i < fI.Length; i++)
                 {
-                    ElementAttribute elemAtt = (ElementAttribute)Attribute.GetCustomAttribute(fI[i], typeof(ElementAttribute));
+                    ElementAttribute elemAtt = AttributeCache<ElementAttribute, MemberInfo>.Get(fI[i]);
                     if (elemAtt != null)
                     {
                         if (elemAtt.IsName)
@@ -278,7 +295,7 @@ namespace Asap2
             List<SerialisedData> resultData = new List<SerialisedData>();
             for (int i = 0; i < fI.Length; i++)
             {
-                ElementAttribute att = (ElementAttribute)Attribute.GetCustomAttribute(fI[i], typeof(ElementAttribute));
+                ElementAttribute att = AttributeCache<ElementAttribute, MemberInfo>.Get(fI[i]);
 
                 if (att != null)
                 {
