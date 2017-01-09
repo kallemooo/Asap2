@@ -19,7 +19,29 @@ namespace Asap2Test
             {
                 try
                 {
+                    if (errorHandler.warnings == 0)
+                    {
+                        Console.WriteLine("Parsed file with no warnings.");
+                    }
+                    else
+                    {
+                        Console.WriteLine(string.Format("Parsed file with {0} warnings.", errorHandler.warnings));
+                    }
+
                     tree.Validate(errorHandler);
+                    
+                    if (errorHandler.warnings == 0)
+                    {
+                        Console.WriteLine("Validated parsed data with no warnings.");
+                    }
+                    else
+                    {
+                        Console.WriteLine(string.Format("Validated parsed data with {0} warnings.", errorHandler.warnings));
+                    }
+
+                    Console.WriteLine("Press enter to serialise data.");
+                    Console.ReadLine();
+
                     tree.elements.Insert(0, comment);
                     var ms = new MemoryStream();
                     parser.Serialise(tree, ms);
@@ -30,8 +52,13 @@ namespace Asap2Test
                 }
                 catch (Asap2.ValidationErrorException e)
                 {
+                    Console.WriteLine("Validation of parsed data failed!");
                     Console.WriteLine(e.ToString());
                 }
+            }
+            else
+            {
+                Console.WriteLine("Parsing failed!");
             }
             Console.WriteLine("Press enter to close...");
             Console.ReadLine();
