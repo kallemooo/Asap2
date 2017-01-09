@@ -28,6 +28,7 @@ namespace Asap2Test
                         Console.WriteLine(string.Format("Parsed file with {0} warnings.", errorHandler.warnings));
                     }
 
+                    errorHandler = new ErrorHandler();
                     tree.Validate(errorHandler);
                     
                     if (errorHandler.warnings == 0)
