@@ -30,7 +30,7 @@ namespace Asap2
             using (var stream = new FileStream(fileName, FileMode.Open))
             {
                 scanner = new Asap2Scanner(stream, this.errorHandler, this.fileName);
-                parser = new Asap2Parser(scanner);
+                parser = new Asap2Parser(scanner, this.errorHandler);
                 status = parser.Parse();
             }
 
