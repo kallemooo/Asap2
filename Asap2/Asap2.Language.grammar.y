@@ -305,10 +305,10 @@ Asap2File
         Asap2File.elements.Add($2);
     }
     | Asap2File ASAP2_VERSION NUMBER NUMBER {
-        Asap2File.elements.Add(new ASAP2_VERSION(@2, (uint)$3, (uint)$4));
+        Asap2File.AddAsap2_version(new ASAP2_VERSION(@2, (uint)$3, (uint)$4));
     }
     | Asap2File A2ML_VERSION NUMBER NUMBER {
-        Asap2File.elements.Add(new A2ML_VERSION(@2, (uint)$3, (uint)$4));
+        Asap2File.AddA2ml_version(new A2ML_VERSION(@2, (uint)$3, (uint)$4));
     }
     ;
 

@@ -8,6 +8,49 @@ namespace Asap2
 {
     public class Asap2File : IValidator
     {
+        /// <summary>
+        /// Filename to use for base validation.
+        /// </summary>
+        public string baseFilename { get; set; }
+        /// <summary>
+        /// Default no-arg constructor.
+        /// </summary>
+        public Asap2File() : this("") { }
+
+        /// <summary>
+        /// Constructor with filename parameter.
+        /// </summary>
+        /// <param name="baseFilename"></param>
+        public Asap2File(string baseFilename)
+        {
+            /* Default version if ASAP2_VERSION element is missing. */
+            this.asap2_version = new ASAP2_VERSION(new Location(baseFilename), 1, 51);
+        }
+
+        public ASAP2_VERSION asap2_version {private set; get; }
+        public void AddAsap2_version(ASAP2_VERSION asap2_version)
+        {
+            var version = elements.FirstOrDefault(x => x.GetType() == typeof(ASAP2_VERSION)) as ASAP2_VERSION;
+            if (version != null)
+            {
+                elements.Remove(version);
+            }
+            elements.Add(asap2_version);
+            this.asap2_version = asap2_version;
+        }
+
+        public A2ML_VERSION a2ml_version { private set; get; }
+        public void AddA2ml_version(A2ML_VERSION a2ml_version)
+        {
+            var version = elements.FirstOrDefault(x => x.GetType() == typeof(A2ML_VERSION)) as A2ML_VERSION;
+            if (version != null)
+            {
+                elements.Remove(version);
+            }
+            elements.Add(a2ml_version);
+            this.a2ml_version = a2ml_version;
+        }
+
         public List<Asap2Base> elements = new List<Asap2Base>();
 
         public void Validate(IErrorReporter errorReporter)
@@ -16,8 +59,8 @@ namespace Asap2
 
             if (projects == null || projects.Count == 0)
             {
-                errorReporter.reportError("No PROJECT found, must be one");
-                throw new ValidationErrorException("No PROJECT found, must be one");
+                errorReporter.reportError(baseFilename + " : No PROJECT found, must be one");
+                throw new ValidationErrorException(baseFilename + " : No PROJECT found, must be one");
             }
             else if (projects.Count > 1)
             {
@@ -25,7 +68,7 @@ namespace Asap2
             }
 
             var asap2_versions = elements.FindAll(x => x.GetType() == typeof(ASAP2_VERSION));
-            if (asap2_versions != null && asap2_versions.Count > 1)
+            if (asap2_versions != null && asap2_versions.Count > 0)
             {
                 if (asap2_versions.Count > 1)
                 {
@@ -36,9 +79,22 @@ namespace Asap2
                     asap2_versions[0].reportErrorOrWarning("ASAP2_VERSION shall be placed before PROJECT", false, errorReporter);
                 }
             }
+            else
+            {
+                asap2_version.reportErrorOrWarning("Mandatory element ASAP2_VERSION is not found, version of the file is set to 1.5.1", false, errorReporter);
+            }
+
+            if (asap2_version.VersionNo != 1)
+            {
+                asap2_version.reportErrorOrWarning("ASAP2_VERSION.VersionNo is not 1. This parser is primarly designed for version 1.", false, errorReporter);
+            }
+            else if (asap2_version.UpgradeNo < 60)
+            {
+                asap2_version.reportErrorOrWarning("ASAP2_VERSION is less than 1.6.0. This parser is primarly designed for version 1.6.0 and newer.", false, errorReporter);
+            }
 
             var a2ml_versions = elements.FindAll(x => x.GetType() == typeof(A2ML_VERSION));
-            if (a2ml_versions != null && a2ml_versions.Count > 1)
+            if (a2ml_versions != null && a2ml_versions.Count > 0)
             {
                 if (a2ml_versions.Count > 1)
                 {

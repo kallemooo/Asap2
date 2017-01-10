@@ -46,7 +46,13 @@ namespace Asap2
         /// <summary>
         /// Default no-arg constructor.
         /// </summary>
-        public Location() { startLine = 0; startColumn = 0; endLine = 0; endColumn = 0; fileName = ""; }
+        public Location() : this(0, 0, 0, 0, "") { }
+
+        /// <summary>
+        /// Constructor with only filename parameter.
+        /// </summary>
+        /// <param name="fn">file name</param>
+        public Location(string fn) : this(0, 0, 0, 0, fn) { }
 
         /// <summary>
         /// Constructor for text-span with given start and end.

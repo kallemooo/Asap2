@@ -39,13 +39,17 @@ namespace Asap2
 
         public Location location { get; set; }
 
-        public void reportErrorOrWarning(string message, bool isError, IErrorReporter errorReporter)
+        public void reportErrorOrWarning(string message, bool isError, IErrorReporter errorReporter, bool isInfo = false)
         {
             if (isError)
             {
                 string msg = string.Format("{0} : Line: {1} : Row: {2} : ValidationError : {3}", location.FileName, location.StartLine, location.StartColumn, message);
                 errorReporter.reportError(msg);
                 throw new ValidationErrorException(msg);
+            }
+            else if (isInfo)
+            {
+                errorReporter.reportInformation(string.Format("{0} : Line: {1} : Row: {2} : ValidationInformation : {3}", location.FileName, location.StartLine, location.StartColumn, message));
             }
             else
             {
@@ -54,7 +58,7 @@ namespace Asap2
 
         }
 
-#region ValidateIdentifier
+        #region ValidateIdentifier
 
         static string IdentifierPattern = @"[A-Za-z_][A-Za-z0-9_]*(\[[A-Za-z0-9_]*\])*";
         static Regex IdentifierRgx = new Regex(IdentifierPattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
