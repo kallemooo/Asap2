@@ -11,6 +11,27 @@ using System.Reflection;
 
 namespace Asap2
 {
+    [Serializable()]
+    public class ParserErrorException : System.Exception
+    {
+        public ParserErrorException() : base() { }
+        public ParserErrorException(string message) : base(message) { }
+        public ParserErrorException(string message, System.Exception inner) : base(message, inner) { }
+        public ParserErrorException(string format, params object[] args) : base(string.Format(format, args)) { }
+
+        public override string ToString()
+        {
+            return base.Message;
+        }
+
+        // A constructor is needed for serialization when an
+        // exception propagates from a remoting server to the client. 
+        protected ParserErrorException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context)
+        { }
+    }
+
+
     public class Parser
     {
         private IErrorReporter errorHandler;
@@ -22,6 +43,10 @@ namespace Asap2
 
         public string fileName { get; private set; }
 
+        /// <summary>
+        /// Parse the provided A2L file.
+        /// </summary>
+        /// <returns>true if all succeded with no fatal errors</returns>
         public Asap2File DoParse()
         {
             bool status = false;
@@ -29,9 +54,17 @@ namespace Asap2
             Asap2Parser parser;
             using (var stream = new FileStream(fileName, FileMode.Open))
             {
-                scanner = new Asap2Scanner(stream, this.errorHandler, this.fileName);
+                scanner = new Asap2Scanner(stream, this.errorHandler);
                 parser = new Asap2Parser(scanner, this.errorHandler);
-                status = parser.Parse();
+                try
+                {
+                    status = parser.Parse();
+                }
+                catch(ParserErrorException e)
+                {
+                    errorHandler.reportError(e.Message);
+                    status = false;
+                }
             }
 
             if (status)
