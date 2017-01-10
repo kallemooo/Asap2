@@ -5,6 +5,11 @@
 
 %option summary, stack, minimize, parser, verbose, persistbuffer, noembedbuffers, unicode, codePage:ISO-8859-1
 
+%{
+    Stack<BufferContext> buffStack = new Stack<BufferContext>();
+%}
+
+
 Identifier              [A-Za-z_][A-Za-z0-9_\.\[\]]*
 Space                   [ \t\u000c]
 Decimal                 [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
@@ -13,6 +18,8 @@ Eol                     (\r?\n)
 Alignment               ALIGNMENT_[A-Za-z0-9_]+
 XYZ45                   [XYZ45]
 WXYZ45                  [WXYZ45]
+
+IncFile                 .*
 
 /* Single and Multiline comments */
 CommentStart	\/\*
@@ -23,6 +30,7 @@ LineComment		("//"[^\n]*)
 %x STATE_IF_DATA
 %x STATE_A2ML
 %x ML_COMMENT
+%x STATE_INCL
 
 %%
 
@@ -169,10 +177,17 @@ VAR_NAMING                      { return Make(Token.VAR_NAMING); }
 IF_DATA                         { yy_push_state (STATE_IF_DATA); yylval.sb = new StringBuilder(); }
 A2ML                            { yy_push_state (STATE_A2ML); yylval.sb = new StringBuilder(); }
 
+"\/include"                     { yy_push_state(STATE_INCL); }
 \"                              { yy_push_state(STATE_STRING); yylval.sb = new StringBuilder(); }
 {Identifier}                    { return Make(Token.IDENTIFIER); }
 {HexNumber}                     { return MakeHexNumber(); }
 {Decimal}                       { return MakeNumber(); }
+
+<STATE_INCL>{
+    {Eol}           { yy_pop_state(); TryInclude(null); }
+    [ \t]               /* skip whitespace */
+    [^ \t]{IncFile} { yy_pop_state(); TryInclude(yytext); }
+}
 
 <STATE_IF_DATA> {
     "\/end IF_DATA" { yy_pop_state(); return MakeStringBuilder(Token.IF_DATA); }
@@ -224,7 +239,7 @@ public int MakeNumber()
 {
     yylval.s = yytext;
     decimal.TryParse(yytext, NumberStyles.Float, CultureInfo.InvariantCulture, out yylval.d);
-    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, this.buffer.FileName);
     return (int)Token.NUMBER;
 }
 
@@ -237,12 +252,13 @@ public int MakeHexNumber()
         tmp = tmp.Substring(2);
     }
     yylval.d = long.Parse(tmp, NumberStyles.HexNumber);
-    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, this.buffer.FileName);
     return (int)Token.NUMBER;
 }
 
 public int MakeAlignment()
 {
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, this.buffer.FileName);
     yylval.s = yytext;
     try
     {
@@ -250,22 +266,72 @@ public int MakeAlignment()
     }
     catch (ArgumentException)
     {
-        throw new Exception("Unknown ALIGNMENT type: " + yytext);
+        throw new ParserErrorException("{0} : Line: {1} : Row: {2} : Syntax error, Unknown ALIGNMENT type: '{3}'", this.buffer.FileName, yyline, yycol, yytext);
     }
-    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
     return (int)Token.ALIGNMENT;
 }
 
 public int MakeStringBuilder(Token token)
 {
     yylval.s = yylval.sb.ToString();
-    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, this.buffer.FileName);
     return (int)token;
 }
 
 public int Make(Token token)
 {
     yylval.s = yytext;
-    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, GetCurrentFilename());
+    yylloc = new Location(yyline,yycol,yyline,yycol + yyleng, this.buffer.FileName);
     return (int)token;
+}
+
+private void TryInclude(string fName)
+{
+    if (fName == null)
+    {
+        throw new ParserErrorException("{0} : Line: {1} : Row: {2} : Include error, /include, no filename", this.buffer.FileName, yyline, yycol);
+    }
+    else
+    {
+        try
+        {
+            /* Trim any leading and trailing whitespaces and " */
+            fName = fName.Trim();
+            char[] charsToTrim = { '\"', '\''};
+            fName = fName.Trim(charsToTrim);
+
+            BufferContext savedCtx = MkBuffCtx();
+            if (!Path.IsPathRooted(fName))
+            {
+                /* Handle relative search path for the new file. */
+                fName = Path.Combine(Path.GetDirectoryName(this.buffer.FileName), fName);
+            }
+            var stream = new FileStream(fName, FileMode.Open);
+            SetSource(stream);
+            errorHandler.reportInformation(string.Format("{0} : Line: {1} : Row: {2} : Included file \"{3}\" opened", this.buffer.FileName, yyline, yycol, fName));
+            buffStack.Push(savedCtx); // Don't push until file open succeeds!
+            /* Push the new stream to a separate stack so it can be properly disposed. */
+            StreamStack.Push(stream);
+        }
+        catch
+        {
+            throw new ParserErrorException("{0} : Line: {1} : Row: {2} : Include error, /include, could not open file \"{3}\"", this.buffer.FileName, yyline, yycol, fName);
+        }
+    }
+}
+
+protected override bool yywrap()
+{
+    if (buffStack.Count == 0)
+    {
+        return true;
+    }
+
+    /* Dispose the stream so the same file can be opened again. */
+    Stream currentStream = StreamStack.Pop();
+    currentStream.Dispose();
+    RestoreBuffCtx(buffStack.Pop());
+    Console.WriteLine(this.buffer.GetType().ToString());
+
+    return false;
 }
