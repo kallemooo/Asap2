@@ -13,5 +13,6 @@ namespace Asap2
     {
         void reportWarning(string message);
         void reportError(string message);
+        void reportInformation(string message);
     }
 }
