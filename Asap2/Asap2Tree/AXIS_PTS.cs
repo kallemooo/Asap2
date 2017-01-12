@@ -104,5 +104,64 @@ namespace Asap2
 
         [Element(29)]
         public SYMBOL_LINK symbol_link;
+        public void Validate(IErrorReporter errorReporter, MODULE module)
+        {
+            base.ValidateIdentifier(Name, errorReporter);
+
+            {
+                /* Validate that refered RECORD_LAYOUT exists */
+                if (!module.Record_layouts.ContainsKey(Deposit))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced RECORD_LAYOUT '{0}' not found", Conversion), false, errorReporter);
+                }
+            }
+
+            if (InputQuantity != "NO_INPUT_QUANTITY")
+            {
+                /* Validate that refered measurement exists */
+                if (!module.AxisPtsCharacteristicMeasurement.ContainsKey(InputQuantity))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced inputQuantity '{0}' not found", InputQuantity), false, errorReporter);
+                }
+            }
+
+            /* Validate that refered RECORD_LAYOUT exists */
+            if (!module.Record_layouts.ContainsKey(Deposit))
+            {
+                base.reportErrorOrWarning(string.Format("Referenced Deposit '{0}' not found", Deposit), false, errorReporter);
+            }
+
+            if (Conversion != "NO_COMPU_METHOD")
+            {
+                /* Validate that refered conversion method exists */
+                if (!module.CompuMethods.ContainsKey(Conversion))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced conversion method '{0}' not found", Conversion), false, errorReporter);
+                }
+            }
+
+            if (phys_unit != null && phys_unit != "")
+            {
+                /* Validate that refered UNIT exists */
+                if (!module.Units.ContainsKey(phys_unit))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced UNIT '{0}' not found", phys_unit), false, errorReporter);
+                }
+            }
+
+            if (ref_memory_segment != null && ref_memory_segment != "")
+            {
+                /* Validate that refered conversion method exists */
+
+                var mod_par = module.elements.FirstOrDefault(x => x.GetType() == typeof(MOD_PAR)) as MOD_PAR;
+                if (mod_par != null)
+                {
+                    if (!mod_par.memory_segment.ContainsKey(ref_memory_segment))
+                    {
+                        base.reportErrorOrWarning(string.Format("Referenced MEMORY_SEGMENT '{0}' not found", ref_memory_segment), false, errorReporter);
+                    }
+                }
+            }
+        }
     }
 }

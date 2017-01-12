@@ -1,0 +1,991 @@
+  /begin MODULE
+    SYSTEM1
+    "Desc SYSTEM MODULE"
+    /begin A2ML
+              block "IF_DATA" taggedunion if_data {
+                "CANAPE_EXT" struct {
+                  int;             /* version number */
+                  taggedstruct {
+                    "LINK_MAP" struct {
+                      char[256];   /* segment name */
+                      long;        /* base address of the segment */
+                      uint;        /* address extension of the segment */
+                      uint;        /* flag: address is relative to DS */
+                      long;        /* offset of the segment address */
+                      uint;        /* datatypValid */
+                      uint;        /* enum datatyp */
+                      uint;        /* bit offset of the segment */
+                    };
+                    "DISPLAY" struct {
+                      long;        /* display color */
+                      double;      /* minimal display value (phys)*/
+                      double;      /* maximal display value (phys)*/
+                    };
+                    "VIRTUAL_CONVERSION" struct {
+                      char[256];   /* name of the conversion formula */
+                    };
+                  };
+                };
+    /end A2ML
+
+    /begin MOD_COMMON "Desc mod_common"
+          DEPOSIT ABSOLUTE
+          ALIGNMENT_BYTE 1
+          BYTE_ORDER MSB_FIRST
+          ALIGNMENT_WORDa 2
+          ALIGNMENT_LONG 4
+          ALIGNMENT_INT64 8
+          ALIGNMENT_FLOAT32_IEEE 4
+          ALIGNMENT_FLOAT64_IEEE 4
+          S_REC_LAYOUT TEST_S_REC_LAYOUT
+          DATA_SIZE 32
+    /end MOD_COMMON
+    /begin IF_DATA XCP
+         /begin PROTOCOL_LAYER
+            0x0100 
+            2000 
+            2000 
+            2000 
+            65535 
+            2000 
+            0005 
+            0005 
+            0x08 
+            0x0008 
+            BYTE_ORDER_MSB_LAST 
+            ADDRESS_GRANULARITY_BYTE 
+            SEED_AND_KEY_EXTERNAL_FUNCTION "SeedNKeyXcp.dll" 
+         /end PROTOCOL_LAYER
+    /end IF_DATA
+    
+    /begin MOD_PAR "Module parameters for XCP configuration"
+            VERSION "0"
+            SUPPLIER "Supplier example" 
+            CUSTOMER "Customer example"
+            ECU "ECU example"
+            CPU_TYPE "PPC"
+            PHONE_NO "1234567890"
+            NO_OF_INTERFACES 1
+            ADDR_EPK     0x12345
+            ECU_CALIBRATION_OFFSET 0x1000
+            EPK      "EPROM identifier test" 
+            SYSTEM_CONSTANT "System_Constant_1" "-3.45"
+            SYSTEM_CONSTANT "System_Constant_2" "5.67"
+            SYSTEM_CONSTANT "System_Constant_3" "Text in System Constant"
+            /begin MEMORY_LAYOUT  PRG_DATA  0x0000  0x8000   -1   -1   -1   -1   -1 
+                /begin IF_DATA DIM  
+                    /begin DP_BLOB EXTERN /end DP_BLOB    /* memory type */ 
+                    /begin PA_BLOB DIRECT /end PA_BLOB    /* addressing mode */ 
+                /end IF_DATA 
+            /end MEMORY_LAYOUT                            
+            /begin MEMORY_SEGMENT
+            Code "main program" CODE FLASH INTERN 0x0015fff8 0x8 -1 -1 -1 -1 -1 
+            /begin IF_DATA XCP 
+                /begin SEGMENT 
+                  0x0 0x1 0x0 0x0 0x0 
+                    /begin CHECKSUM 
+                      XCP_ADD_14
+                      MAX_BLOCK_SIZE 0x100  
+                    /end CHECKSUM
+                    /begin PAGE 
+                      0x0 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_NOT_ALLOWED XCP_WRITE_ACCESS_NOT_ALLOWED 
+                    /end PAGE
+                /end SEGMENT
+            /end IF_DATA
+          /end MEMORY_SEGMENT
+          
+          /begin MEMORY_SEGMENT
+            flash_calib_offline "flash_calib_offline" OFFLINE_DATA FLASH INTERN 0x00140000 0xab00 -1 -1 -1 -1 -1 
+            /begin IF_DATA XCP 
+                /begin SEGMENT 
+                  0x1 0x1 0x0 0x0 0x0 
+                    /begin CHECKSUM 
+                      XCP_ADD_14 
+                      MAX_BLOCK_SIZE 0x100
+                    /end CHECKSUM
+                    /begin PAGE 
+                      0x0 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_WITH_ECU_ONLY XCP_WRITE_ACCESS_NOT_ALLOWED 
+                    /end PAGE
+                /end SEGMENT
+            /end IF_DATA
+          /end MEMORY_SEGMENT
+          
+          /begin MEMORY_SEGMENT
+            flash_calib_online "flash_calib_online" DATA FLASH INTERN 0x0014ab00 0x154f8 -1 -1 -1 -1 -1 
+            /begin IF_DATA XCP 
+                /begin SEGMENT 
+                  0x2 0x2 0x0 0x0 0x0 
+                    /begin CHECKSUM 
+                      XCP_ADD_14 
+                      MAX_BLOCK_SIZE 0x100
+                    /end CHECKSUM
+                    /begin PAGE 
+                      0x0 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_WITH_ECU_ONLY XCP_WRITE_ACCESS_NOT_ALLOWED  
+                    /end PAGE
+                    /begin PAGE 
+                      0x1 ECU_ACCESS_WITH_XCP_ONLY XCP_READ_ACCESS_WITH_ECU_ONLY XCP_WRITE_ACCESS_WITH_ECU_ONLY 
+                    /end PAGE
+                /end SEGMENT
+            /end IF_DATA
+          /end MEMORY_SEGMENT
+        /end MOD_PAR
+        
+    /begin MEASUREMENT
+        Measurement_1
+        "Measurement_1 description"
+        UWORD
+        NO_COMPU_METHOD
+        0
+        0.0
+        0.0
+        65535.0
+        ECU_ADDRESS 0x4000b6ee
+        FORMAT "%8.5"
+        /begin BIT_OPERATION
+            RIGHT_SHIFT 4
+            LEFT_SHIFT 6
+            SIGN_EXTEND
+        /end BIT_OPERATION
+    /end MEASUREMENT
+    /begin MEASUREMENT
+        /* Name           */     Measurement_3_Array
+        /* LongIdentifier */     "Array test 3"
+        /* Datatype       */     UWORD
+        /* Conversion     */     NO_COMPU_METHOD
+        /* Resolution     */     1
+        /* Accuracy       */     0.
+        /* LowerLimit     */     0.
+        /* UpperLimit     */     65535.
+        ARRAY_SIZE               8
+        ECU_ADDRESS              0x4000074c
+        ECU_ADDRESS_EXTENSION    0x0
+        FORMAT "%8.5"
+    /end MEASUREMENT
+    /begin MEASUREMENT
+        /* Name           */     Measurement_2_Array[0]
+        /* LongIdentifier */     "Array test part 0.
+        Row 2"
+        /* Datatype       */     UWORD
+        /* Conversion     */     NO_COMPU_METHOD
+        /* Resolution     */     1
+        /* Accuracy       */     0.
+        /* LowerLimit     */     0.
+        /* UpperLimit     */     65535.
+        ECU_ADDRESS              0x4000074c
+        ECU_ADDRESS_EXTENSION    0x0
+        FORMAT "%8.5"
+    /end MEASUREMENT
+    /begin MEASUREMENT
+        /* Name           */     Measurement_2_Array[1]
+        /* LongIdentifier */     "Array test part 1."
+        /* Datatype       */     UWORD
+        /* Conversion     */     NO_COMPU_METHOD
+        /* Resolution     */     1
+        /* Accuracy       */     0.
+        /* LowerLimit     */     0.
+        /* UpperLimit     */     65535.
+        ECU_ADDRESS              0x4000074c
+        ECU_ADDRESS_EXTENSION    0x0
+        DISPLAY_IDENTIFIER Measurement_2_ArrayDISPLAY_IDENTIFIER[1]
+        FORMAT "%8.5"
+        /begin ANNOTATION
+            ANNOTATION_LABEL "Measurement_2_Array[1] annotation label"
+            ANNOTATION_ORIGIN "Measurement_2_Array[1] annotation origin"
+            /begin ANNOTATION_TEXT
+                "Measurement_2_Array[1] annotation test line1.\r\n"
+                "Measurement_2_Array[1] annotation test line2.\r\n"
+                "Measurement_2_Array[1] annotation test line3."
+            /end ANNOTATION_TEXT
+        /end ANNOTATION
+    /end MEASUREMENT
+
+ /begin MEASUREMENT Measurement_01
+         "Preasure_chamber_01"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_01
+         ECU_ADDRESS 0xE0010000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+
+      /begin MEASUREMENT Measurement_02
+         "Preasure_chamber_02"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_02
+         ECU_ADDRESS 0xE0020000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_03
+         "Preasure_chamber_03"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_03
+         ECU_ADDRESS 0xE0030000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_04
+         "Preasure_chamber_04"
+         UWORD
+         CompuMethod_05
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_04
+         ECU_ADDRESS 0xE0040000
+         FORMAT "%6.3"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_05
+         "Preasure_chamber_05"
+         UWORD
+         CompuMethod_01
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_05
+         ECU_ADDRESS 0xE0050000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_06
+         "Preasure_chamber_06"
+         UWORD
+         CompuMethod_01
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_06
+         ECU_ADDRESS 0xE0060000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_07
+         "Preasure_chamber_07"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_07
+         ECU_ADDRESS 0xE0070000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_08
+         "Preasure_chamber_08"
+         UWORD
+         CompuMethod_05
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_08
+         ECU_ADDRESS 0xE0080000
+         FORMAT "%6.3"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_09
+         "Preasure_chamber_09"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_09
+         ECU_ADDRESS 0xE0090000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_10
+         "Preasure_chamber_10"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_10
+         ECU_ADDRESS 0xE00A0000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_11
+         "Preasure_chamber_11"
+         UWORD
+         CompuMethod_03
+         1
+         0.
+         0.
+         65535.
+         DISPLAY_IDENTIFIER Measurement_11
+         ECU_ADDRESS 0xE00B0000
+         FORMAT "%6.0"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_12
+         "Preasure_chamber_12"
+         UWORD
+         CompuMethod_05
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_12
+         ECU_ADDRESS 0xE00C0000
+         FORMAT "%6.3"
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_13
+         "Preasure_chamber_13"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_13
+         ECU_ADDRESS 0xE00D0000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_14
+         "Preasure_chamber_14"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_14
+         ECU_ADDRESS 0xE00E0000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+
+      /begin MEASUREMENT Measurement_15
+         "Preasure_chamber_15"
+         UBYTE
+         CompuMethod_02
+         1
+         0.
+         0.
+         255.
+         DISPLAY_IDENTIFIER Measurement_15
+         ECU_ADDRESS 0xE00F0000
+         BIT_MASK 0x1F
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+      
+      /begin MEASUREMENT Measurement_16
+         "Preasure_chamber_16"
+         UWORD
+         CompuMethod_06
+         1
+         0.
+         0.
+         359.999
+         DISPLAY_IDENTIFIER Measurement_16
+         ECU_ADDRESS 0xE0100000
+         FORMAT "%6.3"
+         ERROR_MASK 0x12345
+         /begin FUNCTION_LIST
+            FUNC1
+            FUNC2
+         /end FUNCTION_LIST
+         LAYOUT ROW_DIR
+         MAX_REFRESH 1 54
+         READ_WRITE
+         PHYS_UNIT "C"
+         REF_MEMORY_SEGMENT TestOf_ref_memory_segment
+         SYMBOL_LINK "LinkName" 0
+         /begin VIRTUAL
+            Channel1
+            Channel2
+         /end VIRTUAL
+         /begin IF_DATA XCP
+            /begin DAQ_EVENT
+               VARIABLE
+               /begin DEFAULT_EVENT_LIST
+                  EVENT 0
+                  EVENT 1
+                  EVENT 2
+                  EVENT 3
+                  EVENT 4
+               /end DEFAULT_EVENT_LIST
+            /end DAQ_EVENT
+         /end IF_DATA
+      /end MEASUREMENT
+
+    /begin COMPU_METHOD CM.TAB_INTP.DEFAULT_VALUE
+      "" 
+      TAB_INTP "%8.4" "U/  min  " 
+      COMPU_TAB_REF CM.TAB_INTP.DEFAULT_VALUE.REF
+    /end COMPU_METHOD 
+
+    /begin COMPU_TAB CM.TAB_INTP.DEFAULT_VALUE.REF   
+       "" 
+       TAB_INTP 
+       12 
+       -3 98   
+       -1 99   
+       0 100
+       2 102   
+       4 104  
+       5 105  
+       6 106 
+       7 107  
+       8 108  
+       9 109  
+       10 110  
+       13 111
+       DEFAULT_VALUE_NUMERIC 300.56                        /* DEFAULT_VALUE_NUMERIC should be used here as the normal output is numeric */
+    /end COMPU_TAB 
+
+    /begin COMPU_METHOD CM.TAB_INTP.NO_DEFAULT_VALUE
+      "" 
+      TAB_INTP "%8.4" "U/  min  " 
+      COMPU_TAB_REF CM.TAB_INTP.NO_DEFAULT_VALUE.REF
+    /end COMPU_METHOD 
+    
+    /begin COMPU_TAB CM.TAB_INTP.NO_DEFAULT_VALUE.REF   
+       "" 
+       TAB_INTP 
+       12 
+       -3 98   
+       -1 99   
+       0 100
+       2 102   
+       4 104  
+       5 105  
+       6 106 
+       7 107  
+       8 108  
+       9 109  
+       10 110  
+       13 111
+    /end COMPU_TAB 
+
+
+    /begin COMPU_METHOD CM.TAB_NOINTP.DEFAULT_VALUE
+      "" 
+      TAB_INTP "%8.4" "U/  min  " 
+      COMPU_TAB_REF CM.TAB_NOINTP.DEFAULT_VALUE.REF
+    /end COMPU_METHOD 
+    
+    /begin COMPU_TAB CM.TAB_NOINTP.DEFAULT_VALUE.REF   
+       "" 
+       TAB_NOINTP 
+       12 
+       -3 98   
+       -1 99   
+       0 100
+       2 102   
+       4 104  
+       5 105  
+       6 106 
+       7 107  
+       8 108  
+       9 109  
+       10 110  
+       13 111
+       DEFAULT_VALUE_NUMERIC 300.56
+    /end COMPU_TAB 
+
+    /begin COMPU_METHOD CM.TAB_NOINTP.NO_DEFAULT_VALUE
+      "" 
+      TAB_INTP "%8.4" "U/  min  " 
+      COMPU_TAB_REF CM.TAB_NOINTP.NO_DEFAULT_VALUE.REF
+    /end COMPU_METHOD 
+    
+    /begin COMPU_TAB CM.TAB_NOINTP.NO_DEFAULT_VALUE.REF   
+       "" 
+       TAB_NOINTP 
+       12 
+       -3 98   
+       -1 99   
+       0 100
+       2 102   
+       4 104  
+       5 105  
+       6 106 
+       7 107  
+       8 108  
+       9 109  
+       10 110  
+       13 111
+    /end COMPU_TAB 
+
+    /begin COMPU_VTAB compu_vtab_boolean 
+        ""
+        TAB_VERB
+        2
+        0 "FALSE"
+        1 "TRUE"
+    /end COMPU_VTAB
+
+    /begin COMPU_VTAB compu_vtab_example1 
+        ""
+        TAB_VERB
+        5
+        0 "compu_vtab_example1_level0"
+        1 "compu_vtab_example1_level1"
+        2 "compu_vtab_example1_level2"
+        11 "compu_vtab_example1_level11"
+        13 "compu_vtab_example1_level13"
+        DEFAULT_VALUE "compu_vtab_example1_error"
+    /end COMPU_VTAB
+
+    /begin COMPU_VTAB compu_vtab_example2
+        ""
+        TAB_VERB
+        3
+        0 "compu_vtab_example2_Idle"
+        1 "compu_vtab_example2_Strtg"
+        2 "compu_vtab_example2_Actv"
+    /end COMPU_VTAB
+    /begin COMPU_VTAB_RANGE compu_vtab_range_example1
+        "ÅÄÖ åäö"
+        3
+        0 1 "compu_vtab_example2_Idle"
+        1.1 3.5 "compu_vtab_example2_Strtg"
+        3.6 5.5 "compu_vtab_example2_Actv"
+    /end COMPU_VTAB_RANGE
+
+    /* Groups */
+    /begin GROUP Group_Type_All "contains all groups with special types"
+      ROOT
+      /begin SUB_GROUP
+        Group_Type_Scalar
+        Group_Type_Array
+        Group_Type_Curve
+        Group_Type_Map
+        Group_Type_Cuboid
+        Group_Type_ASCII
+      /end SUB_GROUP
+    /end GROUP
+
+    /begin GROUP Group_Type_Scalar "Contains all scalar measurements and parameters"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.SCALAR.FLOAT32_IEEE.IDENTICAL
+        ASAM.C.SCALAR.FLOAT64_IEEE.IDENTICAL
+        ASAM.C.SCALAR.SBYTE.IDENTICAL
+        ASAM.C.SCALAR.SLONG.IDENTICAL
+        ASAM.C.SCALAR.SWORD.FORM_X_PLUS_4
+        ASAM.C.SCALAR.SWORD.IDENTICAL
+        ASAM.C.SCALAR.SWORD.LINEAR_MUL_2
+        ASAM.C.SCALAR.SWORD.RAT_FUNC_DIV_10
+        ASAM.C.SCALAR.SWORD.RAT_FUNC_DIV_81_9175
+        ASAM.C.SCALAR.SWORD.TAB_INTP_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_INTP_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_NOINTP_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_NOINTP_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_VERB_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_VERB_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.VTAB_RANGE_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.VTAB_RANGE_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.UBYTE.IDENTICAL
+        ASAM.C.SCALAR.ULONG.IDENTICAL
+        ASAM.C.SCALAR.UWORD.IDENTICAL
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0001
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0010
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0FF0
+      /end REF_CHARACTERISTIC
+      /begin REF_MEASUREMENT
+        ASAM.M.SCALAR.FLOAT32.IDENTICAL
+        ASAM.M.SCALAR.FLOAT64.IDENTICAL
+        ASAM.M.SCALAR.SBYTE.IDENTICAL
+        ASAM.M.SCALAR.SBYTE.LINEAR_MUL_2
+        ASAM.M.SCALAR.SLONG.IDENTICAL
+        ASAM.M.SCALAR.SWORD.IDENTICAL
+        ASAM.M.SCALAR.UBYTE.FORM_X_PLUS_4
+        ASAM.M.SCALAR.UBYTE.IDENTICAL
+        ASAM.M.SCALAR.UBYTE.TAB_INTP_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_INTP_NO_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_NOINTP_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_NOINTP_NO_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_VERB_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_VERB_NO_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.VTAB_RANGE_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.VTAB_RANGE_NO_DEFAULT_VALUE
+        ASAM.M.SCALAR.ULONG.IDENTICAL
+        ASAM.M.SCALAR.UWORD.IDENTICAL
+        ASAM.M.SCALAR.UWORD.IDENTICAL.BITMASK_0008
+        ASAM.M.SCALAR.UWORD.IDENTICAL.BITMASK_0FF0
+        ASAM.M.VIRTUAL.SCALAR.SWORD.PHYSICAL
+      /end REF_MEASUREMENT
+    /end GROUP
+
+    /begin GROUP Group_Type_Array "Contains all array measurements and parameters"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.ARRAY.SWORD.MATRIX_DIM_3_4.COLUMN_DIR
+        ASAM.C.ARRAY.SWORD.MATRIX_DIM_3_4.ROW_DIR
+        ASAM.C.ARRAY.SWORD.MATRIX_DIM_6.ROW_DIR
+      /end REF_CHARACTERISTIC
+      /begin REF_MEASUREMENT
+        ASAM.M.ARRAY_SIZE_16.UBYTE.IDENTICAL
+        ASAM.M.MATRIX_DIM_16_1_1.UBYTE.IDENTICAL
+        ASAM.M.MATRIX_DIM_8_2_1.UBYTE.IDENTICAL
+      /end REF_MEASUREMENT
+    /end GROUP
+
+    /begin GROUP Group_Type_Curve "Contains all curve parameters"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.CURVE.COM_AXIS
+        ASAM.C.CURVE.CURVE_AXIS
+        ASAM.C.CURVE.FIX_AXIS.PAR
+        ASAM.C.CURVE.FIX_AXIS.PAR_DIST
+        ASAM.C.CURVE.FIX_AXIS.PAR_LIST
+        ASAM.C.CURVE.RES_AXIS
+        ASAM.C.CURVE.STD_AXIS
+        ASAM.C.CURVE.STD_AXIS.MONOTONY_STRICT_DECREASE
+        ASAM.C.CURVE.STD_AXIS.MONOTONY_STRICT_INCREASE
+        ASAM.C.CURVE_AXIS
+        ASAM.C.AXIS_PTS.RESCALE
+        ASAM.C.AXIS_PTS.UBYTE_8
+      /end REF_CHARACTERISTIC
+    /end GROUP
+
+    /begin GROUP Group_Type_Map "Contains all map parameters"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.MAP.COM_AXIS.FIX_AXIS
+        ASAM.C.MAP.STD_AXIS.STD_AXIS
+      /end REF_CHARACTERISTIC
+    /end GROUP
+
+    /begin GROUP Group_Type_Cuboid "Contains all cuboid parameters"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.CUBOID.COM_AXIS.FIX_AXIS.STD_AXIS
+      /end REF_CHARACTERISTIC
+    /end GROUP
+
+    /begin GROUP Group_Type_ASCII "Contains all ASCII parameters"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.ASCII.UBYTE.NUMBER_42
+      /end REF_CHARACTERISTIC
+    /end GROUP
+
+
+    /begin GROUP Group_Function_All "contains all groups with special functions"
+      ROOT
+      /begin SUB_GROUP
+        Group_Function_Virtual 
+        Group_Function_Monotony
+        Group_Function_Computation
+        Group_Function_Bitmask
+      /end SUB_GROUP
+    /end GROUP
+
+    /begin GROUP Group_Function_Virtual "Contains all functions, measurements and parameters used for virtual"
+      /begin FUNCTION_LIST
+        FunctionVirtualMeasurements
+      /end FUNCTION_LIST
+      /begin REF_CHARACTERISTIC
+        ASAM.C.SCALAR.SBYTE.IDENTICAL 
+        ASAM.C.SCALAR.UBYTE.IDENTICAL 
+        ASAM.C.VIRTUAL.ASCII
+        ASAM.C.VIRTUAL.REF_1.SWORD
+        ASAM.C.VIRTUAL.REF_2.UWORD
+        ASAM.C.VIRTUAL.REF_3.SWORD
+        ASAM.C.VIRTUAL.SYSTEM_CONSTANT_1
+      /end REF_CHARACTERISTIC
+      /begin REF_MEASUREMENT
+        ASAM.M.SCALAR.SBYTE.LINEAR_MUL_2
+        ASAM.M.VIRTUAL.SCALAR.SWORD.PHYSICAL
+      /end REF_MEASUREMENT
+    /end GROUP
+
+    /begin GROUP Group_Function_Monotony "Contains all functions, measurements and parameters used for monotony"
+      /begin REF_CHARACTERISTIC
+      /end REF_CHARACTERISTIC
+      /begin REF_MEASUREMENT
+      /end REF_MEASUREMENT
+    /end GROUP
+
+    /begin GROUP Group_Function_Computation "Contains all measurements and parameters that have a computation method different to identical"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.SCALAR.SWORD.FORM_X_PLUS_4
+        ASAM.C.SCALAR.SWORD.LINEAR_MUL_2
+        ASAM.C.SCALAR.SWORD.RAT_FUNC_DIV_10
+        ASAM.C.SCALAR.SWORD.RAT_FUNC_DIV_81_9175
+        ASAM.C.SCALAR.SWORD.TAB_INTP_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_INTP_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_NOINTP_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_NOINTP_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_VERB_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.TAB_VERB_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.VTAB_RANGE_DEFAULT_VALUE
+        ASAM.C.SCALAR.SWORD.VTAB_RANGE_NO_DEFAULT_VALUE
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0001
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0010
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0FF0
+      /end REF_CHARACTERISTIC
+      /begin REF_MEASUREMENT
+        ASAM.M.SCALAR.SBYTE.LINEAR_MUL_2
+        ASAM.M.SCALAR.UBYTE.FORM_X_PLUS_4
+        ASAM.M.SCALAR.UBYTE.TAB_INTP_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_INTP_NO_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_NOINTP_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_NOINTP_NO_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_VERB_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.TAB_VERB_NO_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.VTAB_RANGE_DEFAULT_VALUE
+        ASAM.M.SCALAR.UBYTE.VTAB_RANGE_NO_DEFAULT_VALUE
+      /end REF_MEASUREMENT
+    /end GROUP
+
+    /begin GROUP Group_Function_Bitmask "Contains all measurements and parameters that have a bitmask"
+      /begin REF_CHARACTERISTIC
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0001
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0010
+        ASAM.C.SCALAR.UWORD.IDENTICAL.BITMASK_0FF0
+      /end REF_CHARACTERISTIC
+      /begin REF_MEASUREMENT
+        ASAM.M.SCALAR.UWORD.IDENTICAL.BITMASK_0008
+        ASAM.M.SCALAR.UWORD.IDENTICAL.BITMASK_0FF0
+      /end REF_MEASUREMENT
+    /end GROUP
+    /begin VARIANT_CODING
+        VAR_SEPERATOR "."
+        VAR_NAMING NUMERIC
+        /begin VAR_CHARACTERISTIC var_characteristic_test1
+            var_characteristic_test1_var1 var_characteristic_test1_var2
+            /begin VAR_ADDRESS
+                0x0000
+                0x0001
+                0x0002
+                0x0003
+                0x0004
+            /end VAR_ADDRESS
+        /end VAR_CHARACTERISTIC
+        /begin VAR_CHARACTERISTIC var_characteristic_test2
+            var_characteristic_test1_var1 var_characteristic_test2_var2 var_characteristic_test2_var3
+            /begin VAR_ADDRESS
+                0x0000
+                0x0001
+                0x0002
+                0x0003
+                0x0004
+                5
+                6
+                7
+                8
+            /end VAR_ADDRESS
+        /end VAR_CHARACTERISTIC
+        /begin VAR_FORBIDDEN_COMB
+            criterionName11 criterionValue11
+            criterionName12 criterionValue12
+        /end VAR_FORBIDDEN_COMB
+        /begin VAR_FORBIDDEN_COMB
+            criterionName21 criterionValue21
+            criterionName22 criterionValue22
+        /end VAR_FORBIDDEN_COMB
+        /begin VAR_CRITERION  var_criterion_test1 "var_criterion_test1 longIDent"
+            var_criterion_test1_var1 var_criterion_test1_var2 var_criterion_test1_var3
+            VAR_MEASUREMENT var_measurement_test1
+            VAR_SELECTION_CHARACTERISTIC var_selection_characteristic_test1
+        /end VAR_CRITERION
+        /begin VAR_CRITERION  var_criterion_test2 "var_criterion_test2 longIDent"
+            var_criterion_test2_var1
+            VAR_MEASUREMENT var_measurement_test2
+            VAR_SELECTION_CHARACTERISTIC var_selection_characteristic_test2
+        /end VAR_CRITERION
+    /end VARIANT_CODING
+ /end MODULE
