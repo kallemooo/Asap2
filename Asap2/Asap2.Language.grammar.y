@@ -788,11 +788,8 @@ compu_vtab                  : BEGIN COMPU_VTAB compu_vtab_data END COMPU_VTAB {
                             ;
 
 compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
-                                $$ = new COMPU_VTAB(@$, Name: $1, LongIdentifier: $2, NumberValuePairs: (uint)$4);
-                                if ($3 != $$.ConversionType)
-                                {
-                                    Scanner.yyerror("Parser warning: Unknown COMPU_VTAB ConversionType: " + $3 + " expecting: " + $$.ConversionType);
-                                }
+                                ConversionType conversionType = (ConversionType)EnumToStringOrAbort(typeof(ConversionType), $3);
+                                $$ = new COMPU_VTAB(@$, Name: $1, LongIdentifier: $2, conversionType: conversionType, NumberValuePairs: (uint)$4);
                             }
                             | compu_vtab_data NUMBER QUOTED_STRING {
                                 $$ = $1;
