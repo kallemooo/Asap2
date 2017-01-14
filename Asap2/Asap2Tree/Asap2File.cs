@@ -1108,55 +1108,6 @@ namespace Asap2
         public CALIBRATION_ACCESS_type value;
     }
 
-    [Base()]
-    public class COMPU_METHOD : Asap2Base
-    {
-        public COMPU_METHOD(Location location, string Name, string LongIdentifier, ConversionType conversionType, string Format, string Unit) : base(location)
-        {
-            this.Name = Name;
-            this.LongIdentifier = LongIdentifier;
-            this.conversionType = conversionType;
-            this.Format = Format;
-        }
-
-        [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
-        [Element(2, IsString = true, Comment   = " LongIdentifier ")]
-        public string LongIdentifier;
-        [Element(3, IsArgument = true, Comment = " ConversionType ")]
-        public ConversionType conversionType;
-        [Element(4, IsString = true, Comment   = " Display Format ")]
-        public string Format;
-        [Element(5, IsString = true, Comment   = " Physical Unit  ")]
-        public string Unit;
-        [Element(6)]
-        public COEFFS coeffs;
-        [Element(7)]
-        public COEFFS_LINEAR coeffs_linear;
-
-        /// <summary>
-        /// Reference to conversion table to use.
-        /// </summary>
-        [Element(8, IsArgument = true, Name = "COMPU_TAB_REF")]
-        public string compu_tab_ref;
-        [Element(9)]
-        public FORMULA formula;
-
-        /// <summary>
-        /// Reference to a physical unit.
-        /// </summary>
-        [Element(10, IsArgument = true, Name = "REF_UNIT")]
-        public string ref_unit;
-
-        /// <summary>
-        /// Reference to a verbal conversion table (<see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/>).
-        /// Used to split up the value range of the measurement to a numerical part and a verbal part.
-        /// The latter contains status information about the numerical part such as providing an error or describing the quality of the measurement.
-        /// </summary>
-        [Element(11, IsArgument = true, Name = "STATUS_STRING_REF")]
-        public string status_string_ref;
-    }
-
     [Base(IsSimple = true)]
     public class COEFFS : Asap2Base
     {
@@ -1226,6 +1177,10 @@ namespace Asap2
         /// </summary>
         [Element(2, IsString = true, Name = "FORMULA_INV")]
         public string formula_inv;
+
+        public void Validate(IErrorReporter errorReporter, MODULE module)
+        {
+        }
     }
 
     [Base()]
@@ -1278,10 +1233,11 @@ namespace Asap2
     [Base()]
     public class COMPU_VTAB : Asap2Base
     {
-        public COMPU_VTAB(Location location, string Name, string LongIdentifier, uint NumberValuePairs) : base(location)
+        public COMPU_VTAB(Location location, string Name, string LongIdentifier, ConversionType conversionType, uint NumberValuePairs) : base(location)
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
+            this.conversionType = conversionType;
             this.NumberValuePairs = NumberValuePairs;
             data = new List<COMPU_VTAB_DATA>();
         }
@@ -1291,7 +1247,7 @@ namespace Asap2
         [Element(2, IsString = true, Comment   = " LongIdentifier   ")]
         public string LongIdentifier;
         [Element(3, IsArgument = true, Comment = " ConversionType   ")]
-        public string ConversionType = "TAB_VERB";
+        public ConversionType conversionType;
         [Element(4, IsArgument = true, Comment = " NumberValuePairs ")]
         public uint NumberValuePairs;
         [Element(5, IsList = true, Comment     = " ValuePairs       ")]

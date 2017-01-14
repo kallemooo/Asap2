@@ -54,6 +54,7 @@
     <Compile Include="Asap2Tree\Asap2File.cs" />
     <Compile Include="Asap2Tree\AXIS_PTS.cs" />
     <Compile Include="Asap2Tree\CHARACTERISTIC.cs" />
+    <Compile Include="Asap2Tree\COMPU_METHOD.cs" />
     <Compile Include="Asap2Tree\FileComment.cs" />
     <Compile Include="Asap2Tree\MEASUREMENT.cs" />
     <Compile Include="Attributes.cs" />
