@@ -111,7 +111,7 @@ namespace Asap2
         /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_TAB"/>, <see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/> is found.</exception>
         public void AddElement(COMPU_TAB obj)
         {
-            AddAxisPtsCharacteristicOrMeasurement(obj.Name, obj);
+            AddCompuTabCompuVtabCompuVtabRanges(obj.Name, obj);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Asap2
         /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_TAB"/>, <see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/> is found.</exception>
         public void AddElement(COMPU_VTAB obj)
         {
-            AddAxisPtsCharacteristicOrMeasurement(obj.Name, obj);
+            AddCompuTabCompuVtabCompuVtabRanges(obj.Name, obj);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Asap2
         /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_TAB"/>, <see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/> is found.</exception>
         public void AddElement(COMPU_VTAB_RANGE Characteristic)
         {
-            AddAxisPtsCharacteristicOrMeasurement(Characteristic.Name, Characteristic);
+            AddCompuTabCompuVtabCompuVtabRanges(Characteristic.Name, Characteristic);
         }
 
         #endregion
