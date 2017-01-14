@@ -369,6 +369,20 @@ namespace Asap2
                         (item as CHARACTERISTIC).Validate(errorReporter, this);
                     }
                 }
+                {
+                    var axis_pts = elements.FindAll(x => x.GetType() == typeof(AXIS_PTS));
+                    foreach (var item in axis_pts)
+                    {
+                        (item as AXIS_PTS).Validate(errorReporter, this);
+                    }
+                }
+                {
+                    var compu_method = elements.FindAll(x => x.GetType() == typeof(COMPU_METHOD));
+                    foreach (var item in compu_method)
+                    {
+                        (item as COMPU_METHOD).Validate(errorReporter, this);
+                    }
+                }
             }
         }
     }
