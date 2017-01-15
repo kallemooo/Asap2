@@ -9,12 +9,14 @@ namespace Asap2
     [Base()]
     public class MODULE : Asap2Base , IValidator
     {
-        public MODULE(Location location) : base(location)
+        public MODULE(Location location, string Name, string LongIdentifier) : base(location)
         {
+            this.Name = Name;
+            this.LongIdentifier = LongIdentifier;
         }
 
         [Element(1, IsArgument = true)]
-        public string name;
+        public string Name;
 
         [Element(2, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier;

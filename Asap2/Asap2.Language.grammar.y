@@ -848,11 +848,11 @@ project_data    :   IDENTIFIER QUOTED_STRING {
                     $$ = $1;
                     try
                     {
-                        $$.modules.Add($2.name, $2);
+                        $$.modules.Add($2.Name, $2);
                     }
                     catch (ArgumentException)
                     {
-                        Scanner.yyerror(String.Format("Syntax error: Duplicate MODULE with name '{0}' found", $2.name));
+                        Scanner.yyerror(String.Format("Syntax error: Duplicate MODULE with name '{0}' found", $2.Name));
                         YYAbort();
                     }
                 }
@@ -883,9 +883,7 @@ module          :   BEGIN MODULE module_data END MODULE {
                 ;
 
 module_data :   IDENTIFIER QUOTED_STRING {
-                    $$ = new MODULE(@$);
-                    $$.name = $1;
-                    $$.LongIdentifier = $2;
+                    $$ = new MODULE(@$, $1, $2);
                 }
                 | module_data mod_common {
                     $$ = $1;
