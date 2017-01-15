@@ -129,106 +129,32 @@ namespace Asap2
 
         public bool Serialise(Asap2File tree, MemoryStream outStream)
         {
-            List<SerialisedData> resultTree = new List<SerialisedData>();
+            StreamWriter stream = new StreamWriter(outStream, new UTF8Encoding(true));
 
             tree.elements.Sort((x, y) => x.OrderID.CompareTo(y.OrderID));
             foreach (var item in tree.elements)
             {
                 if (item.GetType() == typeof(FileComment))
                 {
-                    SerialisedData data = new SerialisedData();
-                    data.name = item.ToString();
-                    data.isNode = true;
-                    data.isSimple = true;
-                    resultTree.Add(data);
+                    stream.Write(item.ToString());
+                    stream.Write(Environment.NewLine);
                 }
                 else
                 {
-                    SerialisedData data = SerialiseNode(item, 0);
-                    if (data != null)
+                    foreach (SerialisedData data in SerialiseNode(item, 0))
                     {
-                        resultTree.Add(data);
+                        WriteToStream(data, stream);
                     }
                 }
             }
-            StreamWriter stream = new StreamWriter(outStream);
-            WriteToStream(resultTree, stream);
             stream.Flush();
             return false;
         }
 
-        private void WriteToStream(List<SerialisedData> tree, StreamWriter stream, string indentType = "    ")
+        private void WriteToStream(SerialisedData node, StreamWriter stream, string indentType = "    ")
         {
-            tree.Sort();
-            foreach(SerialisedData node in tree)
-            {
-                if (node.ForceNewLine)
-                {
-                    stream.WriteAsync(Environment.NewLine);
-                }
-
-                if (node.comment != "")
-                {
-                    if (!node.ForceNewLine)
-                    {
-                        stream.WriteAsync(Environment.NewLine);
-                    }
-                    Indent(stream, node.indentLevel, indentType);
-                    stream.WriteAsync("/*");
-                    stream.WriteAsync(node.comment);
-                    stream.WriteAsync("*/");
-                    if (node.data != "" && node.name != "")
-                    {
-                        stream.WriteAsync(Environment.NewLine);
-                    }
-                    else
-                    {
-                        stream.WriteAsync(" ");
-                    }
-                }
-
-                if (node.name != "")
-                {
-                    if (!node.ForceNewLine)
-                    {
-                        stream.WriteAsync(Environment.NewLine);
-                    }
-                    Indent(stream, node.indentLevel, indentType);
-                    if (node.isSimple)
-                    {
-                        stream.WriteAsync(node.name);
-                    }
-                    else if (node.isNode)
-                    {
-                        stream.WriteAsync("/begin " + node.name);
-                    }
-                }
-
-                if (node.data != "")
-                {
-                    if (node.comment == "" && !node.ForceNewLine)
-                    {
-                        stream.WriteAsync(" ");
-                    }
-                    else if (node.comment == "" && node.ForceNewLine && node.name == "")
-                    {
-                        Indent(stream, node.indentLevel, indentType);
-                    }
-                    stream.WriteAsync(node.data);
-                }
-
-                if (node.subData != null)
-                {
-                    WriteToStream(node.subData, stream);
-                }
-
-                if (!node.isSimple && node.name != "" && node.isNode)
-                {
-                    stream.WriteAsync(Environment.NewLine);
-                    Indent(stream, node.indentLevel, indentType);
-                    stream.WriteAsync("/end " + node.name);
-                }
-            }
+            Indent(stream, node.indentLevel, indentType);
+            stream.WriteAsync(node.data);
         }
 
         private void Indent(StreamWriter stream, ulong level, string indentType, ulong extraLevel = 0)
@@ -239,44 +165,15 @@ namespace Asap2
             }
         }
 
-        private class IndentH
+        private IEnumerable<SerialisedData> SerialiseNode(Object tree, ulong indentLevel, ElementAttribute nodeElemAtt = null)
         {
-            public IndentH(string indentType = "    ", int level = 0)
-            {
-                this.indentType = indentType;
-                this.level = level;
-            }
-
-            public IndentH(IndentH iH)
-            {
-                this.indentType = iH.indentType;
-                this.level = iH.level + 1;
-            }
-
-            public string indentType { private set; get; }
-            public int level { private set; get; }
-            public void Indent(StreamWriter stream, int extraLevel = 0)
-            {
-                for (int i = 0; i < level + extraLevel; i++)
-                {
-                    stream.WriteAsync(indentType);
-                }
-            }
-        }
-
-        private SerialisedData SerialiseNode(Object tree, ulong indentLevel)
-        {
-            SerialisedData resultTree = null;
-            string elementName = null;
             BaseAttribute baseAtt = AttributeCache<BaseAttribute, MemberInfo>.Get(tree.GetType());
 
+            string elementName = null;
             if (baseAtt != null)
             {
                 var fI = SortedFieldsCache.Get(tree.GetType());
 
-                resultTree = new SerialisedData();
-                resultTree.isSimple = baseAtt.IsSimple;
-                resultTree.indentLevel = indentLevel;
                 for (int i = 0; i < fI.Length; i++)
                 {
                     ElementAttribute elemAtt = AttributeCache<ElementAttribute, MemberInfo>.Get(fI[i]);
@@ -289,43 +186,88 @@ namespace Asap2
                     }
                 }
 
-                if (elementName != null)
                 {
-                    resultTree.name = elementName;
-                }
-                else
-                {
-                    resultTree.name = tree.GetType().Name.ToUpper();
-                }
-
-                resultTree.isNode = true;
-                if (!baseAtt.IsSimple)
-                {
-                    if (elementName != null)
+                    if (elementName == null)
                     {
-                        resultTree.name = elementName;
+                        elementName = tree.GetType().Name.ToUpper();
+                    }
+
+                    if (baseAtt.IsSimple)
+                    {
+                        yield return new SerialisedData(indentLevel, elementName);
                     }
                     else
                     {
-                        resultTree.name = tree.GetType().Name.ToUpper();
+                        yield return new SerialisedData(indentLevel, "/begin " + elementName);
                     }
                 }
+
 
                 if (fI.Length > 0)
                 {
-                    List<SerialisedData> resultData = SerialiseElement(tree, fI, indentLevel + 1);
-                    if (resultData.Count > 0)
+                    foreach (SerialisedData resultData in SerialiseElement(tree, fI, indentLevel + 1))
                     {
-                        resultTree.subData = resultData;
+                        yield return resultData;
+                    }
+                }
+
+                if (!baseAtt.IsSimple)
+                {
+                    yield return new SerialisedData(indentLevel, "/end " + elementName);
+                }
+                yield return new SerialisedData(indentLevel, Environment.NewLine);
+            }
+            else if (nodeElemAtt != null)
+            {
+                // Pure data node
+                string data = "";
+                if (nodeElemAtt.ForceNewLine)
+                {
+                    data = Environment.NewLine + data;
+                }
+
+                if (nodeElemAtt.IsString)
+                {
+                    String value = tree.ToString();
+                    value = Regex.Replace(value, "\r", @"\r");
+                    value = Regex.Replace(value, "\n", @"\n");
+                    value = Regex.Replace(value, "\t", @"\t");
+                    value = "\"" + value + "\"";
+                    data += value;
+                    yield return new SerialisedData(indentLevel, data);
+                }
+                else
+                {
+                    if (tree.GetType().IsEnum)
+                    {
+                        String value = Enum.GetName(tree.GetType(), tree);
+                        data += value;
+                        yield return new SerialisedData(indentLevel, data);
+                    }
+                    else if (nodeElemAtt.CodeAsHex)
+                    {
+                        UInt64 tmp = (UInt64)tree;
+                        String value = "0x" + tmp.ToString("X");
+                        data += value;
+                        yield return new SerialisedData(indentLevel, data);
+                    }
+                    else if (tree.GetType() == typeof(decimal))
+                    {
+                        decimal value = (decimal)tree;
+                        data += value.ToString(CultureInfo.InvariantCulture);
+                        yield return new SerialisedData(indentLevel, data);
+                    }
+                    else
+                    {
+                        data += tree.ToString();
+                        yield return new SerialisedData(indentLevel, data);
                     }
                 }
             }
-            return resultTree;
         }
 
-        private List<SerialisedData> SerialiseElement(Object tree, FieldInfo[] fI, ulong indentLevel)
+        private IEnumerable<SerialisedData> SerialiseElement(Object tree, FieldInfo[] fI, ulong indentLevel)
         {
-            List<SerialisedData> resultData = new List<SerialisedData>();
             for (int i = 0; i < fI.Length; i++)
             {
                 ElementAttribute att = AttributeCache<ElementAttribute, MemberInfo>.Get(fI[i]);
@@ -336,31 +278,24 @@ namespace Asap2
                     {
                         if (att.IsComment)
                         {
-                            if (!att.IsPreComment && fI[i].GetValue(tree) != null)
+                            string data = Environment.NewLine + "/*" + fI[i].GetValue(tree).ToString() + "*/" + Environment.NewLine;
+                            if (att.ForceNewLine)
                             {
-                                SerialisedData resultElement = new SerialisedData();
-                                resultElement.ForceNewLine = att.ForceNewLine;
-                                resultElement.sortOrder = att.SortOrder;
-                                resultElement.indentLevel = indentLevel;
-                                resultElement.comment = fI[i].GetValue(tree).ToString();
-                                resultData.Add(resultElement);
+                                data = Environment.NewLine + data;
                             }
+                            yield return new SerialisedData(indentLevel, data);
                         }
                         else if ((att.IsArgument || att.IsString) && !att.IsList)
                         {
-                            SerialisedData resultElement = new SerialisedData();
-                            resultElement.ForceNewLine = att.ForceNewLine;
-                            resultElement.sortOrder = att.SortOrder;
-                            resultElement.indentLevel = indentLevel;
-                            if (att.Comment != null)
+                            string data = "";
+                            if (att.ForceNewLine)
                             {
-                                resultElement.comment = att.Comment;
+                                data += Environment.NewLine;
                             }
 
                             if (att.Name != null && att.Name != "")
                             {
-                                resultElement.name = att.Name;
-                                resultElement.isSimple = true;
+                                data += att.Name + " ";
                             }
 
                             if (att.IsString)
@@ -370,32 +305,35 @@ namespace Asap2
                                 value = Regex.Replace(value, "\n", @"\n");
                                 value = Regex.Replace(value, "\t", @"\t");
                                 value = "\"" + value + "\"";
-                                resultElement.data = value;
+                                data += value;
+                                yield return new SerialisedData(indentLevel, data);
                             }
                             else
                             {
                                 if (fI[i].FieldType.IsEnum)
                                 {
                                     String value = Enum.GetName(fI[i].FieldType, fI[i].GetValue(tree));
-                                    resultElement.data = value;
+                                    data = value;
+                                    yield return new SerialisedData(indentLevel, data);
                                 }
                                 else if (att.CodeAsHex)
                                 {
-                                    UInt64 data = (UInt64)fI[i].GetValue(tree);
-                                    String value = "0x" + data.ToString("X");
-                                    resultElement.data = value;
+                                    UInt64 tmp = (UInt64)fI[i].GetValue(tree);
+                                    String value = "0x" + tmp.ToString("X");
+                                    data += value;
+                                    yield return new SerialisedData(indentLevel, data);
                                 }
                                 else if (fI[i].FieldType == typeof(decimal))
                                 {
-                                    decimal data = (decimal)fI[i].GetValue(tree);
-                                    resultElement.data = data.ToString(CultureInfo.InvariantCulture);
+                                    decimal tmp = (decimal)fI[i].GetValue(tree);
+                                    data += tmp.ToString(CultureInfo.InvariantCulture);
+                                    yield return new SerialisedData(indentLevel, data);
                                 }
                                 else
                                 {
-                                    resultElement.data = fI[i].GetValue(tree).ToString();
+                                    yield return new SerialisedData(indentLevel, data + fI[i].GetValue(tree).ToString());
                                 }
                             }
-                            resultData.Add(resultElement);
                         }
                         else if (att.IsDictionary)
                         {
@@ -404,32 +342,22 @@ namespace Asap2
 
                             if (dict.Count > 0)
                             {
-                                SerialisedData resultElement = new SerialisedData();
-                                resultElement.ForceNewLine = att.ForceNewLine;
-                                resultElement.sortOrder = att.SortOrder;
-                                resultElement.indentLevel = indentLevel;
                                 if (att.Comment != null)
                                 {
-                                    resultElement.comment = att.Comment;
+                                    yield return new SerialisedData(indentLevel, Environment.NewLine + "/*" + att.Comment + "*/" + Environment.NewLine);
+                                }
+                                else if (att.ForceNewLine)
+                                {
+                                    yield return new SerialisedData(indentLevel, Environment.NewLine);
                                 }
 
                                 foreach (object elem in dict.Values)
                                 {
-                                    SerialisedData dicElement = SerialiseNode(elem, indentLevel);
-                                    if (dicElement != null)
+                                    foreach (SerialisedData dicElement in SerialiseNode(elem, indentLevel))
                                     {
-                                        if (dicElement.subData != null)
-                                        {
-                                            dicElement.sortOrder = dicElement.subData.Last().sortOrder + 1;
-                                        }
-                                        else
-                                        {
-                                            dicElement.sortOrder = 0;
-                                        }
-                                        resultElement.addSubData(dicElement);
+                                        yield return dicElement;
                                     }
                                 }
-                                resultData.Add(resultElement);
                             }
                         }
                         else if (att.IsList)
@@ -438,91 +366,40 @@ namespace Asap2
                             if (obj is IList)
                             {
                                 var list = ((IList) obj);
-                                SerialisedData resultElement = new SerialisedData();
-                                resultElement.ForceNewLine = att.ForceNewLine;
-                                resultElement.sortOrder = att.SortOrder;
-                                resultElement.indentLevel = indentLevel;
-                                if (att.Comment != null)
-                                {
-                                    resultElement.comment = att.Comment;
-                                }
-                                
                                 if (list.Count > 0)
                                 {
-                                    foreach(var item in list)
+                                    if (att.Comment != null)
                                     {
-                                        SerialisedData dicElement = SerialiseNode(item, indentLevel);
-                                        if (dicElement == null)
-                                        {
-                                            // Pure data element in the list. Add them to a new SerialisedData.
-                                            dicElement = new SerialisedData();
-                                            dicElement.indentLevel = indentLevel;
-                                            dicElement.ForceNewLine = true;
+                                        yield return new SerialisedData(indentLevel, Environment.NewLine + "/*" + att.Comment + "*/" + Environment.NewLine);
+                                    }
+                                    else if (att.ForceNewLine)
+                                    {
+                                        yield return new SerialisedData(indentLevel, Environment.NewLine);
+                                    }
 
-                                            if (att.IsString)
-                                            {
-                                                String value = item.ToString();
-                                                value = Regex.Replace(value, "\r", @"\r");
-                                                value = Regex.Replace(value, "\n", @"\n");
-                                                value = Regex.Replace(value, "\t", @"\t");
-                                                value = "\"" + value + "\"";
-                                                dicElement.data = value;
-                                            }
-                                            else
-                                            {
-                                                if (item.GetType().IsEnum)
-                                                {
-                                                    String value = Enum.GetName(item.GetType(), item);
-                                                    dicElement.data = value;
-                                                }
-                                                else if (att.CodeAsHex)
-                                                {
-                                                    UInt64 data = (UInt64)item;
-                                                    String value = "0x" + data.ToString("X");
-                                                    dicElement.data = value;
-                                                }
-                                                else if (item.GetType() == typeof(decimal))
-                                                {
-                                                    decimal data = (decimal)item;
-                                                    dicElement.data = data.ToString(CultureInfo.InvariantCulture);
-                                                }
-                                                else
-                                                {
-                                                    dicElement.data = item.ToString();
-                                                }
-                                            }
-                                        }
-
-                                        if (dicElement.subData != null)
+                                    foreach (var item in list)
+                                    {
+                                        foreach (SerialisedData listElement in SerialiseNode(item, indentLevel))
                                         {
-                                            dicElement.sortOrder = dicElement.subData.Last().sortOrder + 1;
+                                            yield return listElement;
                                         }
-                                        else
-                                        {
-                                            dicElement.sortOrder = 0;
-                                        }
-                                        resultElement.addSubData(dicElement);
                                     }
                                 }
-                                resultData.Add(resultElement);
                             }
                         }
                         else
                         {
                             if (fI[i].GetValue(tree) != null)
                             {
-                                SerialisedData resultElement = SerialiseNode(fI[i].GetValue(tree), indentLevel);
-                                if (resultElement != null)
+                                foreach (SerialisedData dataNode in SerialiseNode(fI[i].GetValue(tree), indentLevel))
                                 {
-                                    resultElement.sortOrder = att.SortOrder;
-                                    resultData.Add(resultElement);
+                                    yield return dataNode;
                                 }
                             }
                         }
                     }
                 }
             }
-            return resultData;
         }
 
         private static Dictionary<TKey, TValue> ToDict<TKey, TValue>(object obj)
@@ -560,55 +437,15 @@ namespace Asap2
 
         }
 
-        private class SerialisedData : IComparable
+        private class SerialisedData
         {
             public ulong indentLevel;
-            public ulong sortOrder;
-            public bool isSimple;
-            public bool ForceNewLine;
-            public bool isNode;
-            public string comment;
-            public string name;
             public string data;
-            public List<SerialisedData> subData;
 
-            public SerialisedData()
+            public SerialisedData(ulong indentLevel, string data)
             {
-                this.indentLevel  = 0;
-                this.sortOrder    = 0;
-                this.comment      = "";
-                this.name         = "";
-                this.data         = "";
-                this.isNode       = false;
-                this.isSimple     = false;
-                this.ForceNewLine = false;
-            }
-
-            public void addSubData(SerialisedData data)
-            {
-                if (subData == null)
-                {
-                    subData = new List<SerialisedData>();
-                }
-                subData.Add(data);
-            }
-
-            public int CompareTo(object obj)
-            {
-                if (obj == null)
-                {
-                    return 1;
-                }
-
-                SerialisedData data = obj as SerialisedData;
-                if (data != null)
-                {
-                    return this.sortOrder.CompareTo(data.sortOrder);
-                }
-                else
-                {
-                    throw new ArgumentException("Object is not of type SerialisedData");
-                }
+                this.indentLevel  = indentLevel;
+                this.data         = data;
             }
         }
     }
