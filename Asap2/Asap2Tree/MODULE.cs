@@ -18,7 +18,7 @@ namespace Asap2
         [Element(1, IsArgument = true)]
         public string Name;
 
-        [Element(2, IsString = true, Comment = " LongIdentifier ")]
+        [Element(2, IsString = true, ForceNewLine = true)]
         public string LongIdentifier;
 
         [Element(3, IsList = true)]
