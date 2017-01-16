@@ -45,7 +45,8 @@ namespace Asap2Test
 
                     tree.elements.Insert(0, comment);
                     var ms = new MemoryStream();
-                    parser.Serialise(tree, ms);
+                    StreamWriter stream = new StreamWriter(ms, new UTF8Encoding(true));
+                    parser.Serialise(tree, stream);
                     ms.Position = 0;
                     var sr = new StreamReader(ms);
                     var myStr = sr.ReadToEnd();

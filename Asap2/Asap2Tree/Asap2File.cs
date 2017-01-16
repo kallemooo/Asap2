@@ -187,7 +187,7 @@ namespace Asap2
     {
         public HEADER(Location location) : base(location) { }
 
-        [Element(0, IsString = true)]
+        [Element(0, IsString = true, ForceNewLine = true)]
         public string longIdentifier;
 
         [Element(1, IsString = true, Name = "VERSION")]
@@ -777,7 +777,7 @@ namespace Asap2
             this.Comment = Comment;
         }
 
-        [Element(0, IsString = true, Comment = " Comment ")]
+        [Element(0, IsString = true)]
         public string Comment;
 
         [Element(1, IsDictionary = true)]
@@ -1220,10 +1220,10 @@ namespace Asap2
             this.OutVal = OutVal;
         }
 
-        [Element(0, IsName = true, ForceNewLine = true)]
+        [Element(0, IsName = true)]
         public string name = "";
 
-        [Element(1, IsArgument = true, ForceNewLine = true)]
+        [Element(1, IsArgument = true)]
         public decimal InVal;
 
         [Element(2, IsString = true)]
@@ -1265,10 +1265,10 @@ namespace Asap2
             this.OutVal = OutVal;
         }
 
-        [Element(0, IsName = true, ForceNewLine = true)]
+        [Element(0, IsName = true)]
         public string name = "";
 
-        [Element(1, IsArgument = true, ForceNewLine = true)]
+        [Element(1, IsArgument = true)]
         public decimal InVal;
 
         [Element(2, IsString = true)]
@@ -1308,10 +1308,10 @@ namespace Asap2
             this.value = value;
         }
 
-        [Element(0, IsName = true, ForceNewLine = true)]
+        [Element(0, IsName = true)]
         public string name = "";
 
-        [Element(1, IsArgument = true, ForceNewLine = true)]
+        [Element(1, IsArgument = true)]
         public decimal InValMin;
 
         [Element(2, IsArgument = true)]
