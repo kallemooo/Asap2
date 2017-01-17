@@ -17,7 +17,7 @@ namespace Asap2
             this.Name = Name;
         }
         [Element(1, IsArgument = true, Comment = " Name          ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsArgument = true, Comment = " CriterionName ", IsList = true)]
         public List<string> CriterionNames = new List<string>();
 

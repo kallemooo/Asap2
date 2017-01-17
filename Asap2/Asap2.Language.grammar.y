@@ -760,6 +760,10 @@ characteristic_data
 
 compu_tab                   : BEGIN COMPU_TAB compu_tab_data END COMPU_TAB {
                                 $$ = $3;
+                                if ($3.parsedNumberValuePairs != $3.NumberValuePairs)
+                                {
+                                    yywarning(String.Format("Warning: number of Value pairs '{0}' in COMPU_TAB '{1}' is not equal to parameter NumberValuePairs: '{2}'", $3.NumberValuePairs, $3.Name, $3.parsedNumberValuePairs));
+                                }
                             }
                             ;
 
@@ -784,6 +788,10 @@ compu_tab_data              : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
 
 compu_vtab                  : BEGIN COMPU_VTAB compu_vtab_data END COMPU_VTAB {
                                 $$ = $3;
+                                if ($3.parsedNumberValuePairs != $3.NumberValuePairs)
+                                {
+                                    yywarning(String.Format("Warning: number of Value pairs '{0}' in COMPU_VTAB '{1}' is not equal to parameter NumberValuePairs: '{2}'", $3.NumberValuePairs, $3.Name, $3.parsedNumberValuePairs));
+                                }
                             }
                             ;
 
@@ -803,6 +811,10 @@ compu_vtab_data             : IDENTIFIER QUOTED_STRING IDENTIFIER NUMBER {
 
 compu_vtab_range            : BEGIN COMPU_VTAB_RANGE compu_vtab_range_data END COMPU_VTAB_RANGE {
                                 $$ = $3;
+                                if ($3.parsedNumberValueTriples != $3.NumberValueTriples)
+                                {
+                                    yywarning(String.Format("Warning: number of Value triples '{0}' in COMPU_VTAB_RANGE '{1}' is not equal to parameter NumberValueTriples: '{2}'", $3.NumberValueTriples, $3.Name, $3.parsedNumberValueTriples));
+                                }
                             }
                             ;
 

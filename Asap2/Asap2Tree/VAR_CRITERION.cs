@@ -16,9 +16,9 @@ namespace Asap2
             this.LongIdentifier = LongIdentifier;
         }
         [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true,   Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " Ident          ", IsList = true)]
         public List<string> Idents = new List<string>();
 
@@ -41,7 +41,7 @@ namespace Asap2
             this.Name = Name;
         }
         [Element(0, IsArgument = true)]
-        public string Name;
+        public string Name { get; private set; }
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ namespace Asap2
             this.Name = Name;
         }
         [Element(0, IsArgument = true)]
-        public string Name;
+        public string Name { get; private set; }
     }
 
 }

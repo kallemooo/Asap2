@@ -28,25 +28,25 @@ namespace Asap2
             this.UpperLimit = UpperLimit;
         }
         [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true, Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " Address        ", CodeAsHex = true)]
-        public UInt64 Address;
+        public UInt64 Address { get; private set; }
         [Element(4, IsArgument = true, Comment = " InputQuantity  ")]
-        public string InputQuantity;
+        public string InputQuantity { get; private set; }
         [Element(5, IsArgument = true, Comment = " Deposit        ")]
-        public string Deposit;
+        public string Deposit { get; private set; }
         [Element(6, IsArgument = true, Comment = " MaxDiff        ")]
-        public decimal MaxDiff;
+        public decimal MaxDiff { get; private set; }
         [Element(7, IsArgument = true, Comment = " Conversion     ")]
-        public string Conversion;
+        public string Conversion { get; private set; }
         [Element(8, IsArgument = true, Comment = " MaxAxisPoints  ")]
-        public UInt64 MaxAxisPoints;
+        public UInt64 MaxAxisPoints { get; private set; }
         [Element(9, IsArgument = true, Comment = " LowerLimit     ")]
-        public decimal LowerLimit;
+        public decimal LowerLimit { get; private set; }
         [Element(10, IsArgument = true, Comment = " UpperLimit     ")]
-        public decimal UpperLimit;
+        public decimal UpperLimit { get; private set; }
 
         [Element(11, IsList = true)]
         public List<ANNOTATION> annotation = new List<ANNOTATION>();

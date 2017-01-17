@@ -27,21 +27,21 @@ namespace Asap2
             this.UpperLimit = UpperLimit;
         }
         [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true, Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " DataType       ")]
-        public DataType Datatype;
+        public DataType Datatype { get; private set; }
         [Element(4, IsArgument = true, Comment = " Conversion     ")]
-        public string Conversion;
+        public string Conversion { get; private set; }
         [Element(5, IsArgument = true, Comment = " Resolution     ")]
-        public uint Resolution;
+        public uint Resolution { get; private set; }
         [Element(6, IsArgument = true, Comment = " Accuracy       ")]
-        public decimal Accuracy;
+        public decimal Accuracy { get; private set; }
         [Element(7, IsArgument = true, Comment = " LowerLimit     ")]
-        public decimal LowerLimit;
+        public decimal LowerLimit { get; private set; }
         [Element(8, IsArgument = true, Comment = " UpperLimit     ")]
-        public decimal UpperLimit;
+        public decimal UpperLimit { get; private set; }
         [Element(9, IsList = true)]
         public List<ANNOTATION> annotation = new List<ANNOTATION>();
         [Element(10)]

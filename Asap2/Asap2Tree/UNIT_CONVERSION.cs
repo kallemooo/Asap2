@@ -12,8 +12,8 @@
             this.Offset = Offset;
         }
         [Element(0, IsArgument = true, Comment = " Gradient ")]
-        public decimal Gradient;
+        public decimal Gradient { get; private set; }
         [Element(1, IsArgument = true, Comment = " Offset   ")]
-        public decimal Offset;
+        public decimal Offset { get; private set; }
     }
 }

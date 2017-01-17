@@ -35,7 +35,7 @@ namespace Asap2
             {
                 elements.Remove(version);
             }
-            elements.Add(asap2_version);
+            elementsInternal.Add(asap2_version);
             this.asap2_version = asap2_version;
         }
 
@@ -47,11 +47,12 @@ namespace Asap2
             {
                 elements.Remove(version);
             }
-            elements.Add(a2ml_version);
+            elementsInternal.Add(a2ml_version);
             this.a2ml_version = a2ml_version;
         }
 
-        public List<Asap2Base> elements = new List<Asap2Base>();
+        private List<Asap2Base> elementsInternal = new List<Asap2Base>();
+        public List<Asap2Base> elements { get { return elementsInternal; } }
 
         public void Validate(IErrorReporter errorReporter)
         {
@@ -151,10 +152,10 @@ namespace Asap2
             modules = new Dictionary<string, MODULE>();
         }
 
-        [Element(0, IsArgument = true, Comment = " Name           ")]
+        [Element(0, IsArgument = true)]
         public string name;
 
-        [Element(1, IsString = true, Comment = " LongIdentifier ")]
+        [Element(1, IsString = true)]
         public string LongIdentifier;
 
         [Element(2)]
@@ -218,7 +219,7 @@ namespace Asap2
 
         public ALIGNMENT_type type;
         [Element(0, IsName = true)]
-        public string name;
+        public string name { get; private set; }
         [Element(1, IsArgument = true)]
         public uint value;
     }
@@ -341,7 +342,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position  ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " dataType  ")]
@@ -369,7 +370,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position            ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " dataType            ")]
@@ -397,7 +398,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position            ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " dataType            ")]
@@ -417,7 +418,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " NumberOfAxisPoints ")]
         public UInt64 NumberOfAxisPoints;
     }
@@ -454,7 +455,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " dataType ")]
@@ -475,7 +476,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " dataType ")]
@@ -497,7 +498,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " dataType ")]
@@ -536,7 +537,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " DataType ")]
@@ -558,7 +559,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " DataType ")]
@@ -579,7 +580,7 @@ namespace Asap2
         }
 
         [Element(0, IsName = true)]
-        public string Name;
+        public string Name { get; private set; }
         [Element(1, IsArgument = true, Comment = " Position ")]
         public UInt64 Position;
         [Element(2, IsArgument = true, Comment = " DataType ")]
@@ -778,7 +779,7 @@ namespace Asap2
         }
 
         [Element(0, IsString = true)]
-        public string Comment;
+        public string Comment { get; private set; }
 
         [Element(1, IsDictionary = true)]
         public Dictionary<string, ALIGNMENT> alignments;
@@ -809,7 +810,7 @@ namespace Asap2
         }
 
         [Element(0, IsArgument = true)]
-        public string Name;
+        public string Name { get; private set; }
 
         [Element(1, IsDictionary = true)]
         public Dictionary<string, ALIGNMENT> alignments;
@@ -870,7 +871,7 @@ namespace Asap2
             string[] words = data.Split(delimiterChars);
             this.name = words[0];
         }
-        public string name;
+        public string name { get; private set; }
         [Element(0, IsArgument = true)]
         public string data;
     }
@@ -1191,18 +1192,22 @@ namespace Asap2
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
             this.conversionType = conversionType;
-            this.NumberValuePairs = NumberValuePairs;
+            this.parsedNumberValuePairs = NumberValuePairs;
             data = new List<COMPU_TAB_DATA>();
         }
+        /// <summary>
+        /// Set from parsed data. Only used to validate the parsed list of <see cref="COMPU_TAB_DATA"/>.
+        /// </summary>
+        public uint parsedNumberValuePairs { get;  private set; }
 
         [Element(1, IsArgument = true, Comment = " Name             ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true, Comment   = " LongIdentifier   ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " ConversionType   ")]
-        public ConversionType conversionType;
+        public ConversionType conversionType { get; private set; }
         [Element(4, IsArgument = true, Comment = " NumberValuePairs ")]
-        public uint NumberValuePairs;
+        public uint NumberValuePairs { get { return (uint)data.Count; } }
         [Element(5, IsList = true, Comment     = " ValuePairs       ")]
         public List<COMPU_TAB_DATA> data;
         [Element(6, IsString = true, Name = "DEFAULT_VALUE")]
@@ -1238,18 +1243,22 @@ namespace Asap2
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
             this.conversionType = conversionType;
-            this.NumberValuePairs = NumberValuePairs;
+            this.parsedNumberValuePairs = NumberValuePairs;
             data = new List<COMPU_VTAB_DATA>();
         }
+        /// <summary>
+        /// Set from parsed data. Only used to validate the parsed list of <see cref="COMPU_VTAB_DATA"/>.
+        /// </summary>
+        public uint parsedNumberValuePairs { get; private set; }
 
         [Element(1, IsArgument = true, Comment = " Name             ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true, Comment   = " LongIdentifier   ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " ConversionType   ")]
-        public ConversionType conversionType;
+        public ConversionType conversionType { get; private set; }
         [Element(4, IsArgument = true, Comment = " NumberValuePairs ")]
-        public uint NumberValuePairs;
+        public uint NumberValuePairs { get { return (uint)data.Count; } }
         [Element(5, IsList = true, Comment     = " ValuePairs       ")]
         public List<COMPU_VTAB_DATA> data;
         [Element(6, IsString = true, Name = "DEFAULT_VALUE")]
@@ -1282,16 +1291,21 @@ namespace Asap2
         {
             this.Name = Name;
             this.LongIdentifier = LongIdentifier;
-            this.NumberValueTriples = NumberValueTriples;
+            this.parsedNumberValueTriples = NumberValueTriples;
             data = new List<COMPU_VTAB_RANGE_DATA>();
         }
 
+        /// <summary>
+        /// Set from parsed data. Only used to validate the parsed list of <see cref="COMPU_VTAB_RANGE_DATA"/>.
+        /// </summary>
+        public uint parsedNumberValueTriples { get; private set; }
+
         [Element(1, IsArgument = true, Comment = " Name               ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true, Comment   = " LongIdentifier     ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " NumberValueTriples ")]
-        public uint NumberValueTriples;
+        public uint NumberValueTriples { get { return (uint)data.Count; } }
         [Element(4, IsList = true)]
         public List<COMPU_VTAB_RANGE_DATA> data;
         [Element(5, IsString = true, Name = "DEFAULT_VALUE")]
@@ -1388,7 +1402,7 @@ namespace Asap2
         }
 
         [Element(0, IsArgument = true)]
-        public string Name;
+        public string Name { get; private set; }
 
         [Element(1, IsString = true)]
         public string longIdentifier;
@@ -1524,10 +1538,10 @@ namespace Asap2
         }
 
         [Element(1, IsString = true)]
-        public string name;
+        public string name { get; private set; }
 
         [Element(1, IsString = true)]
-        public string value;
+        public string value { get; private set; }
     }
 
     [Base()]
@@ -1623,9 +1637,9 @@ namespace Asap2
             this.GroupLongIdentifier = GroupLongIdentifier;
         }
         [Element(1, IsArgument = true, Comment = " GroupName           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true, Comment   = " GroupLongIdentifier ")]
-        public string GroupLongIdentifier;
+        public string GroupLongIdentifier { get; private set; }
         [Element(3, IsList = true)]
         public List<ANNOTATION> annotation = new List<ANNOTATION>();
         [Element(4)]

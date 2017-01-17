@@ -15,9 +15,9 @@ namespace Asap2
             this.LongIdentifier = LongIdentifier;
         }
         [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true,   Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
 
         [Element(3, IsList = true)]
         public List<ANNOTATION> annotation = new List<ANNOTATION>();

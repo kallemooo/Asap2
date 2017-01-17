@@ -25,13 +25,13 @@ namespace Asap2
             this.type = type;
         }
         [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true,   Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsString = true,   Comment = " Display        ")]
-        public string Display;
+        public string Display { get; private set; }
         [Element(4, IsArgument = true, Comment = " Type           ")]
-        public Type type;
+        public Type type { get; private set; }
 
         /// <summary>
         /// Reference to a physical unit.

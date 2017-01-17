@@ -9,6 +9,7 @@ namespace Asap2
     [Base()]
     public class MODULE : Asap2Base , IValidator
     {
+        private List<Asap2Base> elementsInternal = new List<Asap2Base>();
         public MODULE(Location location, string Name, string LongIdentifier) : base(location)
         {
             this.Name = Name;
@@ -16,19 +17,20 @@ namespace Asap2
         }
 
         [Element(1, IsArgument = true)]
-        public string Name;
+        public string Name { get; private set; }
 
         [Element(2, IsString = true, ForceNewLine = true)]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
 
         [Element(3, IsList = true)]
-        public List<Asap2Base> elements = new List<Asap2Base>();
+        public List<Asap2Base> elements { get { return elementsInternal; } }
 
 #region AXIS_PTS_MEASUREMENT_CHARACTERISTIC
+        private Dictionary<string, Asap2Base> axisPtsCharacteristicMeasurement = new Dictionary<string, Asap2Base>();
         /// <summary>
         /// References to the <see cref="AXIS_PTS"/>s, <see cref="MEASUREMENT"/>s or <see cref="CHARACTERISTIC"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, Asap2Base> AxisPtsCharacteristicMeasurement = new Dictionary<string, Asap2Base>();
+        public Dictionary<string, Asap2Base> AxisPtsCharacteristicMeasurement { get { return axisPtsCharacteristicMeasurement; } }
 
         /// <summary>
         /// Add <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> to the lists.
@@ -40,8 +42,8 @@ namespace Asap2
         {
             try
             {
-                AxisPtsCharacteristicMeasurement.Add(Name, obj);
-                elements.Add(obj);
+                axisPtsCharacteristicMeasurement.Add(Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -82,10 +84,11 @@ namespace Asap2
         #endregion
 
 #region COMPU_TAB_COMPU_VTAB_COMPU_VTAB_RANGE
+        private Dictionary<string, Asap2Base> compuTabCompuVtabCompuVtabRanges = new Dictionary<string, Asap2Base>();
         /// <summary>
         /// References to the <see cref="COMPU_TAB"/>s, <see cref="COMPU_VTAB"/>s or <see cref="COMPU_VTAB_RANGE"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, Asap2Base> CompuTabCompuVtabCompuVtabRanges = new Dictionary<string, Asap2Base>();
+        public Dictionary<string, Asap2Base> CompuTabCompuVtabCompuVtabRanges { get { return compuTabCompuVtabCompuVtabRanges; } }
 
         /// <summary>
         /// References to the <see cref="COMPU_TAB"/>s, <see cref="COMPU_VTAB"/>s or <see cref="COMPU_VTAB_RANGE"/>s based on the Name element.
@@ -97,8 +100,8 @@ namespace Asap2
         {
             try
             {
-                CompuTabCompuVtabCompuVtabRanges.Add(Name, obj);
-                elements.Add(obj);
+                compuTabCompuVtabCompuVtabRanges.Add(Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -139,10 +142,11 @@ namespace Asap2
         #endregion
 
 #region COMPU_METHOD
+        public Dictionary<string, COMPU_METHOD> compuMethods = new Dictionary<string, COMPU_METHOD>();
         /// <summary>
         /// References to the <see cref="COMPU_METHOD"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, COMPU_METHOD> CompuMethods = new Dictionary<string, COMPU_METHOD>();
+        public Dictionary<string, COMPU_METHOD> CompuMethods { get { return compuMethods; } }
 
         /// <summary>
         /// Add <see cref="COMPU_METHOD"/>s to the lists.
@@ -153,8 +157,8 @@ namespace Asap2
         {
             try
             {
-                CompuMethods.Add(obj.Name, obj);
-                elements.Add(obj);
+                compuMethods.Add(obj.Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -164,10 +168,11 @@ namespace Asap2
         #endregion
 
 #region FRAME
+        private Dictionary<string, FRAME> frames = new Dictionary<string, FRAME>();
         /// <summary>
         /// References to the <see cref="FRAME"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, FRAME> Frames = new Dictionary<string, FRAME>();
+        public Dictionary<string, FRAME> Frames { get { return frames; } }
 
         /// <summary>
         /// Add <see cref="FRAME"/>s to the lists.
@@ -178,8 +183,8 @@ namespace Asap2
         {
             try
             {
-                Frames.Add(obj.Name, obj);
-                elements.Add(obj);
+                frames.Add(obj.Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -189,10 +194,11 @@ namespace Asap2
         #endregion
 
 #region FUNCTION
+        public Dictionary<string, FUNCTION> functions = new Dictionary<string, FUNCTION>();
         /// <summary>
         /// References to the <see cref="FUNCTION"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, FUNCTION> Functions = new Dictionary<string, FUNCTION>();
+        public Dictionary<string, FUNCTION> Functions { get { return functions; } }
 
         /// <summary>
         /// Add <see cref="FUNCTION"/>s to the lists.
@@ -203,8 +209,8 @@ namespace Asap2
         {
             try
             {
-                Functions.Add(obj.Name, obj);
-                elements.Add(obj);
+                functions.Add(obj.Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -214,10 +220,11 @@ namespace Asap2
         #endregion
 
 #region GROUP
+        private Dictionary<string, GROUP> groups = new Dictionary<string, GROUP>();
         /// <summary>
         /// References to the <see cref="GROUP"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, GROUP> Groups = new Dictionary<string, GROUP>();
+        public Dictionary<string, GROUP> Groups { get { return groups; } }
 
         /// <summary>
         /// Add <see cref="GROUP"/>s to the lists.
@@ -228,8 +235,8 @@ namespace Asap2
         {
             try
             {
-                Groups.Add(obj.Name, obj);
-                elements.Add(obj);
+                groups.Add(obj.Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -239,10 +246,11 @@ namespace Asap2
         #endregion
 
 #region RECORD_LAYOUT
+        private Dictionary<string, RECORD_LAYOUT> record_layouts = new Dictionary<string, RECORD_LAYOUT>();
         /// <summary>
         /// References to the <see cref="RECORD_LAYOUT"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, RECORD_LAYOUT> Record_layouts = new Dictionary<string, RECORD_LAYOUT>();
+        public Dictionary<string, RECORD_LAYOUT> Record_layouts { get { return record_layouts; } }
 
         /// <summary>
         /// Add <see cref="RECORD_LAYOUT"/>s to the lists.
@@ -253,8 +261,8 @@ namespace Asap2
         {
             try
             {
-                Record_layouts.Add(obj.Name, obj);
-                elements.Add(obj);
+                record_layouts.Add(obj.Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -264,10 +272,11 @@ namespace Asap2
         #endregion
 
 #region UNIT
+        public Dictionary<string, UNIT> units = new Dictionary<string, UNIT>();
         /// <summary>
         /// References to the <see cref="UNIT"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, UNIT> Units = new Dictionary<string, UNIT>();
+        public Dictionary<string, UNIT> Units { get { return units; } }
 
         /// <summary>
         /// Add <see cref="UNIT"/>s to the lists.
@@ -278,8 +287,8 @@ namespace Asap2
         {
             try
             {
-                Units.Add(obj.Name, obj);
-                elements.Add(obj);
+                units.Add(obj.Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {
@@ -289,10 +298,11 @@ namespace Asap2
         #endregion
 
 #region USER_RIGHTS
+        public Dictionary<string, USER_RIGHTS> user_rights = new Dictionary<string, USER_RIGHTS>();
         /// <summary>
         /// References to the <see cref="USER_RIGHTS"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, USER_RIGHTS> User_rights = new Dictionary<string, USER_RIGHTS>();
+        public Dictionary<string, USER_RIGHTS> User_rights { get { return user_rights; } }
 
         /// <summary>
         /// Add <see cref="USER_RIGHTS"/>s to the lists.
@@ -303,8 +313,8 @@ namespace Asap2
         {
             try
             {
-                User_rights.Add(obj.Name, obj);
-                elements.Add(obj);
+                user_rights.Add(obj.Name, obj);
+                elementsInternal.Add(obj);
             }
             catch (ArgumentException)
             {

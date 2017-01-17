@@ -107,6 +107,34 @@ namespace Asap2
             }
         }
 
+        private static class SortedPropertyCache
+        {
+            private static Dictionary<Type, PropertyInfo[]> Value;
+            static SortedPropertyCache()
+            {
+                Value = new Dictionary<Type, PropertyInfo[]>();
+            }
+
+            public static PropertyInfo[] Get(Type x)
+            {
+
+                PropertyInfo[] v;
+                if (Value.TryGetValue(x, out v))
+                    return v;
+
+                v = x.GetProperties().OrderBy(f =>
+                {
+                    var data = AttributeCache<ElementAttribute, MemberInfo>.Get(f);
+                    if (data == null)
+                        return (uint)999999; /* sort it last */
+                    else
+                        return data.SortOrder;
+                }).ToArray();
+                Value.Add(x, v);
+                return v;
+            }
+        }
+
         private static class AttributeCache<T, L>
             where T : class
             where L : MemberInfo
@@ -168,20 +196,35 @@ namespace Asap2
             string elementName = null;
             if (baseAtt != null)
             {
+                var pI = SortedPropertyCache.Get(tree.GetType());
                 var fI = SortedFieldsCache.Get(tree.GetType());
 
-                for (int i = 0; i < fI.Length; i++)
+                for (int i = 0; i < pI.Length; i++)
                 {
-                    ElementAttribute elemAtt = AttributeCache<ElementAttribute, MemberInfo>.Get(fI[i]);
+                    ElementAttribute elemAtt = AttributeCache<ElementAttribute, MemberInfo>.Get(pI[i]);
                     if (elemAtt != null)
                     {
                         if (elemAtt.IsName)
                         {
-                            elementName = (string)fI[i].GetValue(tree);
+                            elementName = (string)pI[i].GetValue(tree);
                         }
                     }
                 }
 
+                if (elementName == null)
+                {
+                    for (int i = 0; i < fI.Length; i++)
+                    {
+                        ElementAttribute elemAtt = AttributeCache<ElementAttribute, MemberInfo>.Get(fI[i]);
+                        if (elemAtt != null)
+                        {
+                            if (elemAtt.IsName)
+                            {
+                                elementName = (string)fI[i].GetValue(tree);
+                            }
+                        }
+                    }
+                }
                 {
                     yield return Environment.NewLine;
                     if (elementName == null)
@@ -202,7 +245,7 @@ namespace Asap2
 
                 if (fI.Length > 0)
                 {
-                    foreach (string resultData in SerialiseElement(tree, fI, indentLevel + 1))
+                    foreach (string resultData in SerialiseElement(tree, fI, pI, indentLevel + 1))
                     {
                         yield return resultData;
                     }
@@ -259,183 +302,203 @@ namespace Asap2
             }
         }
 
-        private IEnumerable<string> SerialiseElement(Object tree, FieldInfo[] fI, uint indentLevel)
+        private IEnumerable<string> SerialiseElement(Object tree, FieldInfo[] fI, PropertyInfo[] pI, uint indentLevel)
         {
-            for (int i = 0; i < fI.Length; i++)
+            foreach (var info in pI)
             {
-                ElementAttribute att = AttributeCache<ElementAttribute, MemberInfo>.Get(fI[i]);
-
+                ElementAttribute att = AttributeCache<ElementAttribute, MemberInfo>.Get(info);
                 if (att != null)
                 {
-                    if (fI[i].GetValue(tree) != null)
+                    object objData = info.GetValue(tree);
+                    if (objData != null)
                     {
-                        if (att.IsComment)
+                        foreach (var serialiseAttribute in SerialiseAttributeData(objData, info.PropertyType, att, indentLevel))
+                        {
+                            yield return serialiseAttribute;
+                        }
+                    }
+                }
+            }
+            foreach (var info in fI)
+            {
+                ElementAttribute att = AttributeCache<ElementAttribute, MemberInfo>.Get(info);
+                if (att != null)
+                {
+                    object objData = info.GetValue(tree);
+                    if (objData != null)
+                    {
+                        foreach (var serialiseAttribute in SerialiseAttributeData(objData, info.FieldType, att, indentLevel))
+                        {
+                            yield return serialiseAttribute;
+                        }
+                    }
+                }
+            }
+        }
+        private IEnumerable<string> SerialiseAttributeData(Object objData, Type objType, ElementAttribute att, uint indentLevel)
+        {
+            if (att.IsComment)
+            {
+                yield return Environment.NewLine;
+                StringBuilder tmp = Indent(indentLevel);
+                tmp.Append("/*");
+                tmp.Append(objData.ToString());
+                tmp.Append("*/");
+                tmp.Append(Environment.NewLine);
+                yield return tmp.ToString();
+            }
+            else if ((att.IsArgument || att.IsString) && !att.IsList)
+            {
+                string data = "";
+                if (att.Comment != null)
+                {
+                    yield return Environment.NewLine;
+                    StringBuilder tmp = Indent(indentLevel);
+                    tmp.Append("/*");
+                    tmp.Append(att.Comment);
+                    tmp.Append("*/ ");
+                    yield return tmp.ToString();
+                }
+                if (att.Name != null && att.Name != "")
+                {
+                    data += Environment.NewLine;
+                    data += Indent(indentLevel).Append(att.Name).Append(" ").ToString();
+                }
+                else if (att.ForceNewLine)
+                {
+                    data += Environment.NewLine;
+                    data += Indent(indentLevel).ToString();
+                }
+                else if (att.Comment == null)
+                {
+                    data = " ";
+                }
+
+                if (att.IsString)
+                {
+                    String value = objData.ToString();
+                    value = Regex.Replace(value, "\r", @"\r");
+                    value = Regex.Replace(value, "\n", @"\n");
+                    value = Regex.Replace(value, "\t", @"\t");
+                    value = "\"" + value + "\"";
+                    data += value;
+                    yield return data;
+                }
+                else
+                {
+                    if (objType.IsEnum)
+                    {
+                        String value = Enum.GetName(objType, objData);
+                        data += value;
+                        yield return data;
+                    }
+                    else if (att.CodeAsHex)
+                    {
+                        UInt64 tmp = (UInt64)objData;
+                        String value = "0x" + tmp.ToString("X");
+                        data += value;
+                        yield return data;
+                    }
+                    else if (objType == typeof(decimal))
+                    {
+                        decimal tmp = (decimal)objData;
+                        data += tmp.ToString(CultureInfo.InvariantCulture);
+                        yield return data;
+                    }
+                    else
+                    {
+                        yield return data + objData.ToString();
+                    }
+                }
+            }
+            else if (att.IsDictionary)
+            {
+                Dictionary<string, object> dict = ToDict<string, object>(objData);
+
+                if (dict.Count > 0)
+                {
+                    if (att.Comment != null)
+                    {
+                        yield return Environment.NewLine;
+                        StringBuilder tmp = Indent(indentLevel);
+                        tmp.Append("/*");
+                        tmp.Append(att.Comment);
+                        tmp.Append("*/");
+                        tmp.Append(Environment.NewLine);
+                        yield return tmp.ToString();
+                    }
+                    else if (att.ForceNewLine)
+                    {
+                        yield return Environment.NewLine;
+                    }
+
+                    foreach (object elem in dict.Values)
+                    {
+                        foreach (string dicElement in SerialiseNode(elem, indentLevel))
+                        {
+                            yield return dicElement;
+                        }
+                    }
+                }
+            }
+            else if (att.IsList)
+            {
+                if (objData is IList)
+                {
+                    var list = ((IList)objData);
+                    if (list.Count > 0)
+                    {
+                        if (att.Comment != null)
                         {
                             yield return Environment.NewLine;
                             StringBuilder tmp = Indent(indentLevel);
                             tmp.Append("/*");
-                            tmp.Append(fI[i].GetValue(tree).ToString());
+                            tmp.Append(att.Comment);
                             tmp.Append("*/");
-                            tmp.Append(Environment.NewLine);
                             yield return tmp.ToString();
                         }
-                        else if ((att.IsArgument || att.IsString) && !att.IsList)
+                        else if (att.ForceNewLine)
                         {
-                            string data = "";
-                            if (att.Comment != null)
-                            {
-                                yield return Environment.NewLine;
-                                StringBuilder tmp = Indent(indentLevel);
-                                tmp.Append("/*");
-                                tmp.Append(att.Comment);
-                                tmp.Append("*/ ");
-                                yield return tmp.ToString();
-                            }
-                            if (att.Name != null && att.Name != "")
-                            {
-                                data += Environment.NewLine;
-                                data += Indent(indentLevel).Append(att.Name).Append(" ").ToString();
-                            }
-                            else if (att.ForceNewLine)
-                            {
-                                data += Environment.NewLine;
-                                data += Indent(indentLevel).ToString();
-                            }
-                            else if (att.Comment == null)
-                            {
-                                data = " ";
-                            }
-
-                            if (att.IsString)
-                            {
-                                String value = fI[i].GetValue(tree).ToString();
-                                value = Regex.Replace(value, "\r", @"\r");
-                                value = Regex.Replace(value, "\n", @"\n");
-                                value = Regex.Replace(value, "\t", @"\t");
-                                value = "\"" + value + "\"";
-                                data += value;
-                                yield return data;
-                            }
-                            else
-                            {
-                                if (fI[i].FieldType.IsEnum)
-                                {
-                                    String value = Enum.GetName(fI[i].FieldType, fI[i].GetValue(tree));
-                                    data += value;
-                                    yield return data;
-                                }
-                                else if (att.CodeAsHex)
-                                {
-                                    UInt64 tmp = (UInt64)fI[i].GetValue(tree);
-                                    String value = "0x" + tmp.ToString("X");
-                                    data += value;
-                                    yield return data;
-                                }
-                                else if (fI[i].FieldType == typeof(decimal))
-                                {
-                                    decimal tmp = (decimal)fI[i].GetValue(tree);
-                                    data += tmp.ToString(CultureInfo.InvariantCulture);
-                                    yield return data;
-                                }
-                                else
-                                {
-                                    yield return data + fI[i].GetValue(tree).ToString();
-                                }
-                            }
+                            yield return Environment.NewLine;
                         }
-                        else if (att.IsDictionary)
+
+                        if (list[0].GetType().BaseType == typeof(Asap2Base))
                         {
-                            object obj = fI[i].GetValue(tree);
-                            Dictionary<string, object> dict = ToDict<string, object>(obj);
+                            /* If the is list is List<Asap2Base> sort the list and then iterate over the sorted list. */
+                            IEnumerable<Asap2Base> tmp =
+                                from Asap2Base item in list
+                                orderby item.OrderID
+                                select item;
 
-                            if (dict.Count > 0)
+                            foreach (var item in tmp)
                             {
-                                if (att.Comment != null)
+                                foreach (string listElement in SerialiseNode(item, indentLevel, att))
                                 {
-                                    yield return Environment.NewLine;
-                                    StringBuilder tmp = Indent(indentLevel);
-                                    tmp.Append("/*");
-                                    tmp.Append(att.Comment);
-                                    tmp.Append("*/");
-                                    tmp.Append(Environment.NewLine);
-                                    yield return tmp.ToString();
-                                }
-                                else if (att.ForceNewLine)
-                                {
-                                    yield return Environment.NewLine;
-                                }
-
-                                foreach (object elem in dict.Values)
-                                {
-                                    foreach (string dicElement in SerialiseNode(elem, indentLevel))
-                                    {
-                                        yield return dicElement;
-                                    }
-                                }
-                            }
-                        }
-                        else if (att.IsList)
-                        {
-                            object obj = fI[i].GetValue(tree);
-                            if (obj is IList)
-                            {
-                                var list = ((IList) obj);
-                                if (list.Count > 0)
-                                {
-                                    if (att.Comment != null)
-                                    {
-                                        yield return Environment.NewLine;
-                                        StringBuilder tmp = Indent(indentLevel);
-                                        tmp.Append("/*");
-                                        tmp.Append(att.Comment);
-                                        tmp.Append("*/");
-                                        yield return tmp.ToString();
-                                    }
-                                    else if (att.ForceNewLine)
-                                    {
-                                        yield return Environment.NewLine;
-                                    }
-
-                                    if (list[0].GetType().BaseType == typeof(Asap2Base))
-                                    {
-                                        /* If the is list is List<Asap2Base> sort the list and then iterate over the sorted list. */
-                                        IEnumerable<Asap2Base> tmp =
-                                            from Asap2Base item in list
-                                            orderby item.OrderID
-                                            select item;
-
-                                        foreach (var item in tmp)
-                                        {
-                                            foreach (string listElement in SerialiseNode(item, indentLevel, att))
-                                            {
-                                                yield return listElement;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        /* Generic data elements. */
-                                        foreach (var item in list)
-                                        {
-                                            foreach (string listElement in SerialiseNode(item, indentLevel, att))
-                                            {
-                                                yield return listElement;
-                                            }
-                                        }
-                                    }
+                                    yield return listElement;
                                 }
                             }
                         }
                         else
                         {
-                            if (fI[i].GetValue(tree) != null)
+                            /* Generic data elements. */
+                            foreach (var item in list)
                             {
-                                foreach (string dataNode in SerialiseNode(fI[i].GetValue(tree), indentLevel))
+                                foreach (string listElement in SerialiseNode(item, indentLevel, att))
                                 {
-                                    yield return dataNode;
+                                    yield return listElement;
                                 }
                             }
                         }
+                    }
+                }
+            }
+            else
+            {
+                if (objData != null)
+                {
+                    foreach (string dataNode in SerialiseNode(objData, indentLevel))
+                    {
+                        yield return dataNode;
                     }
                 }
             }

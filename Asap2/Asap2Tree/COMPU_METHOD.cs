@@ -20,18 +20,18 @@ namespace Asap2
         }
 
         [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true, Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " ConversionType ")]
-        public ConversionType conversionType;
+        public ConversionType conversionType { get; private set; }
         [Element(4, IsString = true, Comment = " Display Format ")]
-        public string Format;
+        public string Format { get; private set; }
         /// <summary>
         /// Reference to a physical unit. Reduntant if <see cref="ref_unit"/> is defined.
         /// </summary>
         [Element(5, IsString = true, Comment = " Physical Unit  ")]
-        public string Unit;
+        public string Unit { get; private set; }
         [Element(6)]
         public COEFFS coeffs;
         [Element(7)]

@@ -17,7 +17,7 @@ namespace Asap2
         /// UserLevelId
         /// </summary>
         [Element(1, IsArgument = true, Comment = " UserLevelId ")]
-        public string Name;
+        public string Name { get; private set; }
 
         [Element(2, IsList = true)]
         public List<REF_GROUP> ref_group = new List<REF_GROUP>();

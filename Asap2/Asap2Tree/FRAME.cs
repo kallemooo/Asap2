@@ -20,13 +20,13 @@ namespace Asap2
             this.Rate = Rate;
         }
         [Element(1, IsArgument = true, Comment = " Name           ")]
-        public string Name;
+        public string Name { get; private set; }
         [Element(2, IsString = true,   Comment = " LongIdentifier ")]
-        public string LongIdentifier;
+        public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " ScalingUnit    ")]
-        public UInt64 ScalingUnit;
+        public UInt64 ScalingUnit { get; private set; }
         [Element(4, IsArgument = true, Comment = " Rate           ")]
-        public UInt64 Rate;
+        public UInt64 Rate { get; private set; }
 
         /// <summary>
         /// List of <see cref="MEASUREMENT"/>s that are bundled in this frame. 
