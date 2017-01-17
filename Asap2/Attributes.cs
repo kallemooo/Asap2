@@ -48,7 +48,6 @@ namespace Asap2
         private bool isArgument;
         private bool isString;
         private bool isComment;
-        private bool isPreComment;
         private bool isDictionary;
         private bool isList;
         private bool forceNewLine;
@@ -62,7 +61,6 @@ namespace Asap2
             this.isArgument = false;
             this.isString = false;
             this.isComment = false;
-            this.isPreComment = false;
             this.isDictionary = false;
             this.isList = false;
             this.forceNewLine = false;
@@ -105,14 +103,6 @@ namespace Asap2
             set { isComment = value; }
         }
 
-        /// <summary>
-        /// Is comment to placed before an element.
-        /// </summary>
-        public virtual bool IsPreComment
-        {
-            get { return isPreComment; }
-            set { isPreComment = value; }
-        }
 
         /// <summary>
         /// Is a dictionary of type Dictionary&lt;string, object&gt;
