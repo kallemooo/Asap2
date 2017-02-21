@@ -265,11 +265,7 @@ namespace Asap2
                 if (nodeElemAtt.IsString)
                 {
                     String value = tree.ToString();
-                    value = Regex.Replace(value, "\r", @"\r");
-                    value = Regex.Replace(value, "\n", @"\n");
-                    value = Regex.Replace(value, "\t", @"\t");
-                    value = "\"" + value + "\"";
-                    data += value;
+                    data += "\"" + value + "\"";
                     yield return Indent(indentLevel).Append(data).ToString();
                 }
                 else
@@ -377,11 +373,7 @@ namespace Asap2
                 if (att.IsString)
                 {
                     String value = objData.ToString();
-                    value = Regex.Replace(value, "\r", @"\r");
-                    value = Regex.Replace(value, "\n", @"\n");
-                    value = Regex.Replace(value, "\t", @"\t");
-                    value = "\"" + value + "\"";
-                    data += value;
+                    data += "\"" + value + "\"";
                     yield return data;
                 }
                 else

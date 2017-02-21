@@ -208,9 +208,6 @@ A2ML                            { yy_push_state (STATE_A2ML); yylval.sb = new St
 <STATE_STRING> {
     \"              { yy_pop_state(); return MakeStringBuilder(Token.QUOTED_STRING); }
     \r?\n           { yylval.sb.Append("\r\n"); }
-    \\r             { yylval.sb.Append("\r"); }
-    \\n             { yylval.sb.Append("\n"); }
-    \\t             { yylval.sb.Append("\t"); }
     \\\"            { yylval.sb.Append("\""); }
     \\'             { yylval.sb.Append("\'"); }
     \"\"            { yylval.sb.Append("\""); }
