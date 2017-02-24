@@ -251,6 +251,101 @@ namespace Asap2
                     }
                 }
 
+                if (tree.GetType() == typeof(Asap2.MODULE))
+                {
+                    // Handle internal module data.
+                    SortedList<ulong, Asap2Base> elements = new SortedList<ulong, Asap2Base>();
+                    var moduleObj = tree as Asap2.MODULE;
+                    
+                    if (moduleObj.elements != null)
+                    {
+                        foreach(var obj in moduleObj.elements)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.AxisPtsCharacteristicMeasurement != null)
+                    {
+                        foreach (var obj in moduleObj.AxisPtsCharacteristicMeasurement.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.CompuTabCompuVtabCompuVtabRanges != null)
+                    {
+                        foreach (var obj in moduleObj.CompuTabCompuVtabCompuVtabRanges.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.CompuMethods != null)
+                    {
+                        foreach (var obj in moduleObj.CompuMethods.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.Frames != null)
+                    {
+                        foreach (var obj in moduleObj.Frames.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.Functions != null)
+                    {
+                        foreach (var obj in moduleObj.Functions.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.Groups != null)
+                    {
+                        foreach (var obj in moduleObj.Groups.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.Record_layouts != null)
+                    {
+                        foreach (var obj in moduleObj.Record_layouts.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.Units != null)
+                    {
+                        foreach (var obj in moduleObj.Units.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    if (moduleObj.User_rights != null)
+                    {
+                        foreach (var obj in moduleObj.User_rights.Values)
+                        {
+                            elements.Add(obj.OrderID, obj);
+                        }
+                    }
+
+                    foreach (var element in elements.Values)
+                    {
+                        foreach (string dataNode in SerialiseNode(element, indentLevel + 1))
+                        {
+                            yield return dataNode;
+                        }
+                    }
+                }
+
                 if (!baseAtt.IsSimple)
                 {
                     yield return Environment.NewLine;
