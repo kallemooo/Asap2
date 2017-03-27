@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Asap2")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A2L Parser (ASAM MCD-2 MC Parser / ASAP2 parser)")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Karl Thorén")]
 [assembly: AssemblyProduct("Asap2")]
 [assembly: AssemblyCopyright("Copyright © Karl Thorén 2017")]
 [assembly: AssemblyTrademark("")]
