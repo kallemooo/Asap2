@@ -1,0 +1,1737 @@
+﻿[assembly: System.Runtime.InteropServices.ComVisibleAttribute(false)]
+[assembly: System.Runtime.InteropServices.GuidAttribute("bfad106e-3de5-43f3-9983-0129e9414ccc")]
+[assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETFramework,Version=v4.5", FrameworkDisplayName=".NET Framework 4.5")]
+
+namespace Asap2
+{
+    
+    [Asap2.BaseAttribute()]
+    public class A2ML : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public string data;
+        public A2ML(Asap2.Location location, string data) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class A2ML_VERSION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public uint UpgradeNo;
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public uint VersionNo;
+        public A2ML_VERSION(Asap2.Location location, uint VersionNo, uint UpgradeNo) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ADDR_EPK : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, CodeAsHex=true, IsArgument=true)]
+        public ulong Address;
+        public ADDR_EPK(Asap2.Location location, ulong Address) { }
+    }
+    public enum AddrType
+    {
+        PBYTE = 0,
+        PWORD = 1,
+        PLONG = 2,
+        DIRECT = 3,
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ALIGNMENT : Asap2.Asap2Base
+    {
+        public Asap2.ALIGNMENT.ALIGNMENT_type type;
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public uint value;
+        public ALIGNMENT(Asap2.Location location, Asap2.ALIGNMENT.ALIGNMENT_type type, uint value) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string name { get; }
+        public enum ALIGNMENT_type
+        {
+            ALIGNMENT_BYTE = 0,
+            ALIGNMENT_WORD = 1,
+            ALIGNMENT_LONG = 2,
+            ALIGNMENT_INT64 = 3,
+            ALIGNMENT_FLOAT32_IEEE = 4,
+            ALIGNMENT_FLOAT64_IEEE = 5,
+        }
+    }
+    [Asap2.BaseAttribute()]
+    public class ANNOTATION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u)]
+        public Asap2.ANNOTATION_LABEL annotation_label;
+        [Asap2.ElementAttribute(1u)]
+        public Asap2.ANNOTATION_ORIGIN annotation_origin;
+        [Asap2.ElementAttribute(2u)]
+        public Asap2.ANNOTATION_TEXT annotation_text;
+        public ANNOTATION(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ANNOTATION_LABEL : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsString=true)]
+        public string value;
+        public ANNOTATION_LABEL(Asap2.Location location, string value) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ANNOTATION_ORIGIN : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsString=true)]
+        public string value;
+        public ANNOTATION_ORIGIN(Asap2.Location location, string value) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class ANNOTATION_TEXT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsList=true, IsString=true)]
+        public System.Collections.Generic.List<string> data;
+        public ANNOTATION_TEXT(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsObsolete="Obsolete keyword. Please use MATRIX_DIM instead.", IsSimple=true)]
+    public class ARRAY_SIZE : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public ulong value;
+        public ARRAY_SIZE(Asap2.Location location, ulong value) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ASAP2_VERSION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public uint UpgradeNo;
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public uint VersionNo;
+        public ASAP2_VERSION(Asap2.Location location, uint VersionNo, uint UpgradeNo) { }
+    }
+    public abstract class Asap2Base
+    {
+        public Asap2Base(Asap2.Location location) { }
+        public Asap2.Location location { get; set; }
+        public ulong OrderID { get; set; }
+        protected ulong GetOrderID() { }
+        public void reportErrorOrWarning(string message, bool isError, Asap2.IErrorReporter errorReporter, bool isInfo = False) { }
+        protected void ValidateIdentifier(string Identifier, Asap2.IErrorReporter errorReporter) { }
+    }
+    public class Asap2File
+    {
+        public Asap2File() { }
+        public Asap2File(string baseFilename) { }
+        public Asap2.A2ML_VERSION a2ml_version { get; }
+        public Asap2.ASAP2_VERSION asap2_version { get; }
+        public string baseFilename { get; set; }
+        public System.Collections.Generic.List<Asap2.Asap2Base> elements { get; }
+        public void AddA2ml_version(Asap2.A2ML_VERSION a2ml_version) { }
+        public void AddAsap2_version(Asap2.ASAP2_VERSION asap2_version) { }
+        public void Validate(Asap2.IErrorReporter errorReporter) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class AXIS_DESCR : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(7u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.ANNOTATION> annotation;
+        [Asap2.ElementAttribute(1u, Comment=" Type           ", IsArgument=true)]
+        public Asap2.AXIS_DESCR.Attribute attribute;
+        [Asap2.ElementAttribute(8u, IsArgument=true, Name="AXIS_PTS_REF")]
+        public string axis_pts_ref;
+        [Asap2.ElementAttribute(9u)]
+        public Asap2.BYTE_ORDER byte_order;
+        [Asap2.ElementAttribute(3u, Comment=" Conversion     ", IsArgument=true)]
+        public string Conversion;
+        [Asap2.ElementAttribute(10u, IsArgument=true, Name="CURVE_AXIS_REF")]
+        public string curve_axis_ref;
+        [Asap2.ElementAttribute(11u)]
+        public Asap2.DEPOSIT deposit;
+        [Asap2.ElementAttribute(12u)]
+        public Asap2.EXTENDED_LIMITS extended_limits;
+        [Asap2.ElementAttribute(13u)]
+        public Asap2.FIX_AXIS_PAR fix_axis_par;
+        [Asap2.ElementAttribute(14u)]
+        public Asap2.FIX_AXIS_PAR_DIST fix_axis_par_dist;
+        [Asap2.ElementAttribute(15u)]
+        public Asap2.FIX_AXIS_PAR_LIST fix_axis_par_list;
+        [Asap2.ElementAttribute(16u, IsString=true, Name="FORMAT")]
+        public string format;
+        [Asap2.ElementAttribute(2u, Comment=" InputQuantity  ", IsArgument=true)]
+        public string InputQuantity;
+        [Asap2.ElementAttribute(5u, Comment=" LowerLimit     ", IsArgument=true)]
+        public decimal LowerLimit;
+        [Asap2.ElementAttribute(17u, IsArgument=true, Name="MAX_GRAD")]
+        public System.Nullable<decimal> max_grad;
+        [Asap2.ElementAttribute(4u, Comment=" MaxAxisPoints  ", IsArgument=true)]
+        public ulong MaxAxisPoints;
+        [Asap2.ElementAttribute(18u)]
+        public Asap2.MONOTONY monotony;
+        [Asap2.ElementAttribute(19u, IsString=true, Name="PHYS_UNIT")]
+        public string phys_unit;
+        [Asap2.ElementAttribute(20u, Comment="Write-access is not allowed for this AXIS_DESCR")]
+        public Asap2.READ_ONLY read_only;
+        [Asap2.ElementAttribute(21u, IsArgument=true, Name="STEP_SIZE")]
+        public System.Nullable<decimal> step_size;
+        [Asap2.ElementAttribute(6u, Comment=" UpperLimit     ", IsArgument=true)]
+        public decimal UpperLimit;
+        public AXIS_DESCR(Asap2.Location location, Asap2.AXIS_DESCR.Attribute attribute, string InputQuantity, string Conversion, ulong MaxAxisPoints, decimal LowerLimit, decimal UpperLimit) { }
+        public enum Attribute
+        {
+            CURVE_AXIS = 0,
+            COM_AXIS = 1,
+            FIX_AXIS = 2,
+            RES_AXIS = 3,
+            STD_AXIS = 4,
+        }
+    }
+    [Asap2.BaseAttribute()]
+    public class AXIS_PTS : Asap2.Asap2Base, Asap2.IAxisPtsCharacteristicMeasurement
+    {
+        [Asap2.ElementAttribute(11u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.ANNOTATION> annotation;
+        [Asap2.ElementAttribute(12u)]
+        public Asap2.BYTE_ORDER byte_order;
+        [Asap2.ElementAttribute(13u)]
+        public Asap2.CALIBRATION_ACCESS calibration_access;
+        [Asap2.ElementAttribute(12u)]
+        public Asap2.DEPOSIT deposit;
+        [Asap2.ElementAttribute(18u, IsArgument=true, Name="DISPLAY_IDENTIFIER")]
+        public string display_identifier;
+        [Asap2.ElementAttribute(19u)]
+        public Asap2.ECU_ADDRESS_EXTENSION ecu_address_extension;
+        [Asap2.ElementAttribute(20u)]
+        public Asap2.EXTENDED_LIMITS extended_limits;
+        [Asap2.ElementAttribute(21u, IsString=true, Name="FORMAT")]
+        public string format;
+        [Asap2.ElementAttribute(22u)]
+        public Asap2.FUNCTION_LIST function_list;
+        [Asap2.ElementAttribute(23u)]
+        public Asap2.GUARD_RAILS guard_rails;
+        [Asap2.ElementAttribute(24u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        [Asap2.ElementAttribute(25u)]
+        public Asap2.MONOTONY monotony;
+        [Asap2.ElementAttribute(26u, IsString=true, Name="PHYS_UNIT")]
+        public string phys_unit;
+        [Asap2.ElementAttribute(20u, Comment="Write-access is not allowed for this AXIS_DESCR")]
+        public Asap2.READ_ONLY read_only;
+        [Asap2.ElementAttribute(27u, IsArgument=true, Name="REF_MEMORY_SEGMENT")]
+        public string ref_memory_segment;
+        [Asap2.ElementAttribute(28u, IsArgument=true, Name="STEP_SIZE")]
+        public System.Nullable<decimal> step_size;
+        [Asap2.ElementAttribute(29u)]
+        public Asap2.SYMBOL_LINK symbol_link;
+        public AXIS_PTS(Asap2.Location location, string Name, string LongIdentifier, ulong Address, string InputQuantity, string Deposit, decimal MaxDiff, string Conversion, ulong MaxAxisPoints, decimal LowerLimit, decimal UpperLimit) { }
+        [Asap2.ElementAttribute(3u, CodeAsHex=true, Comment=" Address        ", IsArgument=true)]
+        public ulong Address { get; }
+        [Asap2.ElementAttribute(7u, Comment=" Conversion     ", IsArgument=true)]
+        public string Conversion { get; }
+        [Asap2.ElementAttribute(5u, Comment=" Deposit        ", IsArgument=true)]
+        public string Deposit { get; }
+        [Asap2.ElementAttribute(4u, Comment=" InputQuantity  ", IsArgument=true)]
+        public string InputQuantity { get; }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(9u, Comment=" LowerLimit     ", IsArgument=true)]
+        public decimal LowerLimit { get; }
+        [Asap2.ElementAttribute(8u, Comment=" MaxAxisPoints  ", IsArgument=true)]
+        public ulong MaxAxisPoints { get; }
+        [Asap2.ElementAttribute(6u, Comment=" MaxDiff        ", IsArgument=true)]
+        public decimal MaxDiff { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(10u, Comment=" UpperLimit     ", IsArgument=true)]
+        public decimal UpperLimit { get; }
+        public ulong GetEcuAddress() { }
+        public string GetName() { }
+        public ulong orderID() { }
+        public void SetEcuAddress(ulong address) { }
+        public void Validate(Asap2.IErrorReporter errorReporter, Asap2.MODULE module) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class AXIS_PTS_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(4u, Comment=" addrType  ", IsArgument=true)]
+        public Asap2.AddrType addrType;
+        [Asap2.ElementAttribute(2u, Comment=" dataType  ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(3u, Comment=" indexIncr ", IsArgument=true)]
+        public Asap2.IndexOrder indexIncr;
+        [Asap2.ElementAttribute(1u, Comment=" Position  ", IsArgument=true)]
+        public ulong Position;
+        public AXIS_PTS_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType, Asap2.IndexOrder indexIncr, Asap2.AddrType addrType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class AXIS_RESCALE_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(5u, Comment=" addrType            ", IsArgument=true)]
+        public Asap2.AddrType addrType;
+        [Asap2.ElementAttribute(2u, Comment=" dataType            ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(4u, Comment=" indexIncr           ", IsArgument=true)]
+        public Asap2.IndexOrder indexIncr;
+        [Asap2.ElementAttribute(3u, Comment=" MaxNoOfRescalePairs ", IsArgument=true)]
+        public ulong MaxNoOfRescalePairs;
+        [Asap2.ElementAttribute(1u, Comment=" Position            ", IsArgument=true)]
+        public ulong Position;
+        public AXIS_RESCALE_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType, ulong MaxNoOfRescalePairs, Asap2.IndexOrder indexIncr, Asap2.AddrType addrType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.All, AllowMultiple=false)]
+    public class BaseAttribute : System.Attribute
+    {
+        public BaseAttribute() { }
+        public virtual string IsObsolete { get; set; }
+        public virtual bool IsSimple { get; set; }
+    }
+    [Asap2.BaseAttribute()]
+    public class BIT_OPERATION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u)]
+        public Asap2.LEFT_SHIFT left_shift;
+        [Asap2.ElementAttribute(0u)]
+        public Asap2.RIGHT_SHIFT right_shift;
+        [Asap2.ElementAttribute(3u)]
+        public Asap2.SIGN_EXTEND sign_extend;
+        public BIT_OPERATION(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class BYTE_ORDER : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public Asap2.BYTE_ORDER.BYTE_ORDER_type value;
+        public BYTE_ORDER(Asap2.Location location, Asap2.BYTE_ORDER.BYTE_ORDER_type value) { }
+        public enum BYTE_ORDER_type
+        {
+            LITTLE_ENDIAN = 0,
+            BIG_ENDIAN = 1,
+            MSB_FIRST = 2,
+            MSB_LAST = 3,
+        }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class CALIBRATION_ACCESS : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public Asap2.CALIBRATION_ACCESS.CALIBRATION_ACCESS_type value;
+        public CALIBRATION_ACCESS(Asap2.Location location, Asap2.CALIBRATION_ACCESS.CALIBRATION_ACCESS_type value) { }
+        public enum CALIBRATION_ACCESS_type
+        {
+            CALIBRATION = 0,
+            NO_CALIBRATION = 1,
+            NOT_IN_MCD_SYSTEM = 2,
+            OFFLINE_CALIBRATION = 3,
+        }
+    }
+    [Asap2.BaseAttribute()]
+    public class CALIBRATION_HANDLE : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, CodeAsHex=true, Comment=" Handles ", ForceNewLine=true, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<long> Handles;
+        [Asap2.ElementAttribute(1u, IsString=true, Name="CALIBRATION_HANDLE_TEXT")]
+        public string text;
+        public CALIBRATION_HANDLE(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class CALIBRATION_METHOD : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u)]
+        public Asap2.CALIBRATION_HANDLE calibration_handle;
+        [Asap2.ElementAttribute(0u, Comment=" Method  ", IsString=true)]
+        public string Method;
+        [Asap2.ElementAttribute(1u, Comment=" Version ", IsArgument=true)]
+        public ulong Version;
+        public CALIBRATION_METHOD(Asap2.Location location, string Method, ulong Version) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class CHARACTERISTIC : Asap2.Asap2Base, Asap2.IAxisPtsCharacteristicMeasurement
+    {
+        [Asap2.ElementAttribute(10u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.ANNOTATION> annotation;
+        [Asap2.ElementAttribute(11u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.AXIS_DESCR> axis_descr;
+        [Asap2.ElementAttribute(12u, CodeAsHex=true, IsArgument=true, Name="BIT_MASK")]
+        public System.Nullable<ulong> bit_mask;
+        [Asap2.ElementAttribute(13u)]
+        public Asap2.BYTE_ORDER byte_order;
+        [Asap2.ElementAttribute(14u)]
+        public Asap2.CALIBRATION_ACCESS calibration_access;
+        [Asap2.ElementAttribute(15u, IsArgument=true, Name="COMPARISON_QUANTITY")]
+        public string comparison_quantity;
+        [Asap2.ElementAttribute(16u)]
+        public Asap2.DEPENDENT_CHARACTERISTIC dependent_characteristic;
+        [Asap2.ElementAttribute(17u)]
+        public Asap2.DISCRETE discrete;
+        [Asap2.ElementAttribute(18u, IsArgument=true, Name="DISPLAY_IDENTIFIER")]
+        public string display_identifier;
+        [Asap2.ElementAttribute(19u)]
+        public Asap2.ECU_ADDRESS_EXTENSION ecu_address_extension;
+        [Asap2.ElementAttribute(20u)]
+        public Asap2.EXTENDED_LIMITS extended_limits;
+        [Asap2.ElementAttribute(21u, IsString=true, Name="FORMAT")]
+        public string format;
+        [Asap2.ElementAttribute(22u)]
+        public Asap2.FUNCTION_LIST function_list;
+        [Asap2.ElementAttribute(23u)]
+        public Asap2.GUARD_RAILS guard_rails;
+        [Asap2.ElementAttribute(34u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        [Asap2.ElementAttribute(24u)]
+        public Asap2.MAP_LIST map_list;
+        [Asap2.ElementAttribute(25u)]
+        public Asap2.MATRIX_DIM matrix_dim;
+        [Asap2.ElementAttribute(26u)]
+        public Asap2.MAX_REFRESH max_refresh;
+        [Asap2.ElementAttribute(27u, IsArgument=true, IsObsolete="Obsolete keyword. Please use MATRIX_DIM instead.", Name="NUMBER")]
+        public System.Nullable<ulong> number;
+        [Asap2.ElementAttribute(28u, IsString=true, Name="PHYS_UNIT")]
+        public string phys_unit;
+        [Asap2.ElementAttribute(29u, Comment="Write-access is not allowed for this CHARACTERISTIC")]
+        public Asap2.READ_ONLY read_only;
+        [Asap2.ElementAttribute(30u, IsArgument=true, Name="REF_MEMORY_SEGMENT")]
+        public string ref_memory_segment;
+        [Asap2.ElementAttribute(31u, IsArgument=true, Name="STEP_SIZE")]
+        public System.Nullable<decimal> step_size;
+        [Asap2.ElementAttribute(32u)]
+        public Asap2.SYMBOL_LINK symbol_link;
+        [Asap2.ElementAttribute(33u)]
+        public Asap2.VIRTUAL_CHARACTERISTIC virtual_characteristic;
+        public CHARACTERISTIC(Asap2.Location location, string Name, string LongIdentifier, Asap2.CHARACTERISTIC.Type type, ulong Address, string Deposit, decimal MaxDiff, string Conversion, decimal LowerLimit, decimal UpperLimit) { }
+        [Asap2.ElementAttribute(4u, CodeAsHex=true, Comment=" Address        ", IsArgument=true)]
+        public ulong Address { get; }
+        [Asap2.ElementAttribute(7u, Comment=" Conversion     ", IsArgument=true)]
+        public string Conversion { get; }
+        [Asap2.ElementAttribute(5u, Comment=" Deposit        ", IsArgument=true)]
+        public string Deposit { get; }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(8u, Comment=" LowerLimit     ", IsArgument=true)]
+        public decimal LowerLimit { get; }
+        [Asap2.ElementAttribute(6u, Comment=" MaxDiff        ", IsArgument=true)]
+        public decimal MaxDiff { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(3u, Comment=" Type           ", IsArgument=true)]
+        public Asap2.CHARACTERISTIC.Type type { get; }
+        [Asap2.ElementAttribute(9u, Comment=" UpperLimit     ", IsArgument=true)]
+        public decimal UpperLimit { get; }
+        public ulong GetEcuAddress() { }
+        public string GetName() { }
+        public ulong orderID() { }
+        public void SetEcuAddress(ulong address) { }
+        public void Validate(Asap2.IErrorReporter errorReporter, Asap2.MODULE module) { }
+        public enum Type
+        {
+            ASCII = 0,
+            CURVE = 1,
+            MAP = 2,
+            CUBOID = 3,
+            CUBE_4 = 4,
+            CUBE_5 = 5,
+            VAL_BLK = 6,
+            VALUE = 7,
+        }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class COEFFS : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Coefficients for the rational function (RAT_FUNC) ", IsArgument=true)]
+        public decimal a;
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public decimal b;
+        [Asap2.ElementAttribute(2u, IsArgument=true)]
+        public decimal c;
+        [Asap2.ElementAttribute(3u, IsArgument=true)]
+        public decimal d;
+        [Asap2.ElementAttribute(4u, IsArgument=true)]
+        public decimal e;
+        [Asap2.ElementAttribute(5u, IsArgument=true)]
+        public decimal f;
+        public COEFFS(Asap2.Location location, decimal a, decimal b, decimal c, decimal d, decimal e, decimal f) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class COEFFS_LINEAR : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Coefficients for the linear function (LINEAR). ", IsArgument=true)]
+        public decimal a;
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public decimal b;
+        public COEFFS_LINEAR(Asap2.Location location, decimal a, decimal b) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class COMPU_METHOD : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(6u)]
+        public Asap2.COEFFS coeffs;
+        [Asap2.ElementAttribute(7u)]
+        public Asap2.COEFFS_LINEAR coeffs_linear;
+        [Asap2.ElementAttribute(8u, IsArgument=true, Name="COMPU_TAB_REF")]
+        public string compu_tab_ref;
+        [Asap2.ElementAttribute(9u)]
+        public Asap2.FORMULA formula;
+        [Asap2.ElementAttribute(10u, IsArgument=true, Name="REF_UNIT")]
+        public string ref_unit;
+        [Asap2.ElementAttribute(11u, IsArgument=true, Name="STATUS_STRING_REF")]
+        public string status_string_ref;
+        public COMPU_METHOD(Asap2.Location location, string Name, string LongIdentifier, Asap2.ConversionType conversionType, string Format, string Unit) { }
+        [Asap2.ElementAttribute(3u, Comment=" ConversionType ", IsArgument=true)]
+        public Asap2.ConversionType conversionType { get; }
+        [Asap2.ElementAttribute(4u, Comment=" Display Format ", IsString=true)]
+        public string Format { get; }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(5u, Comment=" Physical Unit  ", IsString=true)]
+        public string Unit { get; }
+        public void Validate(Asap2.IErrorReporter errorReporter, Asap2.MODULE module) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class COMPU_TAB : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(5u, Comment=" ValuePairs       ", IsList=true)]
+        public System.Collections.Generic.List<Asap2.COMPU_TAB_DATA> data;
+        [Asap2.ElementAttribute(6u, IsString=true, Name="DEFAULT_VALUE")]
+        public string default_value;
+        [Asap2.ElementAttribute(7u, IsArgument=true, Name="DEFAULT_VALUE_NUMERIC")]
+        public decimal default_value_numeric;
+        public COMPU_TAB(Asap2.Location location, string Name, string LongIdentifier, Asap2.ConversionType conversionType, uint NumberValuePairs) { }
+        [Asap2.ElementAttribute(3u, Comment=" ConversionType   ", IsArgument=true)]
+        public Asap2.ConversionType conversionType { get; }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier   ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name             ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(4u, Comment=" NumberValuePairs ", IsArgument=true)]
+        public uint NumberValuePairs { get; }
+        public uint parsedNumberValuePairs { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class COMPU_TAB_DATA : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public decimal InVal;
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string name;
+        [Asap2.ElementAttribute(2u, IsString=true)]
+        public decimal OutVal;
+        public COMPU_TAB_DATA(Asap2.Location location, decimal InVal, decimal OutVal) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class COMPU_VTAB : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(5u, Comment=" ValuePairs       ", IsList=true)]
+        public System.Collections.Generic.List<Asap2.COMPU_VTAB_DATA> data;
+        [Asap2.ElementAttribute(6u, IsString=true, Name="DEFAULT_VALUE")]
+        public string default_value;
+        public COMPU_VTAB(Asap2.Location location, string Name, string LongIdentifier, Asap2.ConversionType conversionType, uint NumberValuePairs) { }
+        [Asap2.ElementAttribute(3u, Comment=" ConversionType   ", IsArgument=true)]
+        public Asap2.ConversionType conversionType { get; }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier   ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name             ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(4u, Comment=" NumberValuePairs ", IsArgument=true)]
+        public uint NumberValuePairs { get; }
+        public uint parsedNumberValuePairs { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class COMPU_VTAB_DATA : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public decimal InVal;
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string name;
+        [Asap2.ElementAttribute(2u, IsString=true)]
+        public string OutVal;
+        public COMPU_VTAB_DATA(Asap2.Location location, decimal InVal, string OutVal) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class COMPU_VTAB_RANGE : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(4u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.COMPU_VTAB_RANGE_DATA> data;
+        [Asap2.ElementAttribute(5u, IsString=true, Name="DEFAULT_VALUE")]
+        public string default_value;
+        public COMPU_VTAB_RANGE(Asap2.Location location, string Name, string LongIdentifier, uint NumberValueTriples) { }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier     ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name               ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(3u, Comment=" NumberValueTriples ", IsArgument=true)]
+        public uint NumberValueTriples { get; }
+        public uint parsedNumberValueTriples { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class COMPU_VTAB_RANGE_DATA : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, IsArgument=true)]
+        public decimal InValMax;
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public decimal InValMin;
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string name;
+        [Asap2.ElementAttribute(3u, IsString=true)]
+        public string value;
+        public COMPU_VTAB_RANGE_DATA(Asap2.Location location, decimal InValMin, decimal InValMax, string value) { }
+    }
+    public enum ConversionType
+    {
+        IDENTICAL = 0,
+        FORM = 1,
+        LINEAR = 2,
+        RAT_FUNC = 3,
+        TAB_INTP = 4,
+        TAB_NOINTP = 5,
+        TAB_VERB = 6,
+    }
+    public enum DataSize
+    {
+        BYTE = 0,
+        WORD = 1,
+        LONG = 2,
+    }
+    public enum DataType
+    {
+        UBYTE = 0,
+        SBYTE = 1,
+        UWORD = 2,
+        SWORD = 3,
+        ULONG = 4,
+        SLONG = 5,
+        A_UINT64 = 6,
+        A_INT64 = 7,
+        FLOAT32_IEEE = 8,
+        FLOAT64_IEEE = 9,
+    }
+    [Asap2.BaseAttribute()]
+    public class DEF_CHARACTERISTIC : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> def_characteristics;
+        public DEF_CHARACTERISTIC(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class DEPENDENT_CHARACTERISTIC : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> Characteristic;
+        [Asap2.ElementAttribute(0u, IsString=true)]
+        public string Formula;
+        public DEPENDENT_CHARACTERISTIC(Asap2.Location location, string Formula) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class DEPOSIT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public Asap2.DEPOSIT.DEPOSIT_type value;
+        public DEPOSIT(Asap2.Location location, Asap2.DEPOSIT.DEPOSIT_type value) { }
+        public enum DEPOSIT_type
+        {
+            ABSOLUTE = 0,
+            DIFFERENCE = 1,
+        }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class DISCRETE : Asap2.Asap2Base
+    {
+        public DISCRETE(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class DIST_OP_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" dataType            ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position            ", IsArgument=true)]
+        public ulong Position;
+        public DIST_OP_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ECU_ADDRESS : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, CodeAsHex=true, IsArgument=true)]
+        public ulong value;
+        public ECU_ADDRESS(Asap2.Location location, ulong value) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ECU_ADDRESS_EXTENSION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, CodeAsHex=true, IsArgument=true)]
+        public ulong value;
+        public ECU_ADDRESS_EXTENSION(Asap2.Location location, ulong value) { }
+    }
+    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly | System.AttributeTargets.Module | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Event | System.AttributeTargets.Interface | System.AttributeTargets.Parameter | System.AttributeTargets.Delegate | System.AttributeTargets.ReturnValue | System.AttributeTargets.GenericParameter | System.AttributeTargets.All, AllowMultiple=false)]
+    public class ElementAttribute : System.Attribute
+    {
+        public ElementAttribute(uint SortOrder) { }
+        public virtual bool CodeAsHex { get; set; }
+        public virtual string Comment { get; set; }
+        public virtual bool ForceNewLine { get; set; }
+        public virtual bool IsArgument { get; set; }
+        public virtual bool IsComment { get; set; }
+        public virtual bool IsDictionary { get; set; }
+        public virtual bool IsList { get; set; }
+        public virtual bool IsName { get; set; }
+        public virtual string IsObsolete { get; set; }
+        public virtual bool IsString { get; set; }
+        public virtual string Name { get; set; }
+        public virtual uint SortOrder { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class EXTENDED_LIMITS : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, Comment=" LowerLimit     ", IsArgument=true)]
+        public decimal LowerLimit;
+        [Asap2.ElementAttribute(2u, Comment=" UpperLimit     ", IsArgument=true)]
+        public decimal UpperLimit;
+        public EXTENDED_LIMITS(Asap2.Location location, decimal LowerLimit, decimal UpperLimit) { }
+    }
+    public class FileComment : Asap2.Asap2Base
+    {
+        public FileComment(string comment = null, bool startNewLineWithStar = False) { }
+        public FileComment(Asap2.Location location, string comment = null, bool startNewLineWithStar = False) { }
+        public System.Text.StringBuilder Comment { get; set; }
+        public bool StartNewLineWithStar { get; }
+        public void Append(object value) { }
+        public override string ToString() { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class FIX_AXIS_PAR : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Number of axis points ", IsArgument=true)]
+        public ulong NumberAPo;
+        [Asap2.ElementAttribute(0u, Comment=" Offset                ", IsArgument=true)]
+        public long Offset;
+        [Asap2.ElementAttribute(0u, Comment=" Shift                 ", IsArgument=true)]
+        public long Shift;
+        public FIX_AXIS_PAR(Asap2.Location location, long Offset, long Shift, ulong NumberAPo) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class FIX_AXIS_PAR_DIST : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Distance              ", IsArgument=true)]
+        public long Distance;
+        [Asap2.ElementAttribute(0u, Comment=" Number of axis points ", IsArgument=true)]
+        public ulong NumberAPo;
+        [Asap2.ElementAttribute(0u, Comment=" Offset                ", IsArgument=true)]
+        public long Offset;
+        public FIX_AXIS_PAR_DIST(Asap2.Location location, long Offset, long Distance, ulong NumberAPo) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class FIX_AXIS_PAR_LIST : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Sample point values ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<decimal> AxisPts_Values;
+        public FIX_AXIS_PAR_LIST(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class FIX_NO_AXIS_PTS_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, Comment=" NumberOfAxisPoints ", IsArgument=true)]
+        public ulong NumberOfAxisPoints;
+        public FIX_NO_AXIS_PTS_XYZ45(Asap2.Location location, string Name, ulong NumberOfAxisPoints) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class FNC_VALUES : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(3u, IsArgument=true)]
+        public Asap2.AddrType addrType;
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(2u, IsArgument=true)]
+        public Asap2.FNC_VALUES.IndexMode indexMode;
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public ulong Position;
+        public FNC_VALUES(Asap2.Location location, ulong Position, Asap2.DataType dataType, Asap2.FNC_VALUES.IndexMode indexMode, Asap2.AddrType addrType) { }
+        public enum IndexMode
+        {
+            ALTERNATE_CURVES = 0,
+            ALTERNATE_WITH_X = 1,
+            ALTERNATE_WITH_Y = 2,
+            COLUMN_DIR = 3,
+            ROW_DIR = 4,
+        }
+    }
+    [Asap2.BaseAttribute()]
+    public class FORMULA : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsString=true)]
+        public string formula;
+        [Asap2.ElementAttribute(2u, IsString=true, Name="FORMULA_INV")]
+        public string formula_inv;
+        public FORMULA(Asap2.Location location, string formula) { }
+        public void Validate(Asap2.IErrorReporter errorReporter, Asap2.MODULE module) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class FRAME : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(4u, IsArgument=true, IsList=true, Name="FRAME_MEASUREMENT")]
+        public System.Collections.Generic.List<string> frame_measurement;
+        [Asap2.ElementAttribute(5u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        public FRAME(Asap2.Location location, string Name, string LongIdentifier, ulong ScalingUnit, ulong Rate) { }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(4u, Comment=" Rate           ", IsArgument=true)]
+        public ulong Rate { get; }
+        [Asap2.ElementAttribute(3u, Comment=" ScalingUnit    ", IsArgument=true)]
+        public ulong ScalingUnit { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class FUNCTION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(3u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.ANNOTATION> annotation;
+        [Asap2.ElementAttribute(4u)]
+        public Asap2.DEF_CHARACTERISTIC def_characteristic;
+        [Asap2.ElementAttribute(5u, IsString=true, Name="FUNCTION_VERSION")]
+        public string function_version;
+        [Asap2.ElementAttribute(6u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        [Asap2.ElementAttribute(8u)]
+        public Asap2.IN_MEASUREMENT in_measurement;
+        [Asap2.ElementAttribute(9u)]
+        public Asap2.LOC_MEASUREMENT loc_measurement;
+        [Asap2.ElementAttribute(10u)]
+        public Asap2.OUT_MEASUREMENT out_measurement;
+        [Asap2.ElementAttribute(7u)]
+        public Asap2.REF_CHARACTERISTIC ref_characteristic;
+        [Asap2.ElementAttribute(11u)]
+        public Asap2.SUB_FUNCTION sub_function;
+        public FUNCTION(Asap2.Location location, string Name, string LongIdentifier) { }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsObsolete="Obsolete keyword. Please use FUNCTION instead.")]
+    public class FUNCTION_LIST : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" List of functions. ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> functions;
+        public FUNCTION_LIST(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class GROUP : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(3u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.ANNOTATION> annotation;
+        [Asap2.ElementAttribute(4u)]
+        public Asap2.FUNCTION_LIST function_list;
+        [Asap2.ElementAttribute(5u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        [Asap2.ElementAttribute(6u)]
+        public Asap2.REF_CHARACTERISTIC ref_characteristic;
+        [Asap2.ElementAttribute(7u)]
+        public Asap2.REF_MEASUREMENT ref_measurement;
+        [Asap2.ElementAttribute(8u)]
+        public Asap2.ROOT root;
+        [Asap2.ElementAttribute(9u)]
+        public Asap2.SUB_GROUP sub_group;
+        public GROUP(Asap2.Location location, string Name, string GroupLongIdentifier) { }
+        [Asap2.ElementAttribute(2u, Comment=" GroupLongIdentifier ", IsString=true)]
+        public string GroupLongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" GroupName           ", IsArgument=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class GUARD_RAILS : Asap2.Asap2Base
+    {
+        public GUARD_RAILS(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class HEADER : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, ForceNewLine=true, IsString=true)]
+        public string longIdentifier;
+        [Asap2.ElementAttribute(2u, IsArgument=true, Name="PROJECT_NO")]
+        public string project_no;
+        [Asap2.ElementAttribute(1u, IsString=true, Name="VERSION")]
+        public string version;
+        public HEADER(Asap2.Location location) { }
+    }
+    public interface IAxisPtsCharacteristicMeasurement
+    {
+        ulong GetEcuAddress();
+        string GetName();
+        ulong orderID();
+        void SetEcuAddress(ulong address);
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class IDENTIFICATION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" DataType ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public IDENTIFICATION(Asap2.Location location, ulong Position, Asap2.DataType dataType) { }
+    }
+    public interface IErrorReporter
+    {
+        void reportError(string message);
+        void reportInformation(string message);
+        void reportWarning(string message);
+    }
+    [Asap2.BaseAttribute()]
+    public class IF_DATA : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public string data;
+        public IF_DATA(Asap2.Location location, string data) { }
+        public string name { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class IN_MEASUREMENT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> measurements;
+        public IN_MEASUREMENT(Asap2.Location location) { }
+    }
+    public enum IndexOrder
+    {
+        INDEX_INCR = 0,
+        INDEX_DECR = 1,
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class LEFT_SHIFT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public ulong value;
+        public LEFT_SHIFT(Asap2.Location location, ulong value) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class LOC_MEASUREMENT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> measurements;
+        public LOC_MEASUREMENT(Asap2.Location location) { }
+    }
+    public class Location
+    {
+        public Location() { }
+        public Location(string fn) { }
+        public Location(int sl, int sc, int el, int ec, string fn) { }
+        public int EndColumn { get; }
+        public int EndLine { get; }
+        public string FileName { get; }
+        public int StartColumn { get; }
+        public int StartLine { get; }
+        public Asap2.Location Merge(Asap2.Location last) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class MAP_LIST : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> MapList;
+        public MAP_LIST(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class MATRIX_DIM : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public uint xDim;
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public uint yDim;
+        [Asap2.ElementAttribute(2u, IsArgument=true)]
+        public uint zDim;
+        public MATRIX_DIM(Asap2.Location location, uint xDim, uint yDim, uint zDim) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class MAX_REFRESH : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, Comment=" Rate        ", IsArgument=true)]
+        public ulong Rate;
+        [Asap2.ElementAttribute(0u, Comment=" ScalingUnit ", IsArgument=true)]
+        public ulong ScalingUnit;
+        public MAX_REFRESH(Asap2.Location location, ulong ScalingUnit, ulong Rate) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class MEASUREMENT : Asap2.Asap2Base, Asap2.IAxisPtsCharacteristicMeasurement
+    {
+        [Asap2.ElementAttribute(9u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.ANNOTATION> annotation;
+        [Asap2.ElementAttribute(10u)]
+        public Asap2.ARRAY_SIZE array_size;
+        [Asap2.ElementAttribute(11u, CodeAsHex=true, IsArgument=true, Name="BIT_MASK")]
+        public System.Nullable<ulong> bit_mask;
+        [Asap2.ElementAttribute(12u)]
+        public Asap2.BIT_OPERATION bit_operation;
+        [Asap2.ElementAttribute(13u)]
+        public Asap2.BYTE_ORDER byte_order;
+        [Asap2.ElementAttribute(14u)]
+        public Asap2.DISCRETE discrete;
+        [Asap2.ElementAttribute(15u, IsArgument=true, Name="DISPLAY_IDENTIFIER")]
+        public string display_identifier;
+        [Asap2.ElementAttribute(16u)]
+        public Asap2.ECU_ADDRESS ecu_address;
+        [Asap2.ElementAttribute(17u)]
+        public Asap2.ECU_ADDRESS_EXTENSION ecu_address_extension;
+        [Asap2.ElementAttribute(18u, CodeAsHex=true, IsArgument=true, Name="ERROR_MASK")]
+        public System.Nullable<ulong> error_mask;
+        [Asap2.ElementAttribute(19u, IsString=true, Name="FORMAT")]
+        public string format;
+        [Asap2.ElementAttribute(20u)]
+        public Asap2.FUNCTION_LIST function_list;
+        [Asap2.ElementAttribute(30u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        [Asap2.ElementAttribute(21u, IsArgument=true, Name="LAYOUT")]
+        public System.Nullable<Asap2.MEASUREMENT.LAYOUT> layout;
+        [Asap2.ElementAttribute(22u)]
+        public Asap2.MATRIX_DIM matrix_dim;
+        [Asap2.ElementAttribute(23u)]
+        public Asap2.MAX_REFRESH max_refresh;
+        [Asap2.ElementAttribute(24u, IsString=true, Name="PHYS_UNIT")]
+        public string phys_unit;
+        [Asap2.ElementAttribute(25u, Comment="Write-access is allowed for this MEASUREMENT")]
+        public Asap2.READ_WRITE read_write;
+        [Asap2.ElementAttribute(26u, IsArgument=true, Name="REF_MEMORY_SEGMENT")]
+        public string ref_memory_segment;
+        [Asap2.ElementAttribute(27u)]
+        public Asap2.SYMBOL_LINK symbol_link;
+        [Asap2.ElementAttribute(28u)]
+        public Asap2.VIRTUAL Virtual;
+        public MEASUREMENT(Asap2.Location location, string Name, string LongIdentifier, Asap2.DataType Datatype, string Conversion, uint Resolution, decimal Accuracy, decimal LowerLimit, decimal UpperLimit) { }
+        [Asap2.ElementAttribute(6u, Comment=" Accuracy       ", IsArgument=true)]
+        public decimal Accuracy { get; }
+        [Asap2.ElementAttribute(4u, Comment=" Conversion     ", IsArgument=true)]
+        public string Conversion { get; }
+        [Asap2.ElementAttribute(3u, Comment=" DataType       ", IsArgument=true)]
+        public Asap2.DataType Datatype { get; }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(7u, Comment=" LowerLimit     ", IsArgument=true)]
+        public decimal LowerLimit { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(5u, Comment=" Resolution     ", IsArgument=true)]
+        public uint Resolution { get; }
+        [Asap2.ElementAttribute(8u, Comment=" UpperLimit     ", IsArgument=true)]
+        public decimal UpperLimit { get; }
+        public ulong GetEcuAddress() { }
+        public string GetName() { }
+        public ulong orderID() { }
+        public void SetEcuAddress(ulong address) { }
+        public void Validate(Asap2.IErrorReporter errorReporter, Asap2.MODULE module) { }
+        public enum LAYOUT
+        {
+            ROW_DIR = 0,
+            COLUMN_DIR = 1,
+        }
+    }
+    [Asap2.BaseAttribute(IsObsolete="Obsolete keyword. Please use MEMORY_SEGMENT instead.")]
+    public class MEMORY_LAYOUT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, CodeAsHex=true, Comment=" Address              ", IsArgument=true)]
+        public ulong Address;
+        [Asap2.ElementAttribute(8u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        [Asap2.ElementAttribute(3u, Comment=" offset               ", IsArgument=true)]
+        public long offset0;
+        [Asap2.ElementAttribute(4u, IsArgument=true)]
+        public long offset1;
+        [Asap2.ElementAttribute(5u, IsArgument=true)]
+        public long offset2;
+        [Asap2.ElementAttribute(6u, IsArgument=true)]
+        public long offset3;
+        [Asap2.ElementAttribute(7u, IsArgument=true)]
+        public long offset4;
+        [Asap2.ElementAttribute(0u, Comment=" Program segment type ", IsArgument=true)]
+        public Asap2.MEMORY_LAYOUT.PrgType prgType;
+        [Asap2.ElementAttribute(2u, CodeAsHex=true, Comment=" Size                 ", IsArgument=true)]
+        public ulong Size;
+        public MEMORY_LAYOUT(Asap2.Location location, Asap2.MEMORY_LAYOUT.PrgType prgType, ulong Address, ulong Size, long offset0, long offset1, long offset2, long offset3, long offset4) { }
+        public enum PrgType
+        {
+            PRG_CODE = 0,
+            PRG_DATA = 1,
+            PRG_RESERVED = 2,
+        }
+    }
+    [Asap2.BaseAttribute()]
+    public class MEMORY_SEGMENT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(5u, CodeAsHex=true, Comment=" Address    ", IsArgument=true)]
+        public ulong address;
+        [Asap2.ElementAttribute(4u, Comment=" Attribute  ", IsArgument=true)]
+        public Asap2.MEMORY_SEGMENT.Attribute attribute;
+        [Asap2.ElementAttribute(12u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.IF_DATA> if_data;
+        [Asap2.ElementAttribute(1u, IsString=true)]
+        public string longIdentifier;
+        [Asap2.ElementAttribute(3u, Comment=" MemoryType ", IsArgument=true)]
+        public Asap2.MEMORY_SEGMENT.MemoryType memoryType;
+        [Asap2.ElementAttribute(7u, Comment=" offset     ", IsArgument=true)]
+        public long offset0;
+        [Asap2.ElementAttribute(8u, IsArgument=true)]
+        public long offset1;
+        [Asap2.ElementAttribute(9u, IsArgument=true)]
+        public long offset2;
+        [Asap2.ElementAttribute(10u, IsArgument=true)]
+        public long offset3;
+        [Asap2.ElementAttribute(11u, IsArgument=true)]
+        public long offset4;
+        [Asap2.ElementAttribute(2u, Comment=" PrgTypes   ", IsArgument=true)]
+        public Asap2.MEMORY_SEGMENT.PrgType prgType;
+        [Asap2.ElementAttribute(6u, CodeAsHex=true, Comment=" Size       ", IsArgument=true)]
+        public ulong size;
+        public MEMORY_SEGMENT(Asap2.Location location, string Name, string longIdentifier, Asap2.MEMORY_SEGMENT.PrgType prgType, Asap2.MEMORY_SEGMENT.MemoryType memoryType, Asap2.MEMORY_SEGMENT.Attribute attribute, ulong address, ulong size, long offset0, long offset1, long offset2, long offset3, long offset4) { }
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public string Name { get; }
+        public enum Attribute
+        {
+            INTERN = 0,
+            EXTERN = 1,
+        }
+        public enum MemoryType
+        {
+            EEPROM = 0,
+            EPROM = 1,
+            FLASH = 2,
+            RAM = 3,
+            ROM = 4,
+            REGISTER = 5,
+        }
+        public enum PrgType
+        {
+            CALIBRATION_VARIABLES = 0,
+            CODE = 1,
+            DATA = 2,
+            EXCLUDED_FROM_FLASH = 3,
+            OFFLINE_DATA = 4,
+            RESERVED = 5,
+            SERAM = 6,
+            VARIABLES = 7,
+        }
+    }
+    [Asap2.BaseAttribute()]
+    public class MOD_COMMON : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.ALIGNMENT> alignments;
+        [Asap2.ElementAttribute(2u)]
+        public Asap2.BYTE_ORDER byte_order;
+        [Asap2.ElementAttribute(3u, IsArgument=true, Name="DATA_SIZE")]
+        public System.Nullable<ulong> data_size;
+        [Asap2.ElementAttribute(4u)]
+        public Asap2.DEPOSIT deposit;
+        [Asap2.ElementAttribute(5u, IsArgument=true, Name="S_REC_LAYOUT")]
+        public string s_rec_layout;
+        public MOD_COMMON(Asap2.Location location, string Comment) { }
+        [Asap2.ElementAttribute(0u, IsString=true)]
+        public string Comment { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class MOD_PAR : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.ADDR_EPK> addr_epk;
+        [Asap2.ElementAttribute(3u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.CALIBRATION_METHOD> calibration_method;
+        [Asap2.ElementAttribute(1u, IsString=true)]
+        public string comment;
+        [Asap2.ElementAttribute(4u, IsString=true, Name="CPU_TYPE")]
+        public string cpu_type;
+        [Asap2.ElementAttribute(5u, IsString=true, Name="CUSTOMER")]
+        public string customer;
+        [Asap2.ElementAttribute(6u, IsString=true, Name="CUSTOMER_NO")]
+        public string customer_no;
+        [Asap2.ElementAttribute(7u, IsString=true, Name="ECU")]
+        public string ecu;
+        [Asap2.ElementAttribute(8u, IsArgument=true, Name="ECU_CALIBRATION_OFFSET")]
+        public System.Nullable<long> ecu_calibration_offset;
+        [Asap2.ElementAttribute(9u, IsString=true, Name="EPK")]
+        public string epk;
+        [Asap2.ElementAttribute(10u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.MEMORY_LAYOUT> memory_layout;
+        [Asap2.ElementAttribute(11u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.MEMORY_SEGMENT> memory_segment;
+        [Asap2.ElementAttribute(12u, IsArgument=true, Name="NO_OF_INTERFACES")]
+        public System.Nullable<ulong> no_of_interfaces;
+        [Asap2.ElementAttribute(13u, IsString=true, Name="PHONE_NO")]
+        public string phone_no;
+        [Asap2.ElementAttribute(14u, IsString=true, Name="SUPPLIER")]
+        public string supplier;
+        [Asap2.ElementAttribute(15u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.SYSTEM_CONSTANT> system_constants;
+        [Asap2.ElementAttribute(16u, IsString=true, Name="USER")]
+        public string user;
+        [Asap2.ElementAttribute(17u, IsString=true, Name="VERSION")]
+        public string version;
+        public MOD_PAR(Asap2.Location location, string comment) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class MODULE : Asap2.Asap2Base
+    {
+        public System.Collections.Generic.Dictionary<string, Asap2.IAxisPtsCharacteristicMeasurement> AxisPtsCharacteristicMeasurement;
+        public System.Collections.Generic.Dictionary<string, Asap2.COMPU_METHOD> CompuMethods;
+        public System.Collections.Generic.Dictionary<string, Asap2.Asap2Base> CompuTabCompuVtabCompuVtabRanges;
+        public System.Collections.Generic.List<Asap2.Asap2Base> elements;
+        public System.Collections.Generic.Dictionary<string, Asap2.FRAME> Frames;
+        public System.Collections.Generic.Dictionary<string, Asap2.FUNCTION> Functions;
+        public System.Collections.Generic.Dictionary<string, Asap2.GROUP> Groups;
+        public System.Collections.Generic.Dictionary<string, Asap2.RECORD_LAYOUT> Record_layouts;
+        public System.Collections.Generic.Dictionary<string, Asap2.UNIT> Units;
+        public System.Collections.Generic.Dictionary<string, Asap2.USER_RIGHTS> User_rights;
+        public MODULE(Asap2.Location location, string Name, string LongIdentifier) { }
+        [Asap2.ElementAttribute(2u, ForceNewLine=true, IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public string Name { get; }
+        public void AddElement(Asap2.AXIS_PTS obj) { }
+        public void AddElement(Asap2.CHARACTERISTIC obj) { }
+        public void AddElement(Asap2.MEASUREMENT Characteristic) { }
+        public void AddElement(Asap2.COMPU_TAB obj) { }
+        public void AddElement(Asap2.COMPU_VTAB obj) { }
+        public void AddElement(Asap2.COMPU_VTAB_RANGE Characteristic) { }
+        public void AddElement(Asap2.COMPU_METHOD obj) { }
+        public void AddElement(Asap2.FRAME obj) { }
+        public void AddElement(Asap2.FUNCTION obj) { }
+        public void AddElement(Asap2.GROUP obj) { }
+        public void AddElement(Asap2.RECORD_LAYOUT obj) { }
+        public void AddElement(Asap2.UNIT obj) { }
+        public void AddElement(Asap2.USER_RIGHTS obj) { }
+        public void Validate(Asap2.IErrorReporter errorReporter) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class MONOTONY : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public Asap2.MONOTONY.MONOTONY_type value;
+        public MONOTONY(Asap2.Location location, Asap2.MONOTONY.MONOTONY_type value) { }
+        public enum MONOTONY_type
+        {
+            MON_DECREASE = 0,
+            MON_INCREASE = 1,
+            STRICT_DECREASE = 2,
+            STRICT_INCREASE = 3,
+            MONOTONOUS = 4,
+            STRICT_MON = 5,
+            NOT_MON = 6,
+        }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class NO_AXIS_PTS_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" dataType ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public NO_AXIS_PTS_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class NO_RESCALE_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" dataType ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public NO_RESCALE_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class OFFSET_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" dataType ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public OFFSET_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class OUT_MEASUREMENT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> measurements;
+        public OUT_MEASUREMENT(Asap2.Location location) { }
+    }
+    public class Parser
+    {
+        public Parser(string fileName, Asap2.IErrorReporter errorHandler) { }
+        public string fileName { get; }
+        public string indentType { get; set; }
+        public Asap2.Asap2File DoParse() { }
+        public Asap2.Asap2File DoParse(System.IO.Stream stream) { }
+        public bool Serialise(Asap2.Asap2File tree, System.IO.StreamWriter stream) { }
+    }
+    public class ParserErrorException : System.Exception
+    {
+        public ParserErrorException() { }
+        public ParserErrorException(string message) { }
+        public ParserErrorException(string message, System.Exception inner) { }
+        public ParserErrorException(string format, params object[] args) { }
+        protected ParserErrorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+        public override string ToString() { }
+    }
+    [Asap2.BaseAttribute()]
+    public class PROJECT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u)]
+        public Asap2.HEADER header;
+        [Asap2.ElementAttribute(1u, IsString=true)]
+        public string LongIdentifier;
+        [Asap2.ElementAttribute(3u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.MODULE> modules;
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public string name;
+        public PROJECT(Asap2.Location location) { }
+        public void Validate(Asap2.IErrorReporter errorReporter) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class READ_ONLY : Asap2.Asap2Base
+    {
+        public READ_ONLY(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class READ_WRITE : Asap2.Asap2Base
+    {
+        public READ_WRITE(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class RECORD_LAYOUT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.ALIGNMENT> alignments;
+        [Asap2.ElementAttribute(2u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.AXIS_PTS_XYZ45> axis_pts_xyz45;
+        [Asap2.ElementAttribute(3u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.AXIS_RESCALE_XYZ45> axis_rescale_xyz45;
+        [Asap2.ElementAttribute(4u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.DIST_OP_XYZ45> dist_op_xyz45;
+        [Asap2.ElementAttribute(5u, IsDictionary=true)]
+        public System.Collections.Generic.Dictionary<string, Asap2.FIX_NO_AXIS_PTS_XYZ45> fix_no_axis_pts_xyz45;
+        [Asap2.ElementAttribute(6u)]
+        public Asap2.FNC_VALUES fnc_values;
+        [Asap2.ElementAttribute(7u)]
+        public Asap2.IDENTIFICATION identification;
+        [Asap2.ElementAttribute(8u)]
+        public System.Collections.Generic.Dictionary<string, Asap2.NO_AXIS_PTS_XYZ45> no_axis_pts_xyz45;
+        [Asap2.ElementAttribute(9u)]
+        public System.Collections.Generic.Dictionary<string, Asap2.NO_RESCALE_XYZ45> no_rescale_xyz45;
+        [Asap2.ElementAttribute(10u)]
+        public System.Collections.Generic.Dictionary<string, Asap2.OFFSET_XYZ45> offset_xyz45;
+        [Asap2.ElementAttribute(11u)]
+        public Asap2.RESERVED reserved;
+        [Asap2.ElementAttribute(12u)]
+        public System.Collections.Generic.Dictionary<string, Asap2.RIP_ADDR_WXYZ45> rip_addr_wxyz45;
+        [Asap2.ElementAttribute(13u)]
+        public System.Collections.Generic.Dictionary<string, Asap2.SHIFT_OP_XYZ45> shift_op_xyz45;
+        [Asap2.ElementAttribute(14u)]
+        public System.Collections.Generic.Dictionary<string, Asap2.SRC_ADDR_XYZ45> src_addr_xyz45;
+        [Asap2.ElementAttribute(15u)]
+        public Asap2.STATIC_RECORD_LAYOUT static_record_layout;
+        public RECORD_LAYOUT(Asap2.Location location, string Name) { }
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class REF_CHARACTERISTIC : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> reference;
+        public REF_CHARACTERISTIC(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class REF_GROUP : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Group references ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> reference;
+        public REF_GROUP(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class REF_MEASUREMENT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Measurement references ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> reference;
+        public REF_MEASUREMENT(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class RESERVED : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" DataSize ", IsArgument=true)]
+        public Asap2.DataSize dataSize;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public RESERVED(Asap2.Location location, ulong Position, Asap2.DataSize dataSize) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class RIGHT_SHIFT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public ulong value;
+        public RIGHT_SHIFT(Asap2.Location location, ulong value) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class RIP_ADDR_WXYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" DataType ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public RIP_ADDR_WXYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class ROOT : Asap2.Asap2Base
+    {
+        public ROOT(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class SHIFT_OP_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" DataType ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public SHIFT_OP_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class SI_EXPONENTS : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(5u, IsArgument=true)]
+        public long AmountOfSubstance;
+        [Asap2.ElementAttribute(3u, IsArgument=true)]
+        public long ElectricCurrent;
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public long Length;
+        [Asap2.ElementAttribute(6u, IsArgument=true)]
+        public long LuminousIntensity;
+        [Asap2.ElementAttribute(1u, IsArgument=true)]
+        public long Mass;
+        [Asap2.ElementAttribute(4u, IsArgument=true)]
+        public long Temperature;
+        [Asap2.ElementAttribute(2u, IsArgument=true)]
+        public long Time;
+        public SI_EXPONENTS(Asap2.Location location, long Length, long Mass, long Time, long ElectricCurrent, long Temperature, long AmountOfSubstance, long LuminousIntensity) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class SIGN_EXTEND : Asap2.Asap2Base
+    {
+        public SIGN_EXTEND(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class SRC_ADDR_XYZ45 : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" DataType ", IsArgument=true)]
+        public Asap2.DataType dataType;
+        [Asap2.ElementAttribute(1u, Comment=" Position ", IsArgument=true)]
+        public ulong Position;
+        public SRC_ADDR_XYZ45(Asap2.Location location, string Name, ulong Position, Asap2.DataType dataType) { }
+        [Asap2.ElementAttribute(0u, IsName=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class STATIC_RECORD_LAYOUT : Asap2.Asap2Base
+    {
+        public STATIC_RECORD_LAYOUT(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class SUB_FUNCTION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> sub_functions;
+        public SUB_FUNCTION(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class SUB_GROUP : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" Sub groups ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> groups;
+        public SUB_GROUP(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class SYMBOL_LINK : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, Comment=" Offset     ", IsArgument=true)]
+        public ulong Offset;
+        [Asap2.ElementAttribute(0u, Comment=" SymbolName ", IsArgument=true)]
+        public string SymbolName;
+        public SYMBOL_LINK(Asap2.Location location, string SymbolName, ulong Offset) { }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class SYSTEM_CONSTANT : Asap2.Asap2Base
+    {
+        public SYSTEM_CONSTANT(Asap2.Location location, string name, string value) { }
+        [Asap2.ElementAttribute(1u, IsString=true)]
+        public string name { get; }
+        [Asap2.ElementAttribute(1u, IsString=true)]
+        public string value { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class UNIT : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(5u, IsArgument=true, Name="REF_UNIT")]
+        public string ref_unit;
+        [Asap2.ElementAttribute(6u)]
+        public Asap2.SI_EXPONENTS si_exponents;
+        [Asap2.ElementAttribute(7u)]
+        public Asap2.UNIT_CONVERSION unit_conversion;
+        public UNIT(Asap2.Location location, string Name, string LongIdentifier, string Display, Asap2.UNIT.Type type) { }
+        [Asap2.ElementAttribute(3u, Comment=" Display        ", IsString=true)]
+        public string Display { get; }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+        [Asap2.ElementAttribute(4u, Comment=" Type           ", IsArgument=true)]
+        public Asap2.UNIT.Type type { get; }
+        public enum Type
+        {
+            DERIVED = 0,
+            SI_CONVERSION = 1,
+        }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class UNIT_CONVERSION : Asap2.Asap2Base
+    {
+        public UNIT_CONVERSION(Asap2.Location location, decimal Gradient, decimal Offset) { }
+        [Asap2.ElementAttribute(0u, Comment=" Gradient ", IsArgument=true)]
+        public decimal Gradient { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Offset   ", IsArgument=true)]
+        public decimal Offset { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class USER_RIGHTS : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(3u)]
+        public Asap2.READ_ONLY read_only;
+        [Asap2.ElementAttribute(2u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.REF_GROUP> ref_group;
+        public USER_RIGHTS(Asap2.Location location, string Name) { }
+        [Asap2.ElementAttribute(1u, Comment=" UserLevelId ", IsArgument=true)]
+        public string Name { get; }
+    }
+    public class ValidationErrorException : System.Exception
+    {
+        public ValidationErrorException() { }
+        public ValidationErrorException(string message) { }
+        public ValidationErrorException(string message, System.Exception inner) { }
+        protected ValidationErrorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+        public override string ToString() { }
+    }
+    [Asap2.BaseAttribute()]
+    public class VAR_ADDRESS : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, CodeAsHex=true, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<ulong> Addresses;
+        public VAR_ADDRESS(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class VAR_CHARACTERISTIC : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(2u, Comment=" CriterionName ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> CriterionNames;
+        [Asap2.ElementAttribute(3u)]
+        public Asap2.VAR_ADDRESS var_address;
+        public VAR_CHARACTERISTIC(Asap2.Location location, string Name) { }
+        [Asap2.ElementAttribute(1u, Comment=" Name          ", IsArgument=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class VAR_CRITERION : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(3u, Comment=" Ident          ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> Idents;
+        [Asap2.ElementAttribute(4u)]
+        public Asap2.VAR_MEASUREMENT var_measurement;
+        [Asap2.ElementAttribute(5u)]
+        public Asap2.VAR_SELECTION_CHARACTERISTIC var_selection_characteristic;
+        public VAR_CRITERION(Asap2.Location location, string Name, string LongIdentifier) { }
+        [Asap2.ElementAttribute(2u, Comment=" LongIdentifier ", IsString=true)]
+        public string LongIdentifier { get; }
+        [Asap2.ElementAttribute(1u, Comment=" Name           ", IsArgument=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class VAR_FORBIDDEN_COMB : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<Asap2.VAR_FORBIDDEN_COMB.Combo> combinations;
+        public VAR_FORBIDDEN_COMB(Asap2.Location location) { }
+        public class Combo
+        {
+            public Combo(string criterionName, string criterionValue) { }
+            public string CriterionName { get; }
+            public string CriterionValue { get; }
+            public override string ToString() { }
+        }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class VAR_MEASUREMENT : Asap2.Asap2Base
+    {
+        public VAR_MEASUREMENT(Asap2.Location location, string Name) { }
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute(IsSimple=true)]
+    public class VAR_SELECTION_CHARACTERISTIC : Asap2.Asap2Base
+    {
+        public VAR_SELECTION_CHARACTERISTIC(Asap2.Location location, string Name) { }
+        [Asap2.ElementAttribute(0u, IsArgument=true)]
+        public string Name { get; }
+    }
+    [Asap2.BaseAttribute()]
+    public class VARIANT_CODING : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(3u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.VAR_FORBIDDEN_COMB> forbidden_combinations;
+        [Asap2.ElementAttribute(1u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.VAR_CHARACTERISTIC> var_characteristic;
+        [Asap2.ElementAttribute(2u, IsList=true)]
+        public System.Collections.Generic.List<Asap2.VAR_CRITERION> var_criterion;
+        [Asap2.ElementAttribute(5u, IsArgument=true, Name="VAR_NAMING")]
+        public Asap2.VARIANT_CODING.VAR_NAMING var_naming;
+        [Asap2.ElementAttribute(4u, IsString=true, Name="VAR_SEPERATOR")]
+        public string var_seperator;
+        public VARIANT_CODING(Asap2.Location location) { }
+        public enum VAR_NAMING
+        {
+            NUMERIC = 0,
+            ALPHA = 1,
+        }
+    }
+    [Asap2.BaseAttribute()]
+    public class VIRTUAL : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(0u, Comment=" MeasuringChannels ", IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> MeasuringChannel;
+        public VIRTUAL(Asap2.Location location) { }
+    }
+    [Asap2.BaseAttribute()]
+    public class VIRTUAL_CHARACTERISTIC : Asap2.Asap2Base
+    {
+        [Asap2.ElementAttribute(1u, IsArgument=true, IsList=true)]
+        public System.Collections.Generic.List<string> Characteristic;
+        [Asap2.ElementAttribute(0u, IsString=true)]
+        public string Formula;
+        public VIRTUAL_CHARACTERISTIC(Asap2.Location location, string Formula) { }
+    }
+}
+namespace Asap2.tools
+{
+    
+    public class ErrorException : System.Exception
+    {
+        public Asap2.tools.ErrorException.ErrorCodes errorCode;
+        public ErrorException(Asap2.tools.ErrorException.ErrorCodes errorCode) { }
+        public ErrorException(Asap2.tools.ErrorException.ErrorCodes errorCode, string message) { }
+        public ErrorException(Asap2.tools.ErrorException.ErrorCodes errorCode, string message, System.Exception inner) { }
+        protected ErrorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+        public override string ToString() { }
+        [System.FlagsAttribute()]
+        public enum ErrorCodes
+        {
+            NoError = 0,
+            ParameterError = 1,
+            InputFileNotFoundOrNotReadable = 2,
+            OutoutFileNotWritable = 4,
+            MergeError = 8,
+            InFileParsingError = 16,
+            FileValidationError = 32,
+            ModuleNotFoundError = 64,
+            UnknownError = 255,
+        }
+    }
+    public class Merger
+    {
+        public Merger(Asap2.tools.Options options) { }
+        public void Merge(ref Asap2.Asap2File destination, Asap2.Asap2File source) { }
+        public void MergeModules(ref Asap2.MODULE destination, Asap2.MODULE source) { }
+        public Asap2.MODULE MergeModulesList(System.Collections.Generic.Dictionary<string, Asap2.MODULE> modules) { }
+    }
+    public class Options
+    {
+        public Asap2.tools.Options.ElementTypes ElementToIgnoreWhenMerging;
+        public Asap2.tools.Options.MergeConflictType MergeConflict;
+        public Asap2.tools.Options.ModuleMergeType ModuleMerge;
+        public Options() { }
+        [System.FlagsAttribute()]
+        public enum ElementTypes
+        {
+            NONE = 0,
+            MEASUREMENT = 1,
+            CHARACTERISTIC = 2,
+            AXIS_PTS = 4,
+            COMPU_TAB = 8,
+            COMPU_VTAB = 16,
+            COMPU_VTAB_RANGE = 32,
+            COMPU_METHOD = 64,
+            FRAME = 128,
+            GROUP = 256,
+            FUNCTION = 512,
+            RECORD_LAYOUT = 1024,
+            UNIT = 2048,
+            USER_RIGHTS = 4096,
+            A2ML = 8192,
+            MOD_COMMON = 16384,
+            MOD_PAR = 32768,
+            VARIANT_CODING = 65536,
+            IF_DATA = 131072,
+            ALL = 262143,
+        }
+        public enum MergeConflictType
+        {
+            UseFromFirstModule = 0,
+            UseFromFirstModuleAndWarn = 1,
+            AbortWithError = 2,
+        }
+        public enum ModuleMergeType
+        {
+            Multiple = 0,
+            One = 1,
+        }
+    }
+    public class Remover
+    {
+        public Remover() { }
+        public static void purgeEmptyOrNotReferencedElements(ref Asap2.MODULE module, Asap2.tools.Options options) { }
+        public static void RemoveAllElements(ref Asap2.MODULE module, Asap2.tools.Options.ElementTypes elementsToDelete, Asap2.tools.Options options) { }
+    }
+}
+namespace QUT.GplexBuffers
+{
+    
+    public delegate int BlockReader(char[] block, int index, int number);
+    public class static BlockReaderFactory
+    {
+        public static QUT.GplexBuffers.BlockReader Get(System.IO.Stream stream, int fallbackCodePage) { }
+        public static QUT.GplexBuffers.BlockReader Raw(System.IO.Stream stream) { }
+    }
+    public class BufferException : System.Exception
+    {
+        public BufferException() { }
+        public BufferException(string message) { }
+        public BufferException(string message, System.Exception innerException) { }
+        protected BufferException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+    }
+    public class static CodePageHandling
+    {
+        public static int GetCodePage(string option) { }
+    }
+    public abstract class ScanBuff
+    {
+        public const int EndOfFile = -1;
+        public const int UnicodeReplacementChar = 65533;
+        protected ScanBuff() { }
+        public string FileName { get; set; }
+        public bool IsFile { get; }
+        public abstract int Pos { get; set; }
+        public static QUT.GplexBuffers.ScanBuff GetBuffer(string source) { }
+        public static QUT.GplexBuffers.ScanBuff GetBuffer(System.Collections.Generic.IList<string> source) { }
+        public static QUT.GplexBuffers.ScanBuff GetBuffer(System.IO.Stream source) { }
+        public static QUT.GplexBuffers.ScanBuff GetBuffer(System.IO.Stream source, int fallbackCodePage) { }
+        public abstract string GetString(int begin, int limit);
+        public virtual void Mark() { }
+        public abstract int Read();
+    }
+}
