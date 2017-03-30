@@ -1819,28 +1819,7 @@ var_address
         $$.Addresses.Add((UInt64)$2);
     }
     ;
+
 %%
 
-private object EnumToStringOrAbort(Type type, string strIn)
-{
-    try
-    {
-       return Enum.Parse(type, strIn);
-    }
-    catch (ArgumentException e)
-    {
-        StringBuilder values = new StringBuilder();
-        string[] myArray = Enum.GetNames(type);
-        foreach(var item in myArray)
-        {
-            if (values.Length > 0)
-            {
-                values.Append(", ");
-            }
-            values.Append(item);
-        }
-        Scanner.yyerror(String.Format("Syntax error: Unknown '{0}' enum value '{1}' expecting one of '{2}'", type.ToString(), strIn, values.ToString()));
-        YYAbort();
-        throw e;
-    }
-}
+// User code is all now in Asap2.Parser.cs
