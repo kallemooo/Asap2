@@ -11,11 +11,11 @@ namespace Asap2
     /// </summary>
     public class Location : QUT.Gppg.IMerge<Location>
     {
-        private int startLine;   // start line
-        private int startColumn; // start column
-        private int endLine;     // end line
-        private int endColumn;   // end column
-        private string fileName; // current filename.
+        private readonly int startLine;   // start line
+        private readonly int startColumn; // start column
+        private readonly int endLine;     // end line
+        private readonly int endColumn;   // end column
+        private readonly string fileName; // current filename.
 
         /// <summary>
         /// The line at which the text span starts.

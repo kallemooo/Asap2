@@ -612,10 +612,10 @@ namespace QUT.Gppg {
     internal class LexLocation : IMerge<LexLocation>
 #endif
  {
-        private int startLine;   // start line
-        private int startColumn; // start column
-        private int endLine;     // end line
-        private int endColumn;   // end column
+        private readonly int startLine;   // start line
+        private readonly int startColumn; // start column
+        private readonly int endLine;     // end line
+        private readonly int endColumn;   // end column
 
         /// <summary>
         /// The line at which the text span starts.
