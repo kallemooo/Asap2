@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Asap2
 {
     [Base()]
-    public class CHARACTERISTIC : Asap2Base
+    public class CHARACTERISTIC : Asap2Base, IAxisPtsCharacteristicMeasurement
     {
         /// <summary>
         /// Characteristic types 
@@ -48,6 +48,12 @@ namespace Asap2
         public string Deposit { get; private set; }
         [Element(6, IsArgument = true, Comment = " MaxDiff        ")]
         public decimal MaxDiff { get; private set; }
+
+        /// <summary>
+        /// Reference to the relevant record of the description of the conversion method (see <see cref="COMPU_METHOD"/>).
+        /// If there is no conversion method, as in the case of <see cref="CURVE_AXIS"/>,
+        /// the parameter ‘Conversion’ should be set to “NO_COMPU_METHOD" (measurement and calibration systems must be able to handle this case). 
+        /// </summary>
         [Element(7, IsArgument = true, Comment = " Conversion     ")]
         public string Conversion { get; private set; }
         [Element(8, IsArgument = true, Comment = " LowerLimit     ")]
@@ -122,6 +128,28 @@ namespace Asap2
         [Element(34, IsList = true)]
         public List<IF_DATA> if_data = new List<IF_DATA>();
 
+#region IAxisPtsCharacteristicMeasurement
+        public String GetName()
+        {
+            return Name;
+        }
+
+        public UInt64 GetEcuAddress()
+        {
+            return Address;
+        }
+
+        public void SetEcuAddress(UInt64 address)
+        {
+            Address = address;
+        }
+
+        public ulong orderID()
+        {
+            return OrderID;
+        }
+#endregion
+
         public void Validate(IErrorReporter errorReporter, MODULE module)
         {
             base.ValidateIdentifier(Name, errorReporter);
@@ -130,7 +158,7 @@ namespace Asap2
                 /* Validate that refered RECORD_LAYOUT exists */
                 if (!module.Record_layouts.ContainsKey(Deposit))
                 {
-                    base.reportErrorOrWarning(string.Format("Referenced RECORD_LAYOUT '{0}' not found", Conversion), false, errorReporter);
+                    base.reportErrorOrWarning(string.Format("Referenced RECORD_LAYOUT '{0}' not found", Deposit), false, errorReporter);
                 }
             }
 

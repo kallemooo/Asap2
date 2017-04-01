@@ -198,4 +198,12 @@ namespace Asap2
         /// <exception cref="ValidationErrorException">Fatal validation error.</exception>
         void Validate(IErrorReporter errorReporter);
     }
+
+    public interface IAxisPtsCharacteristicMeasurement
+    {
+        String GetName();
+        UInt64 GetEcuAddress();
+        void SetEcuAddress(UInt64 address);
+        ulong orderID();
+    }
 }

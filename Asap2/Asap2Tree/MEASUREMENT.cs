@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Asap2
 {
     [Base()]
-    public class MEASUREMENT : Asap2Base
+    public class MEASUREMENT : Asap2Base, IAxisPtsCharacteristicMeasurement
     {
         public enum LAYOUT
         {
@@ -32,6 +32,12 @@ namespace Asap2
         public string LongIdentifier { get; private set; }
         [Element(3, IsArgument = true, Comment = " DataType       ")]
         public DataType Datatype { get; private set; }
+
+        /// <summary>
+        /// Reference to the relevant record of the description of the conversion method (see <see cref="COMPU_METHOD"/>).
+        /// If there is no conversion method, as in the case of <see cref="CURVE_AXIS"/>,
+        /// the parameter ‘Conversion’ should be set to “NO_COMPU_METHOD" (measurement and calibration systems must be able to handle this case). 
+        /// </summary>
         [Element(4, IsArgument = true, Comment = " Conversion     ")]
         public string Conversion { get; private set; }
         [Element(5, IsArgument = true, Comment = " Resolution     ")]
@@ -87,6 +93,40 @@ namespace Asap2
         public VIRTUAL Virtual;
         [Element(30, IsList = true)]
         public List<IF_DATA> if_data = new List<IF_DATA>();
+
+#region IAxisPtsCharacteristicMeasurement
+        public String GetName()
+        {
+            return Name;
+        }
+
+        public UInt64 GetEcuAddress()
+        {
+            UInt64 Address = 0;
+            if (ecu_address != null)
+            {
+                Address = ecu_address.value;
+            }
+            return Address;
+        }
+
+        public void SetEcuAddress(UInt64 address)
+        {
+            if (ecu_address == null)
+            {
+                ecu_address = new ECU_ADDRESS(this.location, address);
+            }
+            else
+            {
+                ecu_address.value = address;
+            }
+        }
+
+        public ulong orderID()
+        {
+            return OrderID;
+        }
+#endregion
 
         public void Validate(IErrorReporter errorReporter, MODULE module)
         {

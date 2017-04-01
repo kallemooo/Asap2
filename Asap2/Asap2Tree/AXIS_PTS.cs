@@ -12,7 +12,7 @@ namespace Asap2
     /// record layout and computation method, the maximum number of sample points and further properties.
     /// </summary>
     [Base()]
-    public class AXIS_PTS : Asap2Base
+    public class AXIS_PTS : Asap2Base , IAxisPtsCharacteristicMeasurement
     {
         public AXIS_PTS(Location location, string Name, string LongIdentifier, UInt64 Address, string InputQuantity, string Deposit, decimal MaxDiff, string Conversion, UInt64 MaxAxisPoints, decimal LowerLimit, decimal UpperLimit) : base(location)
         {
@@ -39,6 +39,12 @@ namespace Asap2
         public string Deposit { get; private set; }
         [Element(6, IsArgument = true, Comment = " MaxDiff        ")]
         public decimal MaxDiff { get; private set; }
+
+        /// <summary>
+        /// Reference to the relevant record of the description of the conversion method (see <see cref="COMPU_METHOD"/>).
+        /// If there is no conversion method, as in the case of <see cref="CURVE_AXIS"/>,
+        /// the parameter ‘Conversion’ should be set to “NO_COMPU_METHOD" (measurement and calibration systems must be able to handle this case). 
+        /// </summary>
         [Element(7, IsArgument = true, Comment = " Conversion     ")]
         public string Conversion { get; private set; }
         [Element(8, IsArgument = true, Comment = " MaxAxisPoints  ")]
@@ -104,6 +110,29 @@ namespace Asap2
 
         [Element(29)]
         public SYMBOL_LINK symbol_link;
+
+#region IAxisPtsCharacteristicMeasurement
+        public String GetName()
+        {
+            return Name;
+        }
+
+        public UInt64 GetEcuAddress()
+        {
+            return Address;
+        }
+
+        public void SetEcuAddress(UInt64 address)
+        {
+            Address = address;
+        }
+
+        public ulong orderID()
+        {
+            return OrderID;
+        }
+#endregion
+
         public void Validate(IErrorReporter errorReporter, MODULE module)
         {
             base.ValidateIdentifier(Name, errorReporter);

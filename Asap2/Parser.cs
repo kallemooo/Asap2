@@ -79,6 +79,38 @@ namespace Asap2
             }
         }
 
+        /// <summary>
+        /// Parse the provided A2L file.
+        /// </summary>
+        /// <param name="stream">Data stream to parse.</param>
+        /// <returns>true if all succeded with no fatal errors</returns>
+        public Asap2File DoParse(Stream stream)
+        {
+            bool status = false;
+            Asap2Scanner scanner;
+            Asap2Parser parser;
+            scanner = new Asap2Scanner(stream, this.errorHandler);
+            parser = new Asap2Parser(scanner, this.errorHandler);
+            try
+            {
+                status = parser.Parse();
+            }
+            catch (ParserErrorException e)
+            {
+                errorHandler.reportError(e.Message);
+                status = false;
+            }
+
+            if (status)
+            {
+                return parser.Asap2File;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private static class SortedFieldsCache
         {
             private static Dictionary<Type, FieldInfo[]> Value;
@@ -269,7 +301,7 @@ namespace Asap2
                     {
                         foreach (var obj in moduleObj.AxisPtsCharacteristicMeasurement.Values)
                         {
-                            elements.Add(obj.OrderID, obj);
+                            elements.Add(obj.orderID(), (Asap2Base)obj);
                         }
                     }
 

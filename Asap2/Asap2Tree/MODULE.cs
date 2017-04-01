@@ -30,7 +30,7 @@ namespace Asap2
         /// <summary>
         /// References to the <see cref="AXIS_PTS"/>s, <see cref="MEASUREMENT"/>s or <see cref="CHARACTERISTIC"/>s based on the Name element.
         /// </summary>
-        public Dictionary<string, Asap2Base> AxisPtsCharacteristicMeasurement = new Dictionary<string, Asap2Base>();
+        public Dictionary<string, IAxisPtsCharacteristicMeasurement> AxisPtsCharacteristicMeasurement = new Dictionary<string, IAxisPtsCharacteristicMeasurement>();
 
         /// <summary>
         /// Add <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> to the lists.
@@ -38,7 +38,7 @@ namespace Asap2
         /// <param name="Name">Name of object</param>
         /// <param name="Obj">The object</param>
         /// <exception cref="ValidationErrorException">thrown if duplicated object is found.</exception>
-        private void AddAxisPtsCharacteristicOrMeasurement(string Name, Asap2Base obj)
+        private void AddAxisPtsCharacteristicOrMeasurement(string Name,  IAxisPtsCharacteristicMeasurement obj)
         {
             try
             {

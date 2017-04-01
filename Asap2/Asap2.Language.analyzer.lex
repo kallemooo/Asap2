@@ -328,7 +328,6 @@ protected override bool yywrap()
     Stream currentStream = StreamStack.Pop();
     currentStream.Dispose();
     RestoreBuffCtx(buffStack.Pop());
-    Console.WriteLine(this.buffer.GetType().ToString());
 
     return false;
 }
