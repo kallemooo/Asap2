@@ -36,7 +36,7 @@ namespace Asap2
         /// Add <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> to the lists.
         /// </summary>
         /// <param name="Name">Name of object</param>
-        /// <param name="Obj">The object</param>
+        /// <param name="obj">The object</param>
         /// <exception cref="ValidationErrorException">thrown if duplicated object is found.</exception>
         private void AddAxisPtsCharacteristicOrMeasurement(string Name,  IAxisPtsCharacteristicMeasurement obj)
         {
@@ -73,7 +73,7 @@ namespace Asap2
         /// <summary>
         /// Add a <see cref="MEASUREMENT"/> to the lists.
         /// </summary>
-        /// <param name="obj">MEASUREMENT object to add</param>
+        /// <param name="Characteristic">MEASUREMENT object to add</param>
         /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="AXIS_PTS"/>, <see cref="MEASUREMENT"/> or <see cref="CHARACTERISTIC"/> is found.</exception>
         public void AddElement(MEASUREMENT Characteristic)
         {
@@ -92,7 +92,7 @@ namespace Asap2
         /// References to the <see cref="COMPU_TAB"/>s, <see cref="COMPU_VTAB"/>s or <see cref="COMPU_VTAB_RANGE"/>s based on the Name element.
         /// </summary>
         /// <param name="Name">Name of object</param>
-        /// <param name="Obj">The object</param>
+        /// <param name="obj">The object</param>
         /// <exception cref="ValidationErrorException">thrown if duplicated object is found.</exception>
         private void AddCompuTabCompuVtabCompuVtabRanges(string Name, Asap2Base obj)
         {
@@ -129,7 +129,7 @@ namespace Asap2
         /// <summary>
         /// Add a <see cref="COMPU_VTAB_RANGE"/> to the lists.
         /// </summary>
-        /// <param name="obj">COMPU_VTAB_RANGE object to add</param>
+        /// <param name="Characteristic">COMPU_VTAB_RANGE object to add</param>
         /// <exception cref="ValidationErrorException">thrown if duplicated <see cref="COMPU_TAB"/>, <see cref="COMPU_VTAB"/> or <see cref="COMPU_VTAB_RANGE"/> is found.</exception>
         public void AddElement(COMPU_VTAB_RANGE Characteristic)
         {
