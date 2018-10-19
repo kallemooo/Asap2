@@ -495,7 +495,7 @@ axis_pts_data
         $$ = $1;
         $$.guard_rails = new GUARD_RAILS(@2);
     }
-    | axis_pts if_data {
+    | axis_pts_data if_data {
         $$ = $1;
         $$.if_data.Add($2);
     }
