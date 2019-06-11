@@ -203,7 +203,7 @@ namespace Asap2
                 {
                     foreach (string data in SerialiseNode(item, 0))
                     {
-                        stream.WriteAsync(data);
+                        stream.Write(data);
                     }
                 }
             }
@@ -238,7 +238,7 @@ namespace Asap2
                     {
                         if (elemAtt.IsName)
                         {
-                            elementName = (string)pI[i].GetValue(tree);
+                            elementName = (string)pI[i].GetValue(tree,null);
                         }
                     }
                 }
@@ -432,7 +432,7 @@ namespace Asap2
                 ElementAttribute att = AttributeCache<ElementAttribute, MemberInfo>.Get(info);
                 if (att != null)
                 {
-                    object objData = info.GetValue(tree);
+                    object objData = info.GetValue(tree, null);
                     if (objData != null)
                     {
                         foreach (var serialiseAttribute in SerialiseAttributeData(objData, info.PropertyType, att, indentLevel))
