@@ -64,7 +64,7 @@ namespace Asap2
         public CALIBRATION_ACCESS calibration_access;
 
         [Element(12)]
-        public DEPOSIT deposit;
+        public DEPOSIT depositObj;
 
         [Element(18, IsArgument = true, Name = "DISPLAY_IDENTIFIER")]
         public string display_identifier;

@@ -813,7 +813,7 @@ namespace Asap2
         public string Name { get; private set; }
 
         [Element(1, IsDictionary = true)]
-        public Dictionary<string, ALIGNMENT> alignments;
+        public Dictionary<string, ALIGNMENT> alignments = new Dictionary<string, ALIGNMENT>();
 
         [Element(2, IsDictionary = true)]
         public Dictionary<string, AXIS_PTS_XYZ45> axis_pts_xyz45 = new Dictionary<string, AXIS_PTS_XYZ45>();
