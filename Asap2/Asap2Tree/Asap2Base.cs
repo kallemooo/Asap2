@@ -43,17 +43,17 @@ namespace Asap2
         {
             if (isError)
             {
-                string msg = string.Format("{0} : Line: {1} : Row: {2} : ValidationError : {3}", location.FileName, location.StartLine, location.StartColumn, message);
+                string msg = string.Format("{0} : Line: {1} : Column: {2} : ValidationError : {3}", location.FileName, location.StartLine, location.StartColumn, message);
                 errorReporter.reportError(msg);
                 throw new ValidationErrorException(msg);
             }
             else if (isInfo)
             {
-                errorReporter.reportInformation(string.Format("{0} : Line: {1} : Row: {2} : ValidationInformation : {3}", location.FileName, location.StartLine, location.StartColumn, message));
+                errorReporter.reportInformation(string.Format("{0} : Line: {1} : Column: {2} : ValidationInformation : {3}", location.FileName, location.StartLine, location.StartColumn, message));
             }
             else
             {
-                errorReporter.reportWarning(string.Format("{0} : Line: {1} : Row: {2} : ValidationWarning : {3}", location.FileName, location.StartLine, location.StartColumn, message));
+                errorReporter.reportWarning(string.Format("{0} : Line: {1} : Column: {2} : ValidationWarning : {3}", location.FileName, location.StartLine, location.StartColumn, message));
             }
 
         }
