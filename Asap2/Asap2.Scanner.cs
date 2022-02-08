@@ -13,7 +13,7 @@ namespace Asap2
         public override void yyerror(string format, params object[] args)
         {
             StringBuilder errorMsg = new StringBuilder();
-            errorMsg.AppendFormat("{0} : Line: {1} : Row: {2} : {3}", this.buffer.FileName, yyline, yycol, string.Format(format, args));
+            errorMsg.AppendFormat("{0} : Line: {1} : Column: {2} : {3}", this.buffer.FileName, yyline, yycol, string.Format(format, args));
             errorHandler.reportError(errorMsg.ToString());
         }
 
