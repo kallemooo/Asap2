@@ -606,7 +606,7 @@ A2ML_VERSION 1 1
          MAX_REFRESH 1 54
          READ_WRITE
          PHYS_UNIT "C"
-         REF_MEMORY_SEGMENT TestOf_ref_memory_segment
+         REF_MEMORY_SEGMENT flash_calib_offline
          SYMBOL_LINK "LinkName" 0
          /begin VIRTUAL
             Channel1
@@ -625,6 +625,36 @@ A2ML_VERSION 1 1
             /end DAQ_EVENT
          /end IF_DATA
       /end MEASUREMENT
+
+    /begin COMPU_METHOD CompuMethod_01
+      "conversion CompuMethod_01"
+      IDENTICAL "%3.0" "hours"
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD CompuMethod_02
+      "conversion CompuMethod_02"
+      IDENTICAL "%3.0" "hours"
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD CompuMethod_03
+      "conversion CompuMethod_03"
+      IDENTICAL "%3.0" "hours"
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD CompuMethod_04
+      "conversion CompuMethod_04"
+      IDENTICAL "%3.0" "hours"
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD CompuMethod_05
+      "conversion CompuMethod_05"
+      IDENTICAL "%3.0" "hours"
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD CompuMethod_06
+      "conversion CompuMethod_06"
+      IDENTICAL "%3.0" "hours"
+    /end COMPU_METHOD
 
     /begin COMPU_METHOD CM.TAB_INTP.DEFAULT_VALUE
       "" 
