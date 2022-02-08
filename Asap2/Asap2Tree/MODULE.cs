@@ -349,28 +349,22 @@ namespace Asap2
                 }
             }
 
+            foreach (var obj in AxisPtsCharacteristicMeasurement.Values)
             {
+                if (obj.GetType() == typeof(Asap2.AXIS_PTS))
                 {
-                    var measurements = elements.FindAll(x => x.GetType() == typeof(MEASUREMENT));
-                    foreach(var item in measurements)
-                    {
-                        (item as MEASUREMENT).Validate(errorReporter, this);
-                    }
+                    (obj as AXIS_PTS).Validate(errorReporter, this);
                 }
+                if (obj.GetType() == typeof(Asap2.MEASUREMENT))
                 {
-                    var measurements = elements.FindAll(x => x.GetType() == typeof(CHARACTERISTIC));
-                    foreach (var item in measurements)
-                    {
-                        (item as CHARACTERISTIC).Validate(errorReporter, this);
-                    }
+                    (obj as MEASUREMENT).Validate(errorReporter, this);
                 }
+                if (obj.GetType() == typeof(Asap2.CHARACTERISTIC))
                 {
-                    var axis_pts = elements.FindAll(x => x.GetType() == typeof(AXIS_PTS));
-                    foreach (var item in axis_pts)
-                    {
-                        (item as AXIS_PTS).Validate(errorReporter, this);
-                    }
+                    (obj as CHARACTERISTIC).Validate(errorReporter, this);
                 }
+            }
+            { 
                 {
                     var compu_method = elements.FindAll(x => x.GetType() == typeof(COMPU_METHOD));
                     foreach (var item in compu_method)
