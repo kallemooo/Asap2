@@ -1484,10 +1484,11 @@ namespace Asap2
         public string Name { get; }
         [Asap2.Element(4u, Comment=" Type           ", IsArgument=true)]
         public Asap2.UNIT.Type type { get; }
+        public void Validate(Asap2.IErrorReporter errorReporter, Asap2.MODULE module) { }
         public enum Type
         {
             DERIVED = 0,
-            SI_CONVERSION = 1,
+            EXTENDED_SI = 1,
         }
     }
     [Asap2.Base(IsSimple=true)]

@@ -653,7 +653,8 @@ A2ML_VERSION 1 1
 
     /begin COMPU_METHOD CompuMethod_06
       "conversion CompuMethod_06"
-      IDENTICAL "%3.0" "hours"
+      IDENTICAL "%3.0" ""
+	  REF_UNIT degC
     /end COMPU_METHOD
 
     /begin COMPU_METHOD CM.TAB_INTP.DEFAULT_VALUE
@@ -708,11 +709,11 @@ A2ML_VERSION 1 1
 
     /begin COMPU_METHOD CM.TAB_NOINTP.DEFAULT_VALUE
       "" 
-      TAB_INTP "%8.4" "U/  min  " 
+      TAB_NOINTP "%8.4" "U/  min  " 
       COMPU_TAB_REF CM.TAB_NOINTP.DEFAULT_VALUE.REF
     /end COMPU_METHOD 
     
-    /begin COMPU_TAB CM.TAB_NOINTP.DEFAULT_VALUE.REF   
+    /begin COMPU_TAB CM.TAB_NOINTP.DEFAULT_VALUE.REF
        "" 
        TAB_NOINTP 
        12 
@@ -733,7 +734,7 @@ A2ML_VERSION 1 1
 
     /begin COMPU_METHOD CM.TAB_NOINTP.NO_DEFAULT_VALUE
       "" 
-      TAB_INTP "%8.4" "U/  min  " 
+      TAB_NOINTP "%8.4" "U/  min  " 
       COMPU_TAB_REF CM.TAB_NOINTP.NO_DEFAULT_VALUE.REF
     /end COMPU_METHOD 
     
@@ -790,6 +791,18 @@ A2ML_VERSION 1 1
         1.1 3.5 "compu_vtab_example2_Strtg"
         3.6 5.5 "compu_vtab_example2_Actv"
     /end COMPU_VTAB_RANGE
+
+    /* Unit */
+    /begin UNIT kelvin "base unit for temperature: Kelvin" "[K]"
+        EXTENDED_SI
+        SI_EXPONENTS 0 0 0 0 1 0 0
+    /end UNIT
+
+    /begin UNIT degC "unit for temperature: degree Celsius" "[C]"
+        DERIVED
+		REF_UNIT kelvin
+        UNIT_CONVERSION 1.0 -273.15
+    /end UNIT
 
     /* Groups */
     /begin GROUP Group_Type_All "contains all groups with special types"

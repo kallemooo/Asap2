@@ -15,7 +15,7 @@ namespace Asap2
         public enum Type
         {
             DERIVED,
-            SI_CONVERSION,
+            EXTENDED_SI,
         }
         public UNIT(Location location, string Name, string LongIdentifier, string Display, Type type) : base(location)
         {
@@ -26,9 +26,9 @@ namespace Asap2
         }
         [Element(1, IsArgument = true, Comment = " Name           ")]
         public string Name { get; private set; }
-        [Element(2, IsString = true,   Comment = " LongIdentifier ")]
+        [Element(2, IsString = true, Comment = " LongIdentifier ")]
         public string LongIdentifier { get; private set; }
-        [Element(3, IsString = true,   Comment = " Display        ")]
+        [Element(3, IsString = true, Comment = " Display        ")]
         public string Display { get; private set; }
         [Element(4, IsArgument = true, Comment = " Type           ")]
         public Type type { get; private set; }
@@ -44,6 +44,43 @@ namespace Asap2
 
         [Element(7)]
         public UNIT_CONVERSION unit_conversion;
-    }
 
+        public void Validate(IErrorReporter errorReporter, MODULE module)
+        {
+            base.ValidateIdentifier(Name, errorReporter);
+
+            if (type == Type.DERIVED)
+            {
+                if (ref_unit == null || ref_unit == "")
+                {
+                    base.reportErrorOrWarning("DERIVED UNIT must have a referenced UNIT in REF_UNIT", false, errorReporter);
+                }
+
+                if (unit_conversion == null)
+                {
+                    base.reportErrorOrWarning("DERIVED UNIT must have a UNIT_CONVERSION", false, errorReporter);
+                }
+            }
+            else
+            {
+                if (si_exponents == null)
+                {
+                    base.reportErrorOrWarning("EXTENDED_SI UNIT must have a SI_EXPONENTS", false, errorReporter);
+                }
+                if (ref_unit != null && ref_unit != "")
+                {
+                    base.reportErrorOrWarning("EXTENDED_SI UNIT shall not have a REF_UNIT", false, errorReporter);
+                }
+            }
+
+            if (ref_unit != null && ref_unit != "")
+            {
+                /* Validate that refered UNIT exists */
+                if (!module.Units.ContainsKey(ref_unit))
+                {
+                    base.reportErrorOrWarning(string.Format("Referenced UNIT '{0}' in REF_UNIT not found", ref_unit), false, errorReporter);
+                }
+            }
+        }
+    }
 }

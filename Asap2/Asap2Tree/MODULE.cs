@@ -349,6 +349,11 @@ namespace Asap2
                 }
             }
 
+            foreach (var obj in Units.Values)
+            {
+                (obj as UNIT).Validate(errorReporter, this);
+            }
+
             foreach (var obj in AxisPtsCharacteristicMeasurement.Values)
             {
                 if (obj.GetType() == typeof(Asap2.AXIS_PTS))
@@ -364,14 +369,10 @@ namespace Asap2
                     (obj as CHARACTERISTIC).Validate(errorReporter, this);
                 }
             }
-            { 
-                {
-                    var compu_method = elements.FindAll(x => x.GetType() == typeof(COMPU_METHOD));
-                    foreach (var item in compu_method)
-                    {
-                        (item as COMPU_METHOD).Validate(errorReporter, this);
-                    }
-                }
+
+            foreach (var obj in CompuMethods.Values)
+            {
+                (obj as COMPU_METHOD).Validate(errorReporter, this);
             }
         }
     }
