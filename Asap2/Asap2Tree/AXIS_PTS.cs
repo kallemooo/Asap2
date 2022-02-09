@@ -169,15 +169,6 @@ namespace Asap2
                 }
             }
 
-            if (phys_unit != null && phys_unit != "")
-            {
-                /* Validate that refered UNIT exists */
-                if (!module.Units.ContainsKey(phys_unit))
-                {
-                    base.reportErrorOrWarning(string.Format("Referenced UNIT '{0}' not found", phys_unit), false, errorReporter);
-                }
-            }
-
             if (ref_memory_segment != null && ref_memory_segment != "")
             {
                 /* Validate that refered conversion method exists */

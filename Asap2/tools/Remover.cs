@@ -484,11 +484,6 @@ namespace Asap2.tools
                             referedCompuMethods.Add(tmp.Conversion);
                         }
                         referedRecord_layouts.Add(tmp.Deposit);
-
-                        if (tmp.phys_unit != null && tmp.phys_unit.Count() > 0)
-                        {
-                            referedUnits.Add(tmp.phys_unit);
-                        }
                     }
                     if (obj.GetType() == typeof(AXIS_PTS))
                     {
@@ -498,10 +493,6 @@ namespace Asap2.tools
                             referedCompuMethods.Add(tmp.Conversion);
                         }
                         referedRecord_layouts.Add(tmp.Deposit);
-                        if (tmp.phys_unit != null && tmp.phys_unit.Count() > 0)
-                        {
-                            referedUnits.Add(tmp.phys_unit);
-                        }
                     }
                     if (obj.GetType() == typeof(MEASUREMENT))
                     {
@@ -509,10 +500,6 @@ namespace Asap2.tools
                         if (tmp.Conversion != "NO_COMPU_METHOD")
                         {
                             referedCompuMethods.Add(tmp.Conversion);
-                        }
-                        if (tmp.phys_unit != null && tmp.phys_unit.Count() > 0)
-                        {
-                            referedUnits.Add(tmp.phys_unit);
                         }
                     }
                 }

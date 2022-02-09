@@ -154,27 +154,10 @@ namespace Asap2
         {
             base.ValidateIdentifier(Name, errorReporter);
 
-            {
-                /* Validate that refered RECORD_LAYOUT exists */
-                if (!module.Record_layouts.ContainsKey(Deposit))
-                {
-                    base.reportErrorOrWarning(string.Format("Referenced RECORD_LAYOUT '{0}' not found", Deposit), false, errorReporter);
-                }
-            }
-
             /* Validate that refered RECORD_LAYOUT exists */
             if (!module.Record_layouts.ContainsKey(Deposit))
             {
-                base.reportErrorOrWarning(string.Format("Referenced Deposit '{0}' not found", Deposit), false, errorReporter);
-            }
-
-            if (phys_unit != null && phys_unit != "")
-            {
-                /* Validate that refered UNIT exists */
-                if (!module.Units.ContainsKey(phys_unit))
-                {
-                    base.reportErrorOrWarning(string.Format("Referenced UNIT '{0}' not found", phys_unit), false, errorReporter);
-                }
+                base.reportErrorOrWarning(string.Format("Referenced RECORD_LAYOUT '{0}' not found", Deposit), false, errorReporter);
             }
 
             if (comparison_quantity != null && comparison_quantity != "")
