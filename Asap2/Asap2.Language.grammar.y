@@ -1399,6 +1399,12 @@ memory_segment_data : IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER IDENTIFIER 
                     MEMORY_SEGMENT.Attribute Attribute = (MEMORY_SEGMENT.Attribute)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.Attribute), $5);
                     $$ = new MEMORY_SEGMENT(@$, $1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
                 }
+                | IDENTIFIER QUOTED_STRING RESERVED IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
+                    MEMORY_SEGMENT.PrgType PrgType = (MEMORY_SEGMENT.PrgType)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.PrgType), "RESERVED");
+                    MEMORY_SEGMENT.MemoryType MemoryType = (MEMORY_SEGMENT.MemoryType)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.MemoryType), $4);
+                    MEMORY_SEGMENT.Attribute Attribute = (MEMORY_SEGMENT.Attribute)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.Attribute), $5);
+                    $$ = new MEMORY_SEGMENT(@$, $1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
+                }
                 |  memory_segment_data if_data {
                     $$ = $1;
                     $$.if_data.Add($2);
