@@ -10,3 +10,5 @@
 *.user
 *.conflicts
 *.nupkg
+*.bak
+/.vs

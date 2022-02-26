@@ -95,7 +95,6 @@
 %token <s> RIP_ADDR_WXYZ45
 %token <s> SHIFT_OP_XYZ45
 %token <s> SRC_ADDR_XYZ45
-%token RESERVED
 %token STATIC_RECORD_LAYOUT
 %token BIT_MASK
 %token BIT_OPERATION
@@ -1399,12 +1398,6 @@ memory_segment_data : IDENTIFIER QUOTED_STRING IDENTIFIER IDENTIFIER IDENTIFIER 
                     MEMORY_SEGMENT.Attribute Attribute = (MEMORY_SEGMENT.Attribute)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.Attribute), $5);
                     $$ = new MEMORY_SEGMENT(@$, $1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
                 }
-                | IDENTIFIER QUOTED_STRING RESERVED IDENTIFIER IDENTIFIER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER {
-                    MEMORY_SEGMENT.PrgType PrgType = (MEMORY_SEGMENT.PrgType)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.PrgType), "RESERVED");
-                    MEMORY_SEGMENT.MemoryType MemoryType = (MEMORY_SEGMENT.MemoryType)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.MemoryType), $4);
-                    MEMORY_SEGMENT.Attribute Attribute = (MEMORY_SEGMENT.Attribute)EnumToStringOrAbort(typeof(MEMORY_SEGMENT.Attribute), $5);
-                    $$ = new MEMORY_SEGMENT(@$, $1, $2, PrgType, MemoryType, Attribute, (UInt64)$6, (UInt64)$7, (Int64)$8, (Int64)$9, (Int64)$10, (Int64)$11, (Int64)$12);
-                }
                 |  memory_segment_data if_data {
                     $$ = $1;
                     $$.if_data.Add($2);
@@ -1619,10 +1612,6 @@ record_layout_data
             yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
         }
     }
-    | record_layout_data RESERVED NUMBER IDENTIFIER {
-        $$ = $1;
-        $$.reserved = new RESERVED(location: @$, Position: (UInt64)$3, dataSize: (DataSize)EnumToStringOrAbort(typeof(DataSize), $4));
-    }
     | record_layout_data RIP_ADDR_WXYZ45 NUMBER IDENTIFIER {
         $$ = $1;
         try
@@ -1654,6 +1643,18 @@ record_layout_data
         catch (ArgumentException)
         {
             yywarning(String.Format("Warning: Duplicate '{0}' found, ignoring", $2));
+        }
+    }
+    | record_layout_data IDENTIFIER NUMBER IDENTIFIER {
+        $$ = $1;
+        if ("RESERVED" == $2)
+        {
+            $$.reserved = new RESERVED(location: @$, Position: (UInt64)$3, dataSize: (DataSize)EnumToStringOrAbort(typeof(DataSize), $4));
+        }
+        else
+        {
+            Scanner.yyerror(String.Format("Syntax error: Expected identifier 'RESERVED' found '{0}'", $2));
+            YYAbort();
         }
     }
     | record_layout_data STATIC_RECORD_LAYOUT {

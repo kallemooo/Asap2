@@ -63,7 +63,6 @@ OFFSET_{XYZ45}                  { return Make(Token.OFFSET_XYZ45); }
 RIP_ADDR_{WXYZ45}               { return Make(Token.RIP_ADDR_WXYZ45); }
 SHIFT_OP_{XYZ45}                { return Make(Token.SHIFT_OP_XYZ45); }
 SRC_ADDR_{XYZ45}                { return Make(Token.SRC_ADDR_XYZ45); }
-RESERVED                        { return Make(Token.RESERVED); }
 STATIC_RECORD_LAYOUT            { return Make(Token.STATIC_RECORD_LAYOUT); }
 BIT_MASK                        { return Make(Token.BIT_MASK); }
 BIT_OPERATION                   { return Make(Token.BIT_OPERATION); }

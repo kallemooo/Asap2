@@ -141,18 +141,28 @@ A2ML_VERSION 1 1
             /end IF_DATA
           /end MEMORY_SEGMENT
 
-		/begin MEMORY_SEGMENT reservedsegment 
-		"Reserved segment"
-		 RESERVED
-		 RAM 
-		 INTERN 
-		 0x8000 
-		 0x1000 
-		-1 –1 –1 –1 -1 
+        /begin MEMORY_SEGMENT reservedsegment
+            "Reserved segment"
+            RESERVED
+            RAM
+            INTERN
+            0x8000
+            0x1000
+            -1 –1 –1 –1 -1
 		/end MEMORY_SEGMENT
-
-        /end MOD_PAR
+    /end MOD_PAR
         
+    /begin RECORD_LAYOUT structure_table_byte
+        NO_AXIS_PTS_X 1 UBYTE
+        FNC_VALUES 3 UBYTE ROW_DIR DIRECT
+    /end RECORD_LAYOUT
+
+    /begin RECORD_LAYOUT structure_table_shortint
+        NO_AXIS_PTS_X 1 UBYTE
+        RESERVED 2 BYTE
+        FNC_VALUES 3 SBYTE ROW_DIR DIRECT
+    /end RECORD_LAYOUT
+
     /begin MEASUREMENT
         Measurement_1
         "Measurement_1 description"

@@ -833,25 +833,25 @@ namespace Asap2
         [Element(7)]
         public IDENTIFICATION identification;
 
-        [Element(8)]
+        [Element(8, IsDictionary = true)]
         public Dictionary<string, NO_AXIS_PTS_XYZ45> no_axis_pts_xyz45 = new Dictionary<string, NO_AXIS_PTS_XYZ45>();
 
-        [Element(9)]
+        [Element(9, IsDictionary = true)]
         public Dictionary<string, NO_RESCALE_XYZ45> no_rescale_xyz45 = new Dictionary<string, NO_RESCALE_XYZ45>();
 
-        [Element(10)]
+        [Element(10, IsDictionary = true)]
         public Dictionary<string, OFFSET_XYZ45> offset_xyz45 = new Dictionary<string, OFFSET_XYZ45>();
 
         [Element(11)]
         public RESERVED reserved;
 
-        [Element(12)]
+        [Element(12, IsDictionary = true)]
         public Dictionary<string, RIP_ADDR_WXYZ45> rip_addr_wxyz45 = new Dictionary<string, RIP_ADDR_WXYZ45>();
 
-        [Element(13)]
+        [Element(13, IsDictionary = true)]
         public Dictionary<string, SHIFT_OP_XYZ45> shift_op_xyz45 = new Dictionary<string, SHIFT_OP_XYZ45>();
 
-        [Element(14)]
+        [Element(14, IsDictionary = true)]
         public Dictionary<string, SRC_ADDR_XYZ45> src_addr_xyz45 = new Dictionary<string, SRC_ADDR_XYZ45>();
 
         /// <summary>
