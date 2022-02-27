@@ -15,4 +15,4 @@ jobs:
       - name: Restore nuget packages
         run: msbuild -t:restore -p:RestorePackagesConfig=true
       - name: Build
-        run: msbuild -t:rebuild -verbosity:diag -property:Configuration=Release
+        run: msbuild -t:rebuild -property:Configuration=Release
