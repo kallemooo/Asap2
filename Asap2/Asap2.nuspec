@@ -5,7 +5,6 @@
     <version>$version$</version>
     <title>$title$</title>
     <authors>$author$</authors>
-    <owners>$author$</owners>
     <projectUrl>https://github.com/kallemooo/Asap2</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
@@ -13,7 +12,8 @@
     <tags>a2l ASAP2</tags>
     <license type="expression">MIT</license>
     <readme>docs\README.md</readme>
-	<repository type="git" url="https://github.com/kallemooo/Asap2.git" branch="$branch$" commit="$sha$" />
+    <repository type="git" url="https://github.com/kallemooo/Asap2.git" branch="$branch$" commit="$sha$" />
+    <releaseNotes>Release notes</releaseNotes>
   </metadata>
   <files>
     <file src="..\README.md" target="docs\" />
