@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<package >
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>$id$</id>
     <version>$version$</version>
@@ -11,5 +11,11 @@
     <description>$description$</description>
     <copyright>$copyright$</copyright>
     <tags>a2l ASAP2</tags>
+    <license type="expression">MIT</license>
+    <readme>docs\README.md</readme>
+	<repository type="git" url="https://github.com/kallemooo/Asap2.git" branch="$branch$" commit="$sha$" />
   </metadata>
+  <files>
+    <file src="..\README.md" target="docs\" />
+  </files>
 </package>

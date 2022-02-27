@@ -19,6 +19,12 @@ jobs:
       - name: Setup VSTest Path
         uses: darenm/Setup-VSTest@v1
 
+      - name: Setup Nuget
+        uses: nuget/setup-nuget@v1
+        with:
+          #nuget-api-key: ${{ secrets.NuGetAPIKey }}
+          nuget-version: 'latest'
+
       - name: Restore nuget packages
         run: msbuild -t:restore -p:RestorePackagesConfig=true
 
@@ -27,3 +33,13 @@ jobs:
 
       - name: Test
         run: vstest.console.exe Asap2.Tests\bin\Release\Asap2.Tests.dll
+
+      - name: Create nuget package
+        run: nuget pack Asap2\Asap2.csproj -Properties Configuration=Release -OutputDirectory out -Verbosity detailed -properties branch=${{ github.ref_name }};sha=${{ github.sha }}
+
+      - name: Upload nuget package
+        uses: actions/upload-artifact@v2
+        with:
+          path: out
+          if-no-files-found: error
+
