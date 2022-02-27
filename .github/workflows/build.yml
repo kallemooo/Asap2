@@ -24,3 +24,6 @@ jobs:
 
       - name: Build
         run: msbuild -t:rebuild -property:Configuration=Release
+
+      - name: Test
+        run: vstest.console.exe Asap2\Asap2.Tests\bin\Release\Asap2.Tests.dll
