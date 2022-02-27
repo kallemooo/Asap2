@@ -1310,19 +1310,19 @@ namespace Asap2
         public Asap2.FNC_VALUES fnc_values;
         [Asap2.Element(7u)]
         public Asap2.IDENTIFICATION identification;
-        [Asap2.Element(8u)]
+        [Asap2.Element(8u, IsDictionary=true)]
         public System.Collections.Generic.Dictionary<string, Asap2.NO_AXIS_PTS_XYZ45> no_axis_pts_xyz45;
-        [Asap2.Element(9u)]
+        [Asap2.Element(9u, IsDictionary=true)]
         public System.Collections.Generic.Dictionary<string, Asap2.NO_RESCALE_XYZ45> no_rescale_xyz45;
-        [Asap2.Element(10u)]
+        [Asap2.Element(10u, IsDictionary=true)]
         public System.Collections.Generic.Dictionary<string, Asap2.OFFSET_XYZ45> offset_xyz45;
         [Asap2.Element(11u)]
         public Asap2.RESERVED reserved;
-        [Asap2.Element(12u)]
+        [Asap2.Element(12u, IsDictionary=true)]
         public System.Collections.Generic.Dictionary<string, Asap2.RIP_ADDR_WXYZ45> rip_addr_wxyz45;
-        [Asap2.Element(13u)]
+        [Asap2.Element(13u, IsDictionary=true)]
         public System.Collections.Generic.Dictionary<string, Asap2.SHIFT_OP_XYZ45> shift_op_xyz45;
-        [Asap2.Element(14u)]
+        [Asap2.Element(14u, IsDictionary=true)]
         public System.Collections.Generic.Dictionary<string, Asap2.SRC_ADDR_XYZ45> src_addr_xyz45;
         [Asap2.Element(15u)]
         public Asap2.STATIC_RECORD_LAYOUT static_record_layout;
