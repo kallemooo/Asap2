@@ -10,9 +10,17 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: microsoft/setup-msbuild@v1.1
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup MSbuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Setup VSTest Path
+        uses: darenm/Setup-VSTest@v1
+
       - name: Restore nuget packages
         run: msbuild -t:restore -p:RestorePackagesConfig=true
+
       - name: Build
         run: msbuild -t:rebuild -property:Configuration=Release
