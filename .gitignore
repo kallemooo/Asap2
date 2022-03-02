@@ -12,3 +12,4 @@
 *.nupkg
 *.bak
 /.vs
+/out

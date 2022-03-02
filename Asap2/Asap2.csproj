@@ -1,6 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
+  <PropertyGroup>
+    <PackageId>Asap2</PackageId>
+    <Version>1.1.0</Version>
+    <Authors>Karl Thorén</Authors>
+    <Company>Karl Thorén</Company>
+    <PackageProjectUrl>https://github.com/kallemooo/Asap2</PackageProjectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A2L Parser (ASAM MCD-2 MC Parser / ASAP2 parser)</description>
+    <copyright>Copyright © Karl Thorén 2022</copyright>
+    <PackageTags>a2l ASAP2</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageReadmeFile>docs\README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/kallemooo/Asap2.git</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -38,7 +56,7 @@
     <Names>Asap2</Names>
   </PropertyGroup>
   <PropertyGroup Label="YltProperties">
-    <YltTools>$(SolutionDir)packages\YaccLexTools.0.2.2\tools\</YltTools>
+    <YltTools>$(PkgYaccLexTools)\tools\</YltTools>
     <GplexTool>"$(YltTools)gplex.exe"</GplexTool>
     <GppgTool>"$(YltTools)gppg.exe"</GppgTool>
   </PropertyGroup>
@@ -46,6 +64,13 @@
     <Asap2Parser>$(ProjectDir)Asap2</Asap2Parser>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\docs"/>
+    <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.1">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="YaccLexTools" Version="0.2.2">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -90,9 +115,6 @@
     <Compile Include="tools\Options.cs" />
     <Compile Include="tools\Merger.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <ItemGroup Label="Asap2Files">
     <Compile Include="Asap2.Parser.cs">
       <DependentUpon>Asap2.parser</DependentUpon>
@@ -130,6 +152,12 @@
     <Exec Command="$(GppgTool) /no-lines /verbose /listing /conflicts /gplex &quot;$(Asap2Parser).Language.grammar.y&quot; &gt; &quot;$(Asap2Parser).Parser.Generated.cs&quot;" WorkingDirectory="$(ProjectDir)" Outputs="$(Asap2Parser).Parser.Generated.cs">
       <Output TaskParameter="Outputs" ItemName="Asap2" />
     </Exec>
+  </Target>
+  <Target Name="CopyPackage" AfterTargets="Pack">
+    <Copy
+      SourceFiles="$(OutputPath)\$(PackageId).$(PackageVersion).nupkg"
+      DestinationFolder="..\out"
+    />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
