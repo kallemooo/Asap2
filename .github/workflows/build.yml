@@ -26,16 +26,13 @@ jobs:
           nuget-version: 'latest'
 
       - name: Restore nuget packages
-        run: msbuild -t:restore -p:RestorePackagesConfig=true
+        run: msbuild -t:restore
 
       - name: Build
-        run: msbuild -t:rebuild -property:Configuration=Release
+        run: msbuild -t:rebuild -property:Configuration=Release -p:PackageVersion=1.1.0-dev${{ github.sha }} -p:RepositoryCommit=${{ github.sha }} -p:RepositoryBranch=${{ github.ref_name }}
 
       - name: Test
         run: vstest.console.exe Asap2.Tests\bin\Release\Asap2.Tests.dll
-
-      - name: Create nuget package
-        run: nuget pack Asap2\Asap2.csproj -Properties Configuration=Release -OutputDirectory out -Verbosity detailed -properties 'branch=${{ github.ref_name }};sha=${{ github.sha }}'
 
       - name: Upload nuget package
         uses: actions/upload-artifact@v2
