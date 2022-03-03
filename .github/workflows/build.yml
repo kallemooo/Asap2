@@ -34,9 +34,35 @@ jobs:
       - name: Test
         run: vstest.console.exe Asap2.Tests\bin\Release\Asap2.Tests.dll
 
-      - name: Upload nuget package
+      - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          path: out
+          retention-days: 1
+          name: build_${{ github.sha }}
+          path: |
+            out
+            README.md
+            LICENSE
           if-no-files-found: error
 
+  pre-release:
+    name: "Pre Release"
+    needs: [build]
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build_${{steps.get-ver.outputs.ver}}_${{ github.sha }}
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            *.nupkg
+            README.md
+            LICENSE
