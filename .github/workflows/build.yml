@@ -63,6 +63,6 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            *.nupkg
+            out/*
             README.md
             LICENSE
