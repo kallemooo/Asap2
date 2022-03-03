@@ -40,7 +40,7 @@ jobs:
           retention-days: 1
           name: build_${{ github.sha }}
           path: |
-            out
+            out/*
             README.md
             LICENSE
           if-no-files-found: error
@@ -54,7 +54,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build_${{steps.get-ver.outputs.ver}}_${{ github.sha }}
+          name: build_${{ github.sha }}
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
