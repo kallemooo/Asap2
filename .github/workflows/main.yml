@@ -1,0 +1,73 @@
+name: Release handling
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-release:
+    name: "Build release"
+    runs-on: windows-latest
+    steps:
+      - id: get-ver
+        run: |
+          id=$(echo ${{github.ref_name}} | cut -dv -f2)
+          echo "::set-output name=id::$ver"
+      - run: echo "${{steps.get-ver.outputs.ver}}"
+      
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup MSbuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Setup VSTest Path
+        uses: darenm/Setup-VSTest@v1
+
+      - name: Restore nuget packages
+        run: msbuild -t:restore
+
+      - name: Build
+        run: msbuild -t:rebuild -property:Configuration=Release -p:PackageVersion=${{steps.get-ver.outputs.ver}} -p:RepositoryCommit=${{ github.sha }} -p:RepositoryBranch=${{ github.ref_name }}
+
+      - name: Test
+        run: vstest.console.exe Asap2.Tests\bin\Release\Asap2.Tests.dll
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 1
+          name: build_release_${{ github.sha }}
+          path: |
+            out/*
+            README.md
+            LICENSE
+          if-no-files-found: error
+
+  generate-release:
+    name: "Generate release"
+    needs: build-release
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Setup Nuget
+        uses: nuget/setup-nuget@v1
+        with:
+          #nuget-api-key: ${{ secrets.NuGetAPIKey }}
+          nuget-version: 'latest'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build_release_${{ github.sha }}
+
+      - name: Create release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            out/*.nupkg
+            README.md
+            LICENSE
