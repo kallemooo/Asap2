@@ -13,10 +13,10 @@
     <copyright>Copyright © Karl Thorén 2022</copyright>
     <PackageTags>a2l ASAP2</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<PackageReadmeFile>docs\README.md</PackageReadmeFile>
-	<RepositoryUrl>https://github.com/kallemooo/Asap2.git</RepositoryUrl>
-	<RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReadmeFile>docs\README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/kallemooo/Asap2.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup>
