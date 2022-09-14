@@ -1,6 +1,5 @@
-﻿[assembly: System.Runtime.InteropServices.ComVisible(false)]
-[assembly: System.Runtime.InteropServices.Guid("bfad106e-3de5-43f3-9983-0129e9414ccc")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8", FrameworkDisplayName=".NET Framework 4.8")]
+﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/kallemooo/Asap2.git")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName="")]
 namespace Asap2
 {
     [Asap2.Base]
