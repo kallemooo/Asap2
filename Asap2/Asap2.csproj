@@ -74,7 +74,7 @@
     </None>
     <None Include="Asap2.parser" />
   </ItemGroup>
-  <Target Name="BeforeBuild" BeforeTargets="PreBuildEvent" DependsOnTargets="YltBuildGen" />
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" DependsOnTargets="YltBuildGen" />
   <Target Name="YltBuildGen" DependsOnTargets="GenerateAsap2" />
   <Target Name="GenerateAsap2" Inputs="$(Asap2Parser).Language.analyzer.lex;$(Asap2Parser).Language.grammar.y" Outputs="$(Asap2Parser).Scanner.Generated.cs;$(Asap2Parser).Parser.Generated.cs">
     <Message Text="Generating scanner for $(Asap2Parser) ..." />
