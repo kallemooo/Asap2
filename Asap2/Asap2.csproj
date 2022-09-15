@@ -1,57 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PackageId>Asap2</PackageId>
     <Version>1.1.0</Version>
     <Authors>Karl Thorén</Authors>
     <Company>Karl Thorén</Company>
     <PackageProjectUrl>https://github.com/kallemooo/Asap2</PackageProjectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>A2L Parser (ASAM MCD-2 MC Parser / ASAP2 parser)</description>
-    <copyright>Copyright © Karl Thorén 2022</copyright>
+    <Description>A2L Parser (ASAM MCD-2 MC Parser / ASAP2 parser)</Description>
+    <Copyright>Copyright © Karl Thorén 2022</Copyright>
     <PackageTags>a2l ASAP2</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReadmeFile>docs\README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/kallemooo/Asap2.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+
+    <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
+    <DocumentationFile>$(OutputPath)\Asap2.XML</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EFADEE96-3767-42C4-92D3-BF0095B70553}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Asap2</RootNamespace>
-    <AssemblyName>Asap2</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Asap2.XML</DocumentationFile>
-    <NoWarn>CS1591</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Asap2.XML</DocumentationFile>
-    <NoWarn>CS1591</NoWarn>
-  </PropertyGroup>
   <PropertyGroup Label="YltParsers">
     <Names>Asap2</Names>
   </PropertyGroup>
@@ -64,70 +35,33 @@
     <Asap2Parser>$(ProjectDir)Asap2</Asap2Parser>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\docs"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\docs" />
     <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="YaccLexTools" Version="0.2.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
+
+
+  <PropertyGroup>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Asap2Tree\Asap2Base.cs" />
-    <Compile Include="Asap2Tree\Asap2File.cs" />
-    <Compile Include="Asap2Tree\AXIS_PTS.cs" />
-    <Compile Include="Asap2Tree\CHARACTERISTIC.cs" />
-    <Compile Include="Asap2Tree\COMPU_METHOD.cs" />
-    <Compile Include="Asap2Tree\FileComment.cs" />
-    <Compile Include="Asap2Tree\MEASUREMENT.cs" />
-    <Compile Include="Attributes.cs" />
-    <Compile Include="Asap2Tree\DEF_CHARACTERISTIC.cs" />
-    <Compile Include="Asap2Tree\FRAME.cs" />
-    <Compile Include="Asap2Tree\FUNCTION.cs" />
-    <Compile Include="Asap2Tree\IN_MEASUREMENT.cs" />
-    <Compile Include="Asap2Tree\LOC_MEASUREMENT.cs" />
-    <Compile Include="Asap2Tree\MODULE.cs" />
-    <Compile Include="Asap2Tree\OUT_MEASUREMENT.cs" />
-    <Compile Include="Asap2Tree\REF_CHARACTERISTIC.cs" />
-    <Compile Include="Asap2Tree\SI_EXPONENTS.cs" />
-    <Compile Include="Asap2Tree\SUB_FUNCTION.cs" />
-    <Compile Include="Asap2Tree\UNIT.cs" />
-    <Compile Include="Asap2Tree\UNIT_CONVERSION.cs" />
-    <Compile Include="Asap2Tree\USER_RIGHTS.cs" />
-    <Compile Include="Asap2Tree\VARIANT_CODING.cs" />
-    <Compile Include="Asap2Tree\VAR_CHARACTERISTIC.cs" />
-    <Compile Include="Asap2Tree\VAR_CRITERION.cs" />
-    <Compile Include="Asap2Tree\VAR_FORBIDDEN_COMB.cs" />
-    <Compile Include="GplexBuffers.cs" />
-    <Compile Include="IErrorReporter.cs" />
-    <Compile Include="Location.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShiftReduceParserCode.cs" />
-    <Compile Include="tools\Remover.cs" />
-    <Compile Include="tools\Options.cs" />
-    <Compile Include="tools\Merger.cs" />
-  </ItemGroup>
-  <ItemGroup Label="Asap2Files">
-    <Compile Include="Asap2.Parser.cs">
+    <Compile Update="Asap2.Parser.cs">
       <DependentUpon>Asap2.parser</DependentUpon>
     </Compile>
-    <Compile Include="Asap2.Parser.Generated.cs">
+    <Compile Update="Asap2.Parser.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Asap2.Language.grammar.y</DependentUpon>
     </Compile>
-    <Compile Include="Asap2.Scanner.cs">
+    <Compile Update="Asap2.Scanner.cs">
       <DependentUpon>Asap2.parser</DependentUpon>
     </Compile>
-    <Compile Include="Asap2.Scanner.Generated.cs">
+    <Compile Update="Asap2.Scanner.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Asap2.Language.analyzer.lex</DependentUpon>
@@ -140,8 +74,7 @@
     </None>
     <None Include="Asap2.parser" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="BeforeBuild" DependsOnTargets="YltBuildGen" />
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" DependsOnTargets="YltBuildGen" />
   <Target Name="YltBuildGen" DependsOnTargets="GenerateAsap2" />
   <Target Name="GenerateAsap2" Inputs="$(Asap2Parser).Language.analyzer.lex;$(Asap2Parser).Language.grammar.y" Outputs="$(Asap2Parser).Scanner.Generated.cs;$(Asap2Parser).Parser.Generated.cs">
     <Message Text="Generating scanner for $(Asap2Parser) ..." />
@@ -154,16 +87,6 @@
     </Exec>
   </Target>
   <Target Name="CopyPackage" AfterTargets="Pack">
-    <Copy
-      SourceFiles="$(OutputPath)\$(PackageId).$(PackageVersion).nupkg"
-      DestinationFolder="..\out"
-    />
+    <Copy SourceFiles="$(OutputPath)\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="..\out" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
