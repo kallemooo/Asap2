@@ -1,7 +1,4 @@
-﻿[assembly: System.Runtime.InteropServices.ComVisible(false)]
-[assembly: System.Runtime.InteropServices.Guid("bfad106e-3de5-43f3-9983-0129e9414ccc")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8", FrameworkDisplayName=".NET Framework 4.8")]
-namespace Asap2
+﻿namespace Asap2
 {
     [Asap2.Base]
     public class A2ML : Asap2.Asap2Base
@@ -666,7 +663,7 @@ namespace Asap2
         public decimal UpperLimit;
         public EXTENDED_LIMITS(Asap2.Location location, decimal LowerLimit, decimal UpperLimit) { }
     }
-    [System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Module | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Event | System.AttributeTargets.Interface | System.AttributeTargets.Parameter | System.AttributeTargets.Delegate | System.AttributeTargets.ReturnValue | System.AttributeTargets.GenericParameter | System.AttributeTargets.All, AllowMultiple=false)]
+    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple=false)]
     public class ElementAttribute : System.Attribute
     {
         public ElementAttribute(uint SortOrder) { }
@@ -1701,38 +1698,8 @@ namespace Asap2.tools
 }
 namespace QUT.GplexBuffers
 {
-    public delegate int BlockReader(char[] block, int index, int number);
-    public static class BlockReaderFactory
-    {
-        public static QUT.GplexBuffers.BlockReader Get(System.IO.Stream stream, int fallbackCodePage) { }
-        public static QUT.GplexBuffers.BlockReader Raw(System.IO.Stream stream) { }
-    }
-    [System.Serializable]
-    public class BufferException : System.Exception
-    {
-        public BufferException() { }
-        public BufferException(string message) { }
-        protected BufferException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public BufferException(string message, System.Exception innerException) { }
-    }
     public static class CodePageHandling
     {
         public static int GetCodePage(string option) { }
-    }
-    public abstract class ScanBuff
-    {
-        public const int EndOfFile = -1;
-        public const int UnicodeReplacementChar = 65533;
-        protected ScanBuff() { }
-        public string FileName { get; set; }
-        public bool IsFile { get; }
-        public abstract int Pos { get; set; }
-        public abstract string GetString(int begin, int limit);
-        public virtual void Mark() { }
-        public abstract int Read();
-        public static QUT.GplexBuffers.ScanBuff GetBuffer(System.Collections.Generic.IList<string> source) { }
-        public static QUT.GplexBuffers.ScanBuff GetBuffer(System.IO.Stream source) { }
-        public static QUT.GplexBuffers.ScanBuff GetBuffer(string source) { }
-        public static QUT.GplexBuffers.ScanBuff GetBuffer(System.IO.Stream source, int fallbackCodePage) { }
     }
 }

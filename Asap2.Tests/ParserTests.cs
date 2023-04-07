@@ -11,7 +11,7 @@ namespace Asap2.Tests
         [TestCase("ASAP2_Demo_V161.a2l")]
         public void ParseA2LFiles(string fileName)
         {
-            string fullPath = Path.Combine(TestContext.CurrentContext.TestDirectory, @"..\..\..", fileName);
+            string fullPath = Path.Combine(TestContext.CurrentContext.TestDirectory, @"..\..\..\..", fileName);
             var errorReporter = new UnitTestErrorReporter();
             var parser = new Asap2.Parser(fullPath, errorReporter);
             var tree = parser.DoParse();
@@ -26,7 +26,7 @@ namespace Asap2.Tests
         [TestCase("ASAP2_Demo_V161.a2l")]
         public void ValidateA2LFiles(string fileName)
         {
-            string fullPath = Path.Combine(TestContext.CurrentContext.TestDirectory, @"..\..\..", fileName);
+            string fullPath = Path.Combine(TestContext.CurrentContext.TestDirectory, @"..\..\..\..", fileName);
             var errorReporter = new UnitTestErrorReporter();
             var parser = new Asap2.Parser(fullPath, errorReporter);
             var tree = parser.DoParse();

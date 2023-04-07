@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asap2", "Asap2\Asap2.csproj", "{EFADEE96-3767-42C4-92D3-BF0095B70553}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asap2", "Asap2\Asap2.csproj", "{EFADEE96-3767-42C4-92D3-BF0095B70553}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asap2Test", "Asap2Test\Asap2Test.csproj", "{449BBB8A-D579-4984-8FCE-E8173929309A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asap2Test", "Asap2Test\Asap2Test.csproj", "{449BBB8A-D579-4984-8FCE-E8173929309A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asap2.Tests", "Asap2.Tests\Asap2.Tests.csproj", "{8B8F4BFF-0976-4F2D-A698-FBA980F27E80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asap2.Tests", "Asap2.Tests\Asap2.Tests.csproj", "{8B8F4BFF-0976-4F2D-A698-FBA980F27E80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC7F869C-9D72-41BE-A653-327B31112672}
 	EndGlobalSection
 EndGlobal
