@@ -11,31 +11,24 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Setup MSbuild
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Setup VSTest Path
-        uses: darenm/Setup-VSTest@v1
-
-      - name: Setup Nuget
-        uses: nuget/setup-nuget@v1
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          #nuget-api-key: ${{ secrets.NuGetAPIKey }}
-          nuget-version: 'latest'
+          dotnet-version: 6.0.x
 
-      - name: Restore nuget packages
-        run: msbuild -t:restore
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: Build
-        run: msbuild -t:rebuild -property:Configuration=Release -p:PackageVersion=1.1.0-dev${{ github.sha }} -p:RepositoryCommit=${{ github.sha }} -p:RepositoryBranch=${{ github.ref_name }}
+        run: dotnet build --configuration Release -p:Version=2.0.0 -p:PackageVersion=2.0.0-dev${{ github.sha }} -p:RepositoryCommit=${{ github.sha }} -p:RepositoryBranch=${{ github.ref_name }}
 
       - name: Test
-        run: vstest.console.exe Asap2.Tests\bin\Release\Asap2.Tests.dll
+        run: dotnet test --no-build --verbosity normal --configuration Release
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           retention-days: 1
           name: build_${{ github.sha }}
@@ -52,7 +45,7 @@ jobs:
 
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build_${{ github.sha }}
 

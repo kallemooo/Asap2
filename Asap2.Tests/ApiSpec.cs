@@ -17,7 +17,8 @@ namespace Asap2.Tests
         [Test]
         public void ApproveApiChanges()
         {
-            var publicApi = ApiGenerator.GeneratePublicApi(typeof(Asap2File).Assembly, null);
+            var publicApi = ApiGenerator.GeneratePublicApi(typeof(Asap2File).Assembly,
+                new ApiGeneratorOptions { IncludeAssemblyAttributes = false, });
 
             Approvals.Verify(publicApi);
         }
