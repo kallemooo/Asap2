@@ -9,11 +9,11 @@
     <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ApprovalTests" Version="5.7.2" />
+    <PackageReference Include="ApprovalTests" Version="5.8.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
-    <PackageReference Include="PublicApiGenerator" Version="10.3.0" />
+    <PackageReference Include="PublicApiGenerator" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asap2\Asap2.csproj" />

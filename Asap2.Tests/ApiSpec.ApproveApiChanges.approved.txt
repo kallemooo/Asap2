@@ -663,7 +663,7 @@
         public decimal UpperLimit;
         public EXTENDED_LIMITS(Asap2.Location location, decimal LowerLimit, decimal UpperLimit) { }
     }
-    [System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Module | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Event | System.AttributeTargets.Interface | System.AttributeTargets.Parameter | System.AttributeTargets.Delegate | System.AttributeTargets.ReturnValue | System.AttributeTargets.GenericParameter | System.AttributeTargets.All, AllowMultiple=false)]
+    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple=false)]
     public class ElementAttribute : System.Attribute
     {
         public ElementAttribute(uint SortOrder) { }
