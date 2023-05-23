@@ -12,7 +12,7 @@
 
 Identifier              [A-Za-z_][A-Za-z0-9_\.\[\]]*
 Space                   [ \t\u000c]
-Decimal                 [\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?
+Decimal                 [\-+]?[0-9]*\.?[0-9]+([\.]?[eE][\-+]?[0-9]+)?
 HexNumber               0x[0-9A-Fa-f]+
 Eol                     (\r?\n)
 Alignment               ALIGNMENT_[A-Za-z0-9_]+
